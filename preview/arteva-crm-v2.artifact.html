@@ -430,6 +430,25 @@ body.sb-min .sb-tools{flex-direction:column;align-items:center}
 .seg .ctl[aria-pressed="true"]{background:var(--brand);color:#fff}
 .lines tbody tr{cursor:pointer}
 .lines tbody tr:hover td{background:var(--surface-2)}
+
+/* ---------- 17) LİSTE: bağlantı hücresi, toplu seçim, ön izleme ---------- */
+.link-btn{padding:0;background:none;border:0;color:var(--brand);font-weight:650;font-size:var(--fs-sm);
+  text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-btn:hover{text-decoration:underline}
+.dt tbody tr.prev{cursor:pointer}
+.dt .chk{width:34px;text-align:center}
+.dt .chk input{width:15px;height:15px;accent-color:var(--brand);cursor:pointer}
+.bulk{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;padding:var(--sp-2) var(--sp-4);
+  border-bottom:1px solid var(--line);background:var(--brand-50);color:var(--brand);font-size:var(--fs-sm);font-weight:650}
+.bulk[hidden]{display:none}
+.doc{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);overflow:hidden}
+.doc__h{display:flex;align-items:flex-start;gap:var(--sp-3);padding:var(--sp-4);border-bottom:1px solid var(--line);
+  background:var(--surface-2)}
+.doc__h b{display:block;font-size:var(--fs-lg);color:var(--ink)}
+.doc__h small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+.kv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--sp-2) var(--sp-3);padding:var(--sp-4);font-size:var(--fs-sm)}
+.kv dt{color:var(--ink-3);font-weight:600}
+.kv dd{margin:0;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
 </style>
 <div class="shell">
   <aside class="sidebar">
@@ -437,8 +456,10 @@ body.sb-min .sb-tools{flex-direction:column;align-items:center}
     <div class="org" id="org"><span class="mark">AL</span><span style="min-width:0"><b>ARTEVA LAB</b><small>Aktif Firma 🏢</small></span></div>
     <nav class="sb-scroll" id="nav"></nav>
     <div class="sb-foot">
-      <button class="ctl sb-item" data-go="destek"><span class="sb-i">💬</span><span class="sb-t">Canlı Destek</span><span class="dot"></span></button>
-      <div class="sb-tools"><button class="ctl btn btn--ghost btn--sm" id="navEdit" title="Menüyü düzenle">✎ <span class="sb-t">Menüyü Düzenle</span></button></div>
+      <div class="sb-tools">
+        <button class="ctl btn btn--danger btn--sm" style="flex:1" id="logout">⏻ <span class="sb-t">Güvenli Çıkış Yap</span></button>
+        <button class="ctl btn btn--ghost btn--sm btn--icon" id="navEdit" title="Menüyü düzenle">✎</button>
+      </div>
     </div>
   </aside>
 
@@ -535,38 +556,19 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){Panel.close();clos
 
 /* ---------------- menü ---------------- */
 const NAV_DEF=[
- {items:[{k:'dashboard',i:'🏠',t:'Dashboard'},{k:'arama',i:'🔍',t:'Global Arama'}]},
- {g:'CRM',items:[
-   {k:'musteriler',i:'👥',t:'Müşteriler',ch:[['musteriler','Müşteri Listesi'],['musteri-yeni','Yeni Müşteri'],['musteri-analizi','Müşteri Analizi']]},
-   {k:'kisiler',i:'👤',t:'Kişiler',ch:[['kisiler','Kişi Listesi'],['kisi-yeni','Yeni Kişi']]},
-   {k:'aktiviteler',i:'🗓',t:'Aktiviteler',ch:[['aktiviteler','Takvim'],['gorevler','Görevler']]},
-   {k:'firsatlar',i:'🎯',t:'Fırsatlar',ch:[['firsatlar','Fırsat Listesi'],['firsat-yeni','Yeni Fırsat']]}]},
- {g:'Satış',items:[
-   {k:'teklifler',i:'📄',t:'Teklifler / Proforma',ch:[['teklifler','Proforma Listesi'],['yeni-teklif','Yeni Proforma'],['gonderilen','Gönderilenler'],['arsiv','Arşiv'],['sablonlar','Proforma Şablonları']]},
-   {k:'siparisler',i:'🧾',t:'Siparişler',ch:[['siparisler','Sipariş Listesi'],['uretim','Üretim Süreci'],['teslim','Teslim Edilen']]},
-   {k:'sevkiyatlar',i:'🚚',t:'Sevkiyatlar',ch:[['sevkiyatlar','Sevkiyat Listesi'],['sevkiyat-yeni','Yeni Sevkiyat']]},
-   {k:'faturalar',i:'📑',t:'Faturalar',ch:[['faturalar','Fatura Listesi'],['fatura-entegrasyon','Fatura Entegrasyonu']]},
-   {k:'tahsilatlar',i:'💰',t:'Tahsilatlar',ch:[['tahsilatlar','Tahsilat Listesi'],['vadesi-gecen','Vadesi Geçen']]}]},
- {g:'Katalog',items:[
-   {k:'urunler',i:'📦',t:'Ürünler',ch:[['urunler','Ürün Listesi'],['urun-yeni','Yeni Ürün'],['urun-proforma','Proformadan Aktar'],['urun-web','Web Sitesinden Aktar']]},
-   {k:'kategoriler',i:'🗂',t:'Kategoriler',ch:[['kategoriler','Kategori Listesi'],['kategori-yeni','Yeni Kategori']]},
-   {k:'markalar',i:'🏷',t:'Markalar',ch:[['markalar','Marka Listesi'],['marka-yeni','Yeni Marka']]},
-   {k:'import',i:'⇅',t:'Import Merkezi',ch:[['import','Aktarım Merkezi'],['import-gecmis','Aktarım Geçmişi']]},
-   {k:'fiyat',i:'💲',t:'Fiyat Listeleri',ch:[['fiyat','Fiyat Listeleri'],['fiyat-yeni','Yeni Fiyat Listesi']]}]},
- {g:'Pazarlama',items:[
-   {k:'kampanyalar',i:'📣',t:'Kampanyalar',ch:[['kampanyalar','Kampanya Listesi'],['kampanya-yeni','Yeni Kampanya']]},
-   {k:'eposta',i:'✉',t:'E-posta Gönderimi',ch:[['eposta','Gönderim Listesi'],['eposta-sablon','E-posta Şablonları']]}]},
- {g:'Raporlar',items:[
-   {k:'satis-rapor',i:'📊',t:'Satış Raporları',ch:[['satis-rapor','Aylık / Yıllık'],['satis-urun','Ürün Bazlı']]},
-   {k:'urun-rapor',i:'📈',t:'Ürün Raporları',ch:[['urun-rapor','Ürün Performansı'],['stok-rapor','Stok Durumu']]},
-   {k:'musteri-analizi',i:'👣',t:'Müşteri Analizi',ch:[['musteri-analizi','Sektör / Bölge'],['musteri-skor','Müşteri Skoru']]},
-   {k:'performans',i:'⚡',t:'Performans',ch:[['performans','Dönüşüm'],['temsilci','Temsilci Performansı']]}]},
- {g:'Yönetim',items:[
-   {k:'tema',i:'🎨',t:'Tema Stüdyosu',ch:[['tema','Tema ve Görünüm'],['nav-duzenle','Sidebar Düzenle']]},
-   {k:'ayarlar',i:'⚙',t:'Ayarlar',ch:[['ayarlar','Genel Ayarlar'],['firma','Firma Profili']]},
-   {k:'kullanicilar',i:'🔐',t:'Kullanıcılar',ch:[['kullanicilar','Kullanıcı Listesi'],['yetkiler','Yetki Matrisi']]},
-   {k:'yedekleme',i:'💾',t:'Yedekleme',ch:[['yedekleme','Yedekleme'],['kurtarma','Arşiv ve Kurtarma']]},
-   {k:'loglar',i:'📋',t:'Sistem Logları',ch:[['loglar','Sistem Logları'],['denetim','Denetim İzi']]}]}
+ {items:[{k:'dashboard',i:'⌂',t:'Ana Sayfa'}]},
+ {g:'Kayıtlar',items:[
+   {k:'profiller',i:'▣',t:'Firma Profilleri',ch:[['profiller','Profil Listesi'],['profil-yeni','Yeni Profil']]},
+   {k:'musteriler',i:'♟',t:'Müşteriler',ch:[['musteriler','Müşteri Listesi'],['musteri-yeni','Yeni Müşteri']]},
+   {k:'urunler',i:'◇',t:'Ürünler',ch:[['urunler','Ürün Listesi'],['urun-yeni','Yeni Ürün'],['urun-proforma','Proformadan Ürün Aktar'],['urun-web','Web Sitesinden Ürün Aktar']]},
+   {k:'excel',i:'⇅',t:'Excel Aktarımı'}]},
+ {g:'Satış Süreci',items:[
+   {k:'teklifler',i:'▤',t:'Proforma',ch:[['teklifler','Proforma Listesi'],['gonderilen','Gönderilen Proformalar'],['yeni-teklif','Yeni Proforma'],['arsiv','Arşivler'],['sablonlar','Şablonlar'],['fatura','Fatura Entegrasyonu']]},
+   {k:'surecler',i:'⇄',t:'Teklif ve Sipariş Süreçleri',ch:[['surecler','Süreç Merkezi'],['onay-bekleyen','Onay Bekleyen'],['revize','Revize İstenen'],['siparise-donusen','Siparişe Dönüşen'],['uretim','Üretim Süreci'],['teslim','Teslim Edilen']]},
+   {k:'destek',i:'💬',t:'Canlı Destek',ch:[['destek','Canlı Ziyaretçiler'],['sohbetler','Sohbetler'],['ziyaretci','Ziyaretçi Geçmişi'],['destek-ayar','Canlı Destek Ayarları']]}]},
+ {g:'Sistem',items:[
+   {k:'ayarlar',i:'⚙',t:'Ayarlar',ch:[['ayarlar','Ayarlar Merkezi'],['tema','Tema'],['login-tasarim','Login Tasarımı'],['genel-ayar','Genel Operasyon Ayarları'],['kurulum','İlk Kurulum'],['yedekleme','Yedekleme'],['saglik','Sistem Sağlık Merkezi'],['kurtarma','Arşiv ve Kurtarma'],['entegrasyon','Entegrasyonlar']]},
+   {k:'yonetim',i:'◆',t:'Yönetim',ch:[['kullanicilar','Kullanıcılar'],['yetkiler','Yetki Matrisi'],['denetim','Denetim Kaydı']]}]}
 ];
 // Menü kişiselleştirmesi: gizle/göster, ikon, ad, açılma biçimi. Tarayıcıda saklanır.
 const NAV_MODES=[['acc','Akordiyon'],['mega','Mega menü'],['flat','Alt menüsüz']];
@@ -578,7 +580,7 @@ const navItem=k=>allItems().find(x=>x.k===k)
 const itemIcon=it=>navCfg.icon[it.k]||it.i;
 const itemLabel=it=>navCfg.label[it.k]||it.t;
 const itemMode=it=>navCfg.mode[it.k]||'acc';
-const EMOJIS=['🏠','🔍','👥','👤','🗓','🎯','📄','🧾','🚚','📑','💰','📦','🗂','🏷','⇅','💲','📣','✉','📊','📈',
+const EMOJIS=['⌂','▣','♟','◇','▤','⇄','⇅','⚙','◆','💬','🏠','🔍','👥','👤','🗓','🎯','📄','🧾','🚚','📑','💰','📦','🗂','🏷','💲','📣','✉','📊','📈',
  '👣','⚡','🎨','⚙','🔐','💾','📋','🧪','🔬','🧰','🛠','🏢','⭐','🔔','📌','🚀','🧭','💬','🖨','🧮','📁','🗃','✅','⚠'];
 
 function paintNav(active){
@@ -631,21 +633,23 @@ const DB={
   {id:'c4',code:'M-0004',name:'Agreka Aromaterapi',contact:'Selin Arslan',city:'İzmir',phone:'0232 444 22 11',email:'info@agreka.com',tax:'0120099...'},
   {id:'c5',code:'M-0005',name:'ROKETSAN',contact:'Kemal Öz',city:'Ankara',phone:'0312 860 55 00',email:'satinalma@roketsan.com.tr',tax:'7350022...'}]),
  products:store.get('products',[
-  {id:'p1',code:'ETV-120',name:'Etüv 120 L Doğal Konveksiyonlu',cat:'Etüv ve Kurutma',unit:'ADET',price:48500,vat:20,img:'🔥',stock:12},
-  {id:'p2',code:'CKR-04',name:'Çeker Ocak 1200 mm Laboratuvar Tipi',cat:'Çeker Ocak',unit:'ADET',price:186000,vat:20,img:'🌬',stock:4},
-  {id:'p3',code:'TZG-180',name:'Laboratuvar Tezgahı 1800 mm Epoksi',cat:'Tezgah',unit:'METRE',price:21500,vat:20,img:'🧪',stock:26},
-  {id:'p4',code:'SGT-40',name:'Soğutma Sistemi -40°C Derin Dondurucu',cat:'Soğutma',unit:'ADET',price:264000,vat:20,img:'❄',stock:3},
-  {id:'p5',code:'SSU-15',name:'Saf Su Cihazı 15 L/saat Tip II',cat:'Saf Su',unit:'ADET',price:92500,vat:20,img:'💧',stock:7},
-  {id:'p6',code:'MKR-X1',name:'Mikroskop Trinoküler 1000x',cat:'Optik',unit:'ADET',price:57800,vat:20,img:'🔬',stock:9}]),
+  {id:'p1',code:'ETV-120',name:'Etüv 120 L Doğal Konveksiyonlu',desc:'Dijital PID kontrol, 5–300 °C, paslanmaz iç hazne',brand:'ARTEVA',model:'AE-120N',cat:'Etüv ve Kurutma',unit:'ADET',price:48500,vat:20,img:'🔥',stock:12},
+  {id:'p2',code:'CKR-04',name:'Çeker Ocak 1200 mm Laboratuvar Tipi',desc:'Seramik tezgah, kompakt aspiratör, cam sürgü kapak',brand:'ARTEVA',model:'AC-1200',cat:'Çeker Ocak',unit:'ADET',price:186000,vat:20,img:'🌬',stock:4},
+  {id:'p3',code:'TZG-180',name:'Laboratuvar Tezgahı 1800 mm Epoksi',desc:'Epoksi tabla, kimyasala dayanıklı, çekmeceli modül',brand:'ARTEVA',model:'AT-1800E',cat:'Tezgah',unit:'METRE',price:21500,vat:20,img:'🧪',stock:26},
+  {id:'p4',code:'SGT-40',name:'Soğutma Sistemi -40°C Derin Dondurucu',desc:'Dikey tip, alarm modülü, 380 L hacim',brand:'ARTEVA',model:'AS-40V',cat:'Soğutma',unit:'ADET',price:264000,vat:20,img:'❄',stock:3},
+  {id:'p5',code:'SSU-15',name:'Saf Su Cihazı 15 L/saat Tip II',desc:'Ters ozmoz + reçine, iletkenlik göstergeli',brand:'ARTEVA',model:'AW-15',cat:'Saf Su',unit:'ADET',price:92500,vat:20,img:'💧',stock:7},
+  {id:'p6',code:'MKR-X1',name:'Mikroskop Trinoküler 1000x',desc:'LED aydınlatma, 4 objektifli revolver, kamera çıkışı',brand:'ARTEVA',model:'AM-X1',cat:'Optik',unit:'ADET',price:57800,vat:20,img:'🔬',stock:9}]),
  quotes:store.get('quotes',[
-  {id:'q1',no:'TK-2026-0042',date:'14.09.2026',cust:'ASELSAN',subject:'Laboratuvar Cihazları',total:1320000,status:'wait',last:'14.09.2026'},
-  {id:'q2',no:'TK-2026-0041',date:'13.09.2026',cust:'TUSAŞ',subject:'Ar-Ge Laboratuvarı',total:820000,status:'talk',last:'13.09.2026'},
-  {id:'q3',no:'TK-2026-0040',date:'12.09.2026',cust:'Topkapı Üniversitesi',subject:'Eğitim Laboratuvarı',total:450000,status:'sent',last:'12.09.2026'},
-  {id:'q4',no:'TK-2026-0039',date:'12.09.2026',cust:'Agreka Aromaterapi',subject:'Sterilizasyon Etüvü',total:285000,status:'talk',last:'12.09.2026'},
-  {id:'q5',no:'TK-2026-0038',date:'11.09.2026',cust:'ROKETSAN',subject:'Test Laboratuvarı',total:1950000,status:'draft',last:'11.09.2026'}])
+  {id:'q1',no:'TK-2026-0042',rev:0,date:'14.09.2026',valid:'14.10.2026',custId:'c1',cust:'ASELSAN',subject:'Laboratuvar Cihazları',total:1320000,cur:'TRY',status:'wait',pay:'unpaid',last:'14.09.2026'},
+  {id:'q2',no:'TK-2026-0041',rev:1,date:'13.09.2026',valid:'13.10.2026',custId:'c2',cust:'TUSAŞ',subject:'Ar-Ge Laboratuvarı',total:820000,cur:'TRY',status:'talk',pay:'partial',last:'13.09.2026'},
+  {id:'q3',no:'TK-2026-0040',rev:0,date:'12.09.2026',valid:'12.10.2026',custId:'c3',cust:'Topkapı Üniversitesi',subject:'Eğitim Laboratuvarı',total:450000,cur:'TRY',status:'sent',pay:'unpaid',last:'12.09.2026'},
+  {id:'q4',no:'TK-2026-0039',rev:2,date:'12.09.2026',valid:'12.10.2026',custId:'c4',cust:'Agreka Aromaterapi',subject:'Sterilizasyon Etüvü',total:285000,cur:'EUR',status:'talk',pay:'unpaid',last:'12.09.2026'},
+  {id:'q5',no:'TK-2026-0038',rev:0,date:'11.09.2026',valid:'11.10.2026',custId:'c5',cust:'ROKETSAN',subject:'Test Laboratuvarı',total:1950000,cur:'TRY',status:'draft',pay:'unpaid',last:'11.09.2026'}])
 };
 const save=k=>store.set(k,DB[k]);
 const ST={draft:['Taslak',''],sent:['Gönderildi','info'],talk:['Görüşülüyor','warn'],wait:['Onay Bekliyor','brand'],won:['Kazanıldı','ok']};
+const PAY={unpaid:['Ödenmedi',''],partial:['Kısmi','warn'],paid:['Ödendi','ok']};
+const quoteCount=cid=>DB.quotes.filter(q=>q.custId===cid).length;
 const UNITS=['ADET','METRE','METRETÜL','SET','TAKIM','PAKET','KG','LİTRE'];
 
 /* ---------------- router ---------------- */
@@ -664,100 +668,183 @@ const render = html => $('#view').innerHTML = `<div class="page">${html}</div>`;
 /* ===========================================================================
    LİSTE EKRANI — tek motor. Müşteri, ürün, teklif ve bütün stub'lar aynı yapı.
    =========================================================================== */
-function listPage({title,sub,newLabel,onNew,filters='',cols,getRows,empty}){
-  const acts = (newLabel?UI.btn({t:newLabel,i:'＋',v:'primary',id:'pNew'}):'')
-    + UI.btn({t:'Dışa Aktar',i:'⇩'});
+function listPage({title,sub,newLabel,onNew,filters='',cols,getRows,empty,bulk=true,onRow}){
+  const acts=(newLabel?UI.btn({t:newLabel,i:'＋',v:'primary',id:'pNew'}):'')+UI.btn({t:'Excel',i:'⇩'});
   render(UI.page({title,sub,acts}) + UI.card({flush:true,
     body:`<div class="card__b">${UI.toolbar(UI.search('lq','Ara...')+filters+'<span class="spacer"></span>'+UI.btn({t:'Filtreler',i:'⚙',s:'sm'}))}</div>
-          <div id="lTable"></div>`}));
+      <div class="bulk" id="lBulk" hidden><span id="lBulkN">0 kayıt seçildi</span><span class="spacer" style="flex:1"></span>
+        ${UI.btn({t:'Excel’e aktar',i:'⇩',s:'sm'})}${UI.btn({t:'Arşivle',i:'🗄',s:'sm',v:'danger'})}</div>
+      <div id="lTable"></div>`}));
+  const full=cols=>bulk?[{t:'',w:'34px',cls:'chk',render:()=>'<input type="checkbox" data-row-chk>'},...cols]:cols;
   const paint=()=>{
-    const rows=getRows($('#lq').value.trim().toLowerCase(), $('#lf')?.value||'');
-    $('#lTable').innerHTML = UI.table({cols,rows,empty});
-    $$('#lTable [data-act]').forEach(b=>b.onclick=()=>{
-      const r = getRows($('#lq').value.trim().toLowerCase(), $('#lf')?.value||'')[+b.closest('tr').dataset.i];
-      (cols.find(c=>c.acts)?.onAct||(()=>{}))(b.dataset.act,r);
+    const rows=getRows($('#lq').value.trim().toLowerCase(),$('#lf')?.value||'');
+    $('#lTable').innerHTML=UI.table({cols:full(cols),rows,empty});
+    // MASTER: satırın kendisi ön izlemedir; alan ve düğmeler kendi işini görür.
+    $$('#lTable tbody tr').forEach(tr=>{
+      const r=rows[+tr.dataset.i]; if(!r) return;
+      if(onRow){ tr.classList.add('prev'); tr.title='Ön izleme';
+        tr.onclick=ev=>{ if(ev.target.closest('input,button,select,textarea,a')) return; onRow(r); }; }
     });
+    $$('#lTable [data-act]').forEach(b=>b.onclick=ev=>{ ev.stopPropagation();
+      (cols.find(c=>c.onAct)?.onAct||(()=>{}))(b.dataset.act,rows[+b.closest('tr').dataset.i]); });
+    $$('#lTable [data-prev]').forEach(b=>b.onclick=ev=>{ ev.stopPropagation();
+      PREV[b.dataset.prev](rows[+b.closest('tr').dataset.i]); });
+    const sync=()=>{ const n=$$('#lTable [data-row-chk]:checked').length;
+      $('#lBulk').hidden=!n; $('#lBulkN').textContent=`${n} kayıt seçildi`; };
+    $$('#lTable [data-row-chk]').forEach(c=>c.onchange=sync);
+    sync();
   };
-  $('#lq').oninput=paint; if($('#lf')) $('#lf').onchange=paint;
-  if(onNew) $('#pNew').onclick=()=>onNew(paint);
+  $('#lq').oninput=paint; if($('#lf'))$('#lf').onchange=paint;
+  if(onNew)$('#pNew').onclick=()=>onNew(paint);
   paint(); return paint;
 }
-const ACTS = `${UI.iconBtn('✎',{act:'edit',title:'Düzenle'})}${UI.iconBtn('⋯',{act:'more',title:'Diğer'})}`;
+const ACTS=`${UI.iconBtn('✎',{act:'edit',title:'Düzenle'})}${UI.iconBtn('⋯',{act:'more',title:'Diğer'})}`;
 
+/* ---------------- Ön izleme panelleri (MASTER'ın global ön izlemesi) ---------------- */
+const PREV={
+  quote(q){
+    const c=DB.customers.find(x=>x.id===q.custId);
+    Panel.open({wide:true,title:q.no,
+      body:`<div class="doc"><div class="doc__h"><span class="thumb">📄</span>
+          <span style="flex:1;min-width:0"><b>${esc(q.no)}${q.rev?` · Rev. ${q.rev}`:''}</b>
+          <small>${esc(q.subject)}</small></span>
+          ${UI.pill(ST[q.status][0],ST[q.status][1])}</div>
+        <dl class="kv">
+          <dt>Müşteri</dt><dd>${esc(q.cust)}</dd>
+          <dt>Teklif Tarihi</dt><dd>${q.date}</dd>
+          <dt>Geçerlilik</dt><dd>${q.valid}</dd>
+          <dt>Ödeme Durumu</dt><dd>${PAY[q.pay][0]}</dd>
+          <dt>Genel Toplam</dt><dd class="num">${money(q.total)} ${q.cur}</dd>
+          <dt>Son İşlem</dt><dd>${q.last}</dd>
+        </dl></div>
+        ${c?UI.card({title:'Müşteri Kimlik Kartı',body:`<dl class="kv" style="padding:0">
+          <dt>Firma</dt><dd>${esc(c.name)}</dd><dt>Yetkili</dt><dd>${esc(c.contact)}</dd>
+          <dt>Telefon</dt><dd>${esc(c.phone)}</dd><dt>E-posta</dt><dd>${esc(c.email)}</dd></dl>`}):''}`,
+      foot:`${UI.btn({t:'Düzenle',i:'✎',act:'edit'})}${UI.btn({t:'Yazdır',i:'🖨'})}${UI.btn({t:'PDF',i:'⬇'})}
+        ${UI.btn({t:'E-posta',i:'✉'})}${UI.btn({t:'WhatsApp',i:'💬'})}${UI.btn({t:'Arşivle',i:'🗄',v:'danger'})}`});
+    $('#pFoot [data-act="edit"]').onclick=()=>{Panel.close();go('yeni-teklif')};
+  },
+  customer(c){
+    const qs=DB.quotes.filter(q=>q.custId===c.id);
+    Panel.open({wide:true,title:'Müşteri Kimlik Kartı',
+      body:`<div class="doc"><div class="doc__h"><span class="thumb">🏢</span>
+          <span style="flex:1;min-width:0"><b>${esc(c.name)}</b><small>${esc(c.code)} · ${esc(c.city)}</small></span></div>
+        <dl class="kv">
+          <dt>Yetkili</dt><dd>${esc(c.contact)}</dd><dt>Telefon</dt><dd>${esc(c.phone)}</dd>
+          <dt>E-posta</dt><dd>${esc(c.email)}</dd><dt>Vergi No</dt><dd>${esc(c.tax)}</dd>
+        </dl></div>
+        ${UI.card({title:`Müşteri ve Proformaları (${qs.length})`,flush:true,
+          body:qs.length?UI.table({cols:[
+            {t:'No',w:'130px',render:r=>`<span class="t-strong">${r.no}</span>`},
+            {t:'Tarih',w:'96px',k:'date'},
+            {t:'Durum',w:'120px',render:r=>UI.pill(ST[r.status][0],ST[r.status][1])},
+            {t:'Toplam',align:'right',cls:'t-num',render:r=>`${money0(r.total)} ${r.cur}`}],rows:qs})
+            :'<div class="dt__empty">Bu müşteriye ait proforma yok.</div>'})}`,
+      foot:`${UI.btn({t:'Düzenle',i:'✎',act:'edit'})}${UI.btn({t:'Yeni Proforma',i:'＋',v:'primary',act:'quote'})}`});
+    $('#pFoot [data-act="edit"]').onclick=()=>{Panel.close();panelCustomer(c)};
+    $('#pFoot [data-act="quote"]').onclick=()=>{Panel.close();PF=null;go('yeni-teklif')};
+  },
+  product(pr){
+    Panel.open({wide:true,title:'Ürün Ön İzleme',
+      body:`<div class="doc"><div class="doc__h"><span class="thumb">${pr.img}</span>
+          <span style="flex:1;min-width:0"><b>${esc(pr.name)}</b><small>${esc(pr.code)} · ${esc(pr.cat)}</small></span>
+          ${UI.pill(pr.stock>5?'Stokta':'Sınırlı',pr.stock>5?'ok':'warn')}</div>
+        <dl class="kv">
+          <dt>Açıklama</dt><dd>${esc(pr.desc||'-')}</dd>
+          <dt>Marka</dt><dd>${esc(pr.brand||'-')}</dd><dt>Model</dt><dd>${esc(pr.model||'-')}</dd>
+          <dt>Birim</dt><dd>${pr.unit}</dd><dt>Birim Fiyat</dt><dd class="num">${money(pr.price)} TRY</dd>
+          <dt>KDV</dt><dd>%${pr.vat}</dd><dt>Stok</dt><dd class="num">${pr.stock}</dd>
+        </dl></div>`,
+      foot:`${UI.btn({t:'Düzenle',i:'✎'})}${UI.btn({t:'Proformaya Ekle',i:'＋',v:'primary',act:'add'})}`});
+    $('#pFoot [data-act="add"]').onclick=()=>{Panel.close();PF=PF||null;go('yeni-teklif');setTimeout(()=>addLine(pr),60)};
+  }
+};
+
+/* ---------------- MÜŞTERİLER — MASTER sütunları ---------------- */
 function pgCustomers(){
   listPage({
-    title:'Müşteriler', sub:`${DB.customers.length} kayıt · tümü aktif`, newLabel:'Yeni Müşteri',
-    onNew:done=>panelCustomer(null,()=>done()),
+    title:'Müşteriler', sub:`${DB.customers.length} kayıt`, newLabel:'Yeni Müşteri',
+    onNew:done=>panelCustomer(null,()=>done()), onRow:PREV.customer,
     filters:`<select class="inp" id="lf" style="width:150px"><option value="">Tüm şehirler</option>
       ${[...new Set(DB.customers.map(c=>c.city))].map(c=>`<option>${c}</option>`).join('')}</select>`,
     cols:[
-      {t:'Kod',w:'96px',render:r=>`<span class="t-strong">${r.code}</span>`},
-      {t:'Firma',render:r=>`<div class="cell"><span class="thumb thumb--sm">🏢</span><span style="min-width:0"><b>${esc(r.name)}</b><small>${esc(r.city)}</small></span></div>`},
-      {t:'Yetkili',k:'contact'},{t:'Telefon',k:'phone'},{t:'E-posta',k:'email'},
-      {t:'Vergi No',k:'tax'},
-      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
-       onAct:(a,r)=>a==='edit'?panelCustomer(r):toast(r.name)}
+      {t:'Kod',w:'92px',render:r=>`<span class="t-strong">${r.code}</span>`},
+      {t:'Firma',render:r=>`<button class="ctl link-btn" data-prev="customer">${esc(r.name)}</button>`},
+      {t:'Yetkili',k:'contact'},{t:'Telefon',w:'132px',k:'phone'},{t:'E-posta',k:'email'},
+      {t:'Şehir',w:'104px',k:'city'},{t:'Vergi No',w:'116px',k:'tax'},
+      {t:'Proforma',w:'92px',align:'center',render:r=>UI.pill(String(quoteCount(r.id)),quoteCount(r.id)?'info':'')},
+      {t:'İşlemler',w:'86px',align:'right',render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:(a,r)=>a==='edit'?panelCustomer(r):PREV.customer(r)}
     ],
-    getRows:(q,f)=>DB.customers.filter(c=>(!q||(c.name+c.contact+c.phone+c.city+c.code).toLowerCase().includes(q))&&(!f||c.city===f))
+    getRows:(q,f)=>DB.customers.filter(c=>(!q||(c.name+c.contact+c.phone+c.city+c.code+c.email).toLowerCase().includes(q))&&(!f||c.city===f))
   });
 }
+
+/* ---------------- ÜRÜNLER — MASTER sütunları ---------------- */
 function pgProducts(){
   listPage({
-    title:'Ürünler', sub:`${DB.products.length} ürün · görsel kutuları ile`, newLabel:'Yeni Ürün',
-    onNew:done=>panelProduct(()=>done()),
+    title:'Ürünler', sub:`${DB.products.length} ürün`, newLabel:'Yeni Ürün',
+    onNew:done=>panelProduct(()=>done()), onRow:PREV.product,
     filters:`<select class="inp" id="lf" style="width:170px"><option value="">Tüm kategoriler</option>
-      ${[...new Set(DB.products.map(p=>p.cat))].map(c=>`<option>${c}</option>`).join('')}</select>`,
+      ${[...new Set(DB.products.map(x=>x.cat))].map(c=>`<option>${c}</option>`).join('')}</select>`,
     cols:[
-      {t:'Ürün',render:r=>`<div class="cell">${UI.thumb(r.img)}<span style="min-width:0"><b>${esc(r.name)}</b><small>${r.code} · ${esc(r.cat)}</small></span></div>`},
-      {t:'Birim',w:'92px',k:'unit'},
-      {t:'Birim Fiyat',w:'120px',align:'right',cls:'t-num',render:r=>`₺${money(r.price)}`},
-      {t:'KDV',w:'62px',align:'center',render:r=>`%${r.vat}`},
-      {t:'Stok',w:'70px',align:'right',cls:'t-num',k:'stock'},
-      {t:'Durum',w:'110px',render:r=>UI.pill(r.stock>5?'Stokta':'Sınırlı', r.stock>5?'ok':'warn')},
-      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
-       onAct:(a,r)=>toast(r.name)}
+      {t:'Görsel',w:'56px',render:r=>UI.thumb(r.img)},
+      {t:'Kod',w:'104px',render:r=>`<span class="t-strong">${r.code}</span>`},
+      {t:'Ad',render:r=>`<button class="ctl link-btn" data-prev="product">${esc(r.name)}</button>`},
+      {t:'Açıklama',render:r=>`<span class="meta">${esc(r.desc||'-')}</span>`},
+      {t:'Marka',w:'96px',k:'brand'},{t:'Model',w:'104px',k:'model'},{t:'Birim',w:'86px',k:'unit'},
+      {t:'Fiyat',w:'116px',align:'right',cls:'t-num',render:r=>`${money(r.price)} ₺`},
+      {t:'İşlemler',w:'86px',align:'right',render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:(a,r)=>PREV.product(r)}
     ],
-    getRows:(q,f)=>DB.products.filter(p=>(!q||(p.code+p.name+p.cat).toLowerCase().includes(q))&&(!f||p.cat===f))
+    getRows:(q,f)=>DB.products.filter(x=>(!q||(x.code+x.name+x.brand+x.model+x.cat+(x.desc||'')).toLowerCase().includes(q))&&(!f||x.cat===f))
   });
 }
+
+/* ---------------- PROFORMA — MASTER sütunları ---------------- */
 function pgQuotes(){
   listPage({
-    title:'Teklifler / Proforma', sub:`${DB.quotes.length} kayıt`, newLabel:'Yeni Proforma',
-    onNew:()=>go('yeni-teklif'),
+    title:'Proforma', sub:`${DB.quotes.length} kayıt`, newLabel:'Yeni Proforma',
+    onNew:()=>go('yeni-teklif'), onRow:PREV.quote,
     filters:`<select class="inp" id="lf" style="width:160px"><option value="">Tüm durumlar</option>
       ${Object.entries(ST).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select>`,
     cols:[
-      {t:'Teklif No',w:'132px',render:r=>`<span class="t-strong">${r.no}</span>`},
-      {t:'Tarih',w:'100px',k:'date'},
-      {t:'Müşteri',render:r=>`<div class="cell"><span class="thumb thumb--sm">🏢</span><span style="min-width:0"><b>${esc(r.cust)}</b><small>${esc(r.subject)}</small></span></div>`},
-      {t:'Tutar',w:'128px',align:'right',cls:'t-num',render:r=>`₺${money0(r.total)}`},
-      {t:'Durum',w:'132px',render:r=>UI.pill(ST[r.status][0],ST[r.status][1])},
-      {t:'Son İşlem',w:'110px',k:'last'},
-      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
-       onAct:a=>a==='edit'?go('yeni-teklif'):toast('İşlemler')}
+      {t:'No',w:'134px',render:r=>`<button class="ctl link-btn" data-prev="quote"><b>${r.no}</b></button>`},
+      {t:'Rev.',w:'60px',align:'center',k:'rev'},
+      {t:'Müşteriler',render:r=>`<button class="ctl link-btn" data-prev="customer2">${esc(r.cust)}</button>`},
+      {t:'Teklif Tarihi',w:'112px',k:'date'},
+      {t:'Geçerlilik',w:'106px',k:'valid'},
+      {t:'Durum',w:'128px',render:r=>UI.pill(ST[r.status][0],ST[r.status][1])},
+      {t:'Ödeme',w:'104px',render:r=>UI.pill(PAY[r.pay][0],PAY[r.pay][1])},
+      {t:'Toplam',w:'132px',align:'right',cls:'t-num',render:r=>`${money0(r.total)} ${r.cur}`},
+      {t:'İşlemler',w:'86px',align:'right',render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:(a,r)=>a==='edit'?go('yeni-teklif'):PREV.quote(r)}
     ],
     getRows:(q,f)=>DB.quotes.filter(x=>(!q||(x.no+x.cust+x.subject).toLowerCase().includes(q))&&(!f||x.status===f))
   });
 }
+// Proforma satırındaki müşteri adı, müşterinin kimlik kartını açar.
+PREV.customer2=q=>{ const c=DB.customers.find(x=>x.id===q.custId); c?PREV.customer(c):toast('Müşteri kaydı yok.'); };
+
 function pgStub(k){
-  const it=navItem(k)||{t:k,i:'📄'};
+  const it=navItem(k)||{t:k,i:'▤'};
   listPage({
-    title:`${it.i} ${it.t}`, sub:'Aynı iskelet · içerik onaydan sonra bağlanacak', newLabel:'Yeni Kayıt',
-    onNew:()=>Panel.open({title:`Yeni ${it.t}`,
-      body:UI.card({title:'Kayıt Bilgileri',body:`<div class="form">${UI.field({label:'Başlık'})}${UI.field({label:'Durum',opts:['Aktif','Pasif']})}
-        ${UI.field({label:'Açıklama',rows:4,wide:true})}</div>`}),
+    title:itemLabel(it), sub:'Aynı iskelet · içerik onaydan sonra bağlanacak', newLabel:'Yeni Kayıt', bulk:true,
+    onNew:()=>Panel.open({title:`Yeni ${itemLabel(it)}`,
+      body:UI.card({title:'Kayıt Bilgileri',body:`<div class="form">${UI.field({label:'Başlık'})}
+        ${UI.field({label:'Durum',opts:['Aktif','Pasif']})}${UI.field({label:'Açıklama',rows:4,wide:true})}</div>`}),
       foot:UI.btn({t:'Vazgeç',act:'close'})+UI.btn({t:'Kaydet',v:'primary',act:'close'})}),
-    cols:[{t:'Kod',w:'96px',render:r=>`<span class="t-strong">${r.code}</span>`},
-      {t:'Kayıt',render:r=>`<div class="cell"><span class="thumb thumb--sm">${it.i}</span><span><b>${esc(r.name)}</b><small>${esc(r.note)}</small></span></div>`},
+    cols:[{t:'Kod',w:'104px',render:r=>`<span class="t-strong">${r.code}</span>`},
+      {t:'Kayıt',render:r=>`<div class="cell"><span class="thumb thumb--sm">${itemIcon(it)}</span><span style="min-width:0"><b>${esc(r.name)}</b><small>${esc(r.note)}</small></span></div>`},
       {t:'Tarih',w:'110px',k:'date'},
-      {t:'Tutar',w:'120px',align:'right',cls:'t-num',render:r=>`₺${money0(r.total)}`},
-      {t:'Durum',w:'120px',render:r=>UI.pill(r.st[0],r.st[1])},
-      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,onAct:()=>toast('Demo kayıt')}],
+      {t:'Tutar',w:'128px',align:'right',cls:'t-num',render:r=>`${money0(r.total)} TRY`},
+      {t:'Durum',w:'124px',render:r=>UI.pill(r.st[0],r.st[1])},
+      {t:'İşlemler',w:'86px',align:'right',render:()=>`<div class="dt__acts">${ACTS}</div>`,onAct:()=>toast('Demo kayıt')}],
     getRows:q=>{
-      const base=[['Aktif',''],['Onaylandı','ok'],['Beklemede','warn'],['Gönderildi','info']];
-      return [...Array(6)].map((_,i)=>({code:`${it.t.slice(0,2).toUpperCase()}-00${i+1}`,name:`${it.t} kaydı ${i+1}`,
-        note:'Demo veri · gerçek modül bağlanacak',date:`${10+i}.09.2026`,total:(i+1)*48500,st:base[i%4]}))
-        .filter(r=>!q||r.name.toLowerCase().includes(q));
+      const st=[['Aktif',''],['Onaylandı','ok'],['Beklemede','warn'],['Gönderildi','info']];
+      return [...Array(6)].map((_,i)=>({code:`${itemLabel(it).slice(0,2).toUpperCase()}-00${i+1}`,
+        name:`${itemLabel(it)} kaydı ${i+1}`,note:'Demo veri · gerçek modül bağlanacak',
+        date:`${10+i}.09.2026`,total:(i+1)*48500,st:st[i%4]})).filter(r=>!q||r.name.toLowerCase().includes(q));
     }
   });
 }
