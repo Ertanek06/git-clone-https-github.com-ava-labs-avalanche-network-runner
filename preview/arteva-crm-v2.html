@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARTEVA CRM v2.0 — Önizleme</title>
+<style>
+/* ===========================================================================
+   ARTEVA DESIGN SYSTEM v2.0
+   Tek iskelet kuralı:
+     1 token katmanı · 1 buton · 1 input · 1 tablo · 1 kart · 1 sayfa başlığı
+     1 panel (her açılım sağdan dikey) · 1 tipografi ölçeği
+   Hiçbir ekran kendi stilini yazmaz; hepsi aşağıdaki bileşenleri kullanır.
+   =========================================================================== */
+:root{
+  /* renk */
+  --brand:#e11d2a; --brand-600:#c8152260; --brand-700:#a91019; --brand-50:#fdecee;
+  --bg:#f4f6f9; --surface:#fff; --surface-2:#f8fafc; --surface-3:#f1f4f8;
+  --line:#e6eaf0; --line-2:#d7dee7;
+  --ink:#1a2235; --ink-2:#48536a; --ink-3:#7b869a;
+  --ok:#12a150; --ok-50:#e8f7ee; --warn:#b45309; --warn-50:#fff4e0;
+  --info:#2563eb; --info-50:#e9f0ff; --dim:#eef1f5;
+  /* ölçek */
+  --fs-2xs:10px; --fs-xs:11px; --fs-sm:12px; --fs-md:13px; --fs-lg:15px; --fs-xl:20px; --fs-2xl:24px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px;
+  --r-sm:6px; --r-md:8px; --r-lg:12px; --r-pill:999px;
+  --h-xs:26px; --h-sm:30px; --h-md:34px; --h-lg:40px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 34px rgba(16,24,40,.16);
+  --sb-w:224px; --tb-h:56px;
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  /* sidebar tokenları ana temadan bağımsız */
+  --sb-bg:#fff; --sb-ink:#333e52; --sb-ink-2:#8b95a7; --sb-hover:#f3f5f8; --sb-group:#98a2b3; --sb-line:var(--line);
+}
+body.t-dark{
+  --bg:#0f141c; --surface:#161c26; --surface-2:#1b222e; --surface-3:#212a37;
+  --line:#273040; --line-2:#333e51; --ink:#e7ecf4; --ink-2:#b6c1d2; --ink-3:#8d99ad;
+  --dim:#222b39; --brand-50:#3a1720; --ok-50:#123021; --warn-50:#332612; --info-50:#17233d;
+  --shadow:0 1px 3px rgba(0,0,0,.45); --shadow-lg:0 14px 38px rgba(0,0,0,.55);
+}
+body.sb-dark{ --sb-bg:#141a24; --sb-ink:#d7dee9; --sb-ink-2:#8794a8; --sb-hover:#1e2632; --sb-group:#6f7d92; --sb-line:#222b38; }
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:var(--fs-md);line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:var(--r-pill)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 1) TİPOGRAFİ ---------- */
+.h1{font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.02em;margin:0;color:var(--ink)}
+.h2{font-size:var(--fs-lg);font-weight:650;margin:0;color:var(--ink)}
+.h3{font-size:var(--fs-md);font-weight:650;margin:0;color:var(--ink)}
+.sub{font-size:var(--fs-md);color:var(--ink-3);margin:0}
+.meta{font-size:var(--fs-sm);color:var(--ink-3)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- 2) KONTROL TABANI — tıklanabilir her şey buradan türer ---------- */
+.ctl{font-family:inherit;cursor:pointer;border:1px solid transparent;background:none;color:inherit;
+  border-radius:var(--r-sm);transition:background .14s,border-color .14s,color .14s}
+.ctl:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.ctl:active{transform:translateY(.5px)}
+
+/* ---------- BUTON — tek aksiyon bileşeni ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  height:var(--h-md);padding:0 var(--sp-3);border-radius:var(--r-md);
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:600;line-height:1;cursor:pointer;
+  transition:background .14s,border-color .14s,color .14s;white-space:nowrap
+}
+.btn:hover{background:var(--surface-3);color:var(--ink);border-color:var(--line-2)}
+.btn:active{transform:translateY(.5px)}
+.btn:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.btn--primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn--primary:hover{background:var(--brand-700);border-color:var(--brand-700);color:#fff}
+.btn--ghost{background:transparent;border-color:transparent;color:var(--ink-3)}
+.btn--ghost:hover{background:var(--surface-3);color:var(--ink)}
+.btn--danger{color:var(--brand);border-color:var(--line)}
+.btn--danger:hover{background:var(--brand-50);border-color:var(--brand);color:var(--brand)}
+.btn--icon{width:var(--h-md);padding:0}
+.btn--lg{height:var(--h-lg);padding:0 var(--sp-4);font-size:var(--fs-md)}
+.btn--sm{height:var(--h-sm);padding:0 var(--sp-2);font-size:var(--fs-xs)}
+.btn--sm.btn--icon{width:var(--h-sm)}
+.btn--xs{height:var(--h-xs);padding:0 var(--sp-2);font-size:var(--fs-2xs)}
+.btn--xs.btn--icon{width:var(--h-xs)}
+.btn--on{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn__badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:var(--r-pill);
+  background:var(--brand);color:#fff;font-size:var(--fs-2xs);font-weight:700;display:grid;place-items:center;
+  padding:0 4px;border:2px solid var(--surface)}
+.btn--rel{position:relative;overflow:visible}
+.btn-group{display:inline-flex;gap:var(--sp-2);flex-wrap:wrap}
+
+/* ---------- 3) INPUT — tek bileşen ---------- */
+.inp{
+  width:100%;height:var(--h-md);border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--surface);color:var(--ink);padding:0 var(--sp-3);
+  font-family:inherit;font-size:var(--fs-sm);outline:none;transition:border-color .14s,box-shadow .14s
+}
+.inp::placeholder{color:var(--ink-3)}
+.inp:hover{border-color:var(--line-2)}
+.inp:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-50)}
+textarea.inp{height:auto;padding:var(--sp-2) var(--sp-3);resize:vertical;line-height:1.4}
+select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 14px,calc(100% - 10px) 14px;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+.inp--flush{border-color:transparent;background:transparent;height:auto;padding:var(--sp-1) var(--sp-2);font-size:var(--fs-sm)}
+.inp--flush:hover{border-color:var(--line)}
+.inp--flush:focus{background:var(--surface)}
+.inp--num{text-align:right;font-variant-numeric:tabular-nums}
+.inp--sm{height:var(--h-sm);font-size:var(--fs-xs)}
+.field{display:grid;gap:var(--sp-1);min-width:0}
+.field>span{font-size:var(--fs-xs);font-weight:650;color:var(--ink-3);letter-spacing:.01em}
+.field--wide{grid-column:1/-1}
+.form{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:var(--sp-3)}
+@media(max-width:760px){.form{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- 4) KART ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);min-width:0}
+.card__h{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--line)}
+.card__h--plain{border-bottom:0;padding-bottom:0}
+.card__h .spacer{flex:1}
+.card__b{padding:var(--sp-4)}
+.card__b--flush{padding:0}
+
+/* ---------- 5) SAYFA BAŞLIĞI ---------- */
+.page{display:grid;gap:var(--sp-4)}
+.page__h{display:flex;align-items:flex-start;gap:var(--sp-4);flex-wrap:wrap}
+.page__h .spacer{flex:1}
+.page__acts{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap}
+
+/* ---------- 6) TOOLBAR ---------- */
+.toolbar{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap}
+.toolbar .grow{flex:1;min-width:200px;max-width:340px}
+.toolbar .spacer{flex:1}
+
+/* ---------- 7) TABLO — tek motor ---------- */
+.dt-wrap{overflow-x:auto}
+.dt{width:100%;border-collapse:separate;border-spacing:0}
+.dt th{
+  text-align:left;font-size:var(--fs-xs);font-weight:650;color:var(--ink-3);letter-spacing:.02em;
+  padding:var(--sp-3) var(--sp-3);background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap;
+  position:sticky;top:0;z-index:1
+}
+.dt td{padding:var(--sp-3);border-bottom:1px solid var(--line);font-size:var(--fs-sm);vertical-align:middle;color:var(--ink-2)}
+.dt tbody tr:last-child td{border-bottom:0}
+.dt tbody tr:hover td{background:var(--surface-2)}
+.dt .t-right{text-align:right}
+.dt .t-center{text-align:center}
+.dt .t-strong{color:var(--ink);font-weight:650}
+.dt .t-num{font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);font-weight:600}
+.dt__empty{padding:var(--sp-6);text-align:center;color:var(--ink-3);font-size:var(--fs-md)}
+.dt__acts{display:flex;gap:var(--sp-1);justify-content:flex-end}
+
+/* ---------- 8) ROZET / PILL ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--r-pill);
+  font-size:var(--fs-xs);font-weight:650;white-space:nowrap;background:var(--dim);color:var(--ink-3)}
+.pill--info{background:var(--info-50);color:var(--info)}
+.pill--warn{background:var(--warn-50);color:var(--warn)}
+.pill--brand{background:var(--brand-50);color:var(--brand)}
+.pill--ok{background:var(--ok-50);color:var(--ok)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none}
+
+/* ---------- 9) MEDYA KUTUSU ---------- */
+.thumb{width:38px;height:38px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface-2);
+  display:grid;place-items:center;font-size:16px;flex:none;overflow:hidden}
+.thumb--sm{width:30px;height:30px;font-size:13px}
+.cell{display:flex;align-items:center;gap:var(--sp-3);min-width:0}
+.cell b{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+
+/* ---------- 10) SHELL ---------- */
+.shell{display:flex;min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sb-w);background:var(--sb-bg);border-right:1px solid var(--sb-line);
+  display:flex;flex-direction:column;z-index:40;transition:width .2s ease}
+.main{margin-left:var(--sb-w);flex:1;min-width:0;display:flex;flex-direction:column;transition:margin .2s ease}
+body.sb-min{--sb-w:64px}
+body.sb-min .sb-t,body.sb-min .sb-group,body.sb-min .sb-chev,body.sb-min .org,body.sb-min .brand b,body.sb-min .brand small{display:none}
+body.sb-min .sb-item{justify-content:center;padding:var(--sp-2) 0}
+.brand{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-4) var(--sp-4) var(--sp-3)}
+.brand .mark{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;
+  font-weight:800;font-size:15px;flex:none;box-shadow:0 2px 8px rgba(225,29,42,.35)}
+.brand b{display:block;font-size:var(--fs-lg);letter-spacing:.06em;color:var(--brand);font-weight:800;line-height:1.05}
+.brand small{display:block;font-size:8.5px;color:var(--sb-ink-2);white-space:nowrap}
+.org{position:relative;margin:0 var(--sp-3) var(--sp-3);border-radius:var(--r-md);overflow:hidden;height:54px;
+  background:linear-gradient(135deg,#2c3e55,#4c6480);display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);color:#fff}
+.org::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 8px,transparent 8px 18px)}
+.org>*{position:relative;z-index:1}
+.org .mark{width:26px;height:26px;border-radius:var(--r-sm);background:rgba(255,255,255,.92);color:#2c3e55;
+  display:grid;place-items:center;font-weight:800;font-size:var(--fs-xs);flex:none}
+.org b{display:block;font-size:var(--fs-xs);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.org small{display:block;font-size:9.5px;opacity:.85}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 var(--sp-2) var(--sp-2)}
+.sb-group{padding:var(--sp-3) var(--sp-2) var(--sp-1);font-size:var(--fs-2xs);font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--sb-group)}
+.sb-item{display:flex;align-items:center;gap:var(--sp-2);width:100%;color:var(--sb-ink);
+  padding:7px var(--sp-2);border-radius:var(--r-sm);font-family:inherit;font-size:var(--fs-sm);font-weight:500;
+  text-align:left;margin-bottom:1px}
+.sb-item:hover{background:var(--sb-hover)}
+.sb-item.on{background:var(--brand);color:#fff;font-weight:650}
+.sb-i{width:16px;flex:none;display:grid;place-items:center;font-size:14px;opacity:.8}
+.sb-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-chev{font-size:9px;opacity:.4}
+.sb-foot{border-top:1px solid var(--sb-line);padding:var(--sp-2)}
+
+.topbar{position:sticky;top:0;z-index:30;height:var(--tb-h);background:var(--surface);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:var(--sp-3);padding:0 var(--sp-4)}
+.search{flex:1;max-width:400px;position:relative}
+.search .inp{padding-left:32px;padding-right:56px;background:var(--surface-2)}
+.search .ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:var(--fs-sm)}
+.search kbd{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:inherit;font-size:var(--fs-2xs);
+  color:var(--ink-3);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:2px 5px}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:var(--sp-2)}
+.who{display:flex;align-items:center;gap:var(--sp-2);padding:3px 6px 3px 3px;border-radius:var(--r-md)}
+.who:hover{background:var(--surface-3)}
+.who .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3f5876,#6b829e);color:#fff;
+  display:grid;place-items:center;font-size:var(--fs-xs);font-weight:700;flex:none}
+.who b{display:block;font-size:var(--fs-sm);font-weight:650;line-height:1.15;text-align:left}
+.who small{display:block;font-size:var(--fs-xs);color:var(--ink-3);line-height:1.15;text-align:left}
+.content{padding:var(--sp-5)}
+.foot{display:flex;gap:var(--sp-3);padding:var(--sp-4) var(--sp-5);border-top:1px solid var(--line);
+  color:var(--ink-3);font-size:var(--fs-xs);flex-wrap:wrap}
+.foot .spacer{flex:1}
+
+/* ---------- 11) PANEL — tek açılım biçimi, daima sağdan dikey ---------- */
+.scrim{position:fixed;inset:0;background:rgba(9,18,33,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.panel{position:fixed;inset:0 0 0 auto;width:min(520px,96vw);background:var(--surface);border-left:1px solid var(--line);
+  z-index:61;transform:translateX(102%);transition:transform .24s cubic-bezier(.2,.8,.2,1);
+  display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.panel.on{transform:none}
+.panel--wide{width:min(760px,96vw)}
+.panel__h{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4);border-bottom:1px solid var(--line)}
+.panel__h .spacer{flex:1}
+.panel__b{flex:1;overflow:auto;padding:var(--sp-4);display:grid;gap:var(--sp-4);align-content:start}
+.panel__f{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line);display:flex;gap:var(--sp-2);justify-content:flex-end}
+.note{display:flex;gap:var(--sp-2);padding:var(--sp-3);border-radius:var(--r-md);font-size:var(--fs-sm);
+  background:var(--warn-50);color:var(--warn);border:1px solid rgba(180,83,9,.2)}
+.note--info{background:var(--info-50);color:var(--info);border-color:rgba(37,99,235,.2)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(12px);background:#101828;color:#fff;
+  padding:var(--sp-3) var(--sp-4);border-radius:var(--r-md);font-size:var(--fs-sm);z-index:90;opacity:0;
+  pointer-events:none;transition:.2s;box-shadow:var(--shadow-lg)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+/* ---------- 12) DASHBOARD ---------- */
+.dash{display:grid;grid-template-columns:minmax(0,1fr) 252px;gap:var(--sp-4);align-items:start}
+@media(max-width:1360px){.dash{grid-template-columns:minmax(0,1fr)}.rail{display:none}}
+.zone{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--sp-4);align-content:start}
+.w{grid-column:span 12}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-3)}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{display:flex;align-items:flex-start;gap:var(--sp-3);padding:var(--sp-4);background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-lg)}
+.kpi>div{flex:1;min-width:0}
+.kpi .t{font-size:var(--fs-sm);color:var(--ink-3);margin-bottom:6px}
+.kpi .v{font-size:var(--fs-2xl);font-weight:700;color:var(--ink);letter-spacing:-.025em;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .d{margin-top:7px;font-size:var(--fs-xs);color:var(--ok);font-weight:650}
+.kpi .d.flat{color:var(--ink-3);font-weight:500}
+.kpi .i{width:36px;height:36px;border-radius:var(--r-md);display:grid;place-items:center;font-size:16px;flex:none;
+  background:var(--brand-50);color:var(--brand)}
+.legend{display:flex;gap:var(--sp-4);font-size:var(--fs-xs);color:var(--ink-3)}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}
+.donut{display:flex;align-items:center;gap:var(--sp-4)}
+.donut__l{flex:1;display:grid;gap:6px;font-size:var(--fs-sm);color:var(--ink-2)}
+.donut__l div{display:flex;align-items:center;gap:7px}
+.donut__l b{margin-left:auto;color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+.hbars{display:grid;gap:9px;font-size:var(--fs-sm);color:var(--ink-2)}
+.hbar{display:grid;grid-template-columns:minmax(0,1fr) 88px 18px;align-items:center;gap:9px}
+.hbar__t{height:8px;border-radius:var(--r-pill);background:var(--dim);overflow:hidden}
+.hbar__f{height:100%;border-radius:var(--r-pill);background:#f2a3a9}
+.hbar b{text-align:right;color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:var(--sp-5);padding:0 var(--sp-4);border-bottom:1px solid var(--line);align-items:center}
+.tab{border-radius:0;padding:12px 0 10px;font-size:var(--fs-md);color:var(--ink-3);
+  font-weight:500;border-width:0 0 2px;border-bottom-color:transparent}
+.tab.on{color:var(--brand);border-bottom-color:var(--brand);font-weight:650}
+.quads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-3)}
+@media(max-width:900px){.quads{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.quad{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3);border-color:var(--line);
+  border-radius:var(--r-md);background:var(--surface);text-align:left}
+.quad:hover{border-color:var(--brand)}
+.quad .i{width:34px;height:34px;border-radius:var(--r-md);display:grid;place-items:center;font-size:15px;flex:none}
+.quad b{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)}
+.quad small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+.triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);text-align:center}
+.triple b{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)}
+.triple small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+.rail{display:grid;gap:var(--sp-4)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:var(--sp-1) var(--sp-3) var(--sp-3);text-align:center}
+.cal span{color:var(--ink-3);font-size:var(--fs-2xs);padding:3px 0;font-weight:650}
+.cal b{font-weight:400;padding:5px 0;border-radius:var(--r-sm);color:var(--ink-2);font-size:var(--fs-sm)}
+.cal b:hover{background:var(--surface-3)}
+.cal b.on{background:var(--brand);color:#fff;font-weight:700}
+.row-list>*{display:grid;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line)}
+.row-list>*:first-child{border-top:0}
+.ag{grid-template-columns:46px 1fr}
+.ag time{font-size:var(--fs-xs);font-weight:650;color:var(--ink-3);border-left:2px solid var(--brand);padding-left:7px}
+.ag b{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)}
+.ag small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+.act{grid-template-columns:26px 1fr}
+.act .i{width:24px;height:24px;border-radius:var(--r-sm);display:grid;place-items:center;font-size:var(--fs-xs)}
+.act b{display:block;font-size:var(--fs-sm);font-weight:500;color:var(--ink)}
+.act small{display:block;font-size:var(--fs-xs);color:var(--ink-3)}
+body.edit .w{outline:1.5px dashed var(--brand);outline-offset:3px;border-radius:var(--r-lg)}
+body.edit .w-tools{display:flex}
+.w-tools{display:none;gap:var(--sp-1)}
+.w.drag{opacity:.4}
+.w.over{outline:2px solid var(--brand)}
+
+/* ---------- 13) PROFORMA ---------- */
+.pf{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--sp-4);align-items:start}
+@media(max-width:1200px){.pf{grid-template-columns:minmax(0,1fr)}}
+.lines .dt{min-width:1290px}
+.lines .dt td{padding:6px var(--sp-2);vertical-align:top}
+.lines textarea.inp{min-height:30px;line-height:1.3}
+.lines tr.alt td{background:var(--warn-50)}
+.tag{display:inline-block;background:var(--warn-50);color:var(--warn);border-radius:var(--r-sm);padding:1px 5px;
+  font-size:var(--fs-2xs);font-weight:700;letter-spacing:.04em;margin-bottom:3px}
+.grip{cursor:grab;color:var(--ink-3);font-size:13px;user-select:none;padding-top:7px}
+tr.drag{opacity:.4} tr.over td{box-shadow:inset 0 2px 0 var(--brand)}
+.totals{display:grid;gap:var(--sp-2);font-size:var(--fs-md);color:var(--ink-2)}
+.totals div{display:flex;justify-content:space-between;gap:var(--sp-3)}
+.totals b{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+.totals .g{border-top:1px solid var(--line);padding-top:var(--sp-3);font-size:var(--fs-lg)}
+.totals .g b{font-size:var(--fs-xl);font-weight:700}
+.picks{display:grid;gap:var(--sp-2);max-height:300px;overflow:auto}
+.pick{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2);border-color:var(--line);
+  border-radius:var(--r-md);background:var(--surface);text-align:left;width:100%}
+.pick:hover{border-color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="mark">A</span><span><b>ARTEVA</b><small>Laboratuvar Cihazları Ve Malzemeleri</small></span></div>
+    <div class="org" id="org"><span class="mark">AL</span><span style="min-width:0"><b>ARTEVA LAB</b><small>Aktif Firma 🏢</small></span></div>
+    <nav class="sb-scroll" id="nav"></nav>
+    <div class="sb-foot"><button class="ctl sb-item" data-go="destek"><span class="sb-i">💬</span><span class="sb-t">Canlı Destek</span><span class="dot"></span></button></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="ctl btn btn--ghost btn--icon" id="burger" title="Menü">☰</button>
+      <div class="search"><span class="ico">🔍</span>
+        <input class="inp" id="q" placeholder="Müşteri, ürün, teklif, sipariş ara..."><kbd>⌘ K</kbd></div>
+      <div class="tb-r">
+        <button class="ctl btn btn--primary" id="new">＋ Yeni</button>
+        <button class="ctl btn btn--ghost btn--icon btn--rel" title="Mesajlar">✉<span class="btn__badge">3</span></button>
+        <button class="ctl btn btn--ghost btn--icon btn--rel" title="Bildirimler">🔔<span class="btn__badge">12</span></button>
+        <button class="ctl btn btn--ghost btn--icon" id="theme" title="Tema">◐</button>
+        <button class="ctl btn btn--ghost btn--icon" title="Yardım">?</button>
+        <button class="ctl who"><span class="av">EE</span><span><b>Ertan Ekinci</b><small>Yönetici</small></span><span class="meta">▾</span></button>
+      </div>
+    </header>
+    <main class="content" id="view"></main>
+    <footer class="foot"><span>ARTEVA CRM v2.0</span><span>|</span><span>ARTEVA Laboratuvar Cihazları Ve Malzemeleri</span>
+      <span class="spacer"></span><span>Destek</span><span>KVK/KVKK</span><span>Sürüm 2.0</span></footer>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-hidden="true">
+  <div class="panel__h"><b class="h2" id="pTitle"></b><span class="spacer"></span>
+    <button class="ctl btn btn--ghost btn--icon" id="pClose" title="Kapat">×</button></div>
+  <div class="panel__b" id="pBody"></div>
+  <div class="panel__f" id="pFoot"></div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===========================================================================
+   Tek iskelet: her ekran aşağıdaki UI bileşenlerini kullanır, kendi stilini yazmaz.
+   =========================================================================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>'id'+Math.random().toString(36).slice(2,9);
+const money=n=>Number(n||0).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=n=>Number(n||0).toLocaleString('tr-TR',{maximumFractionDigits:0});
+const store={get(k,d){try{const v=localStorage.getItem('arteva2:'+k);return v?JSON.parse(v):d}catch{return d}},
+  set(k,v){try{localStorage.setItem('arteva2:'+k,JSON.stringify(v))}catch{}},del(k){try{localStorage.removeItem('arteva2:'+k)}catch{}}};
+
+/* ---------------- UI bileşenleri (tek kaynak) ---------------- */
+const UI = {
+  btn:({t='',i='',v='',s='',id='',go='',act='',title='',on=false})=>
+    `<button class="ctl btn${v?' btn--'+v:''}${s?' btn--'+s:''}${on?' btn--on':''}"${id?` id="${id}"`:''}${go?` data-go="${go}"`:''}${act?` data-act="${act}"`:''}${title?` title="${esc(title)}"`:''}>${i}${i&&t?' ':''}${esc(t)}</button>`,
+  iconBtn:(i,{s='sm',v='ghost',act='',title='',id=''}={})=>
+    `<button class="ctl btn btn--${v} btn--icon${s?' btn--'+s:''}"${id?` id="${id}"`:''}${act?` data-act="${act}"`:''} title="${esc(title)}">${i}</button>`,
+  field:({label,name='',type='text',value='',ph='',opts=null,wide=false,rows=0,attrs=''})=>{
+    const cls='inp'+(type==='number'?' inp--num':'');
+    const ctl = opts ? `<select class="${cls}" data-f="${name}" ${attrs}>${opts.map(o=>{
+        const [v,l]=Array.isArray(o)?o:[o,o]; return `<option value="${esc(v)}"${String(value)===String(v)?' selected':''}>${esc(l)}</option>`}).join('')}</select>`
+      : rows ? `<textarea class="${cls}" rows="${rows}" data-f="${name}" placeholder="${esc(ph)}" ${attrs}>${esc(value)}</textarea>`
+      : `<input class="${cls}" type="${type}" data-f="${name}" value="${esc(value)}" placeholder="${esc(ph)}" ${attrs}>`;
+    return `<label class="field${wide?' field--wide':''}"><span>${esc(label)}</span>${ctl}</label>`;
+  },
+  card:({title='',acts='',body='',flush=false,plain=false})=>
+    `<section class="card">${title||acts?`<div class="card__h${plain?' card__h--plain':''}"><h3 class="h3">${esc(title)}</h3><span class="spacer"></span>${acts}</div>`:''}
+      <div class="card__b${flush?' card__b--flush':''}">${body}</div></section>`,
+  page:({title,sub='',acts=''})=>
+    `<div class="page__h"><div><h1 class="h1">${esc(title)}</h1>${sub?`<p class="sub">${esc(sub)}</p>`:''}</div>
+      <span class="spacer"></span><div class="page__acts">${acts}</div></div>`,
+  table:({cols,rows,empty='Kayıt bulunamadı.'})=>{
+    const head=cols.map(c=>`<th${c.w?` style="width:${c.w}"`:''}${c.align?` class="t-${c.align}"`:''}>${esc(c.t||'')}</th>`).join('');
+    const body = rows.length ? rows.map((r,i)=>`<tr data-i="${i}">${cols.map(c=>{
+        const cls = c.cls || (c.align?`t-${c.align}`:'');
+        return `<td${cls?` class="${cls}"`:''}>${c.render? c.render(r,i) : esc(r[c.k]??'')}</td>`;
+      }).join('')}</tr>`).join('')
+      : `<tr><td colspan="${cols.length}"><div class="dt__empty">${esc(empty)}</div></td></tr>`;
+    return `<div class="dt-wrap"><table class="dt"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  },
+  pill:(label,kind='')=>`<span class="pill${kind?' pill--'+kind:''}">${esc(label)}</span>`,
+  thumb:(g,sm=false)=>`<span class="thumb${sm?' thumb--sm':''}">${g||'🖼'}</span>`,
+  toolbar:html=>`<div class="toolbar">${html}</div>`,
+  search:(id,ph='Ara...')=>`<span class="grow"><input class="inp" id="${id}" placeholder="${esc(ph)}"></span>`
+};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ---------------- Panel: TEK açılım biçimi (sağdan dikey) ---------------- */
+const Panel = {
+  open({title,body,foot='',wide=false}){
+    $('#pTitle').textContent=title; $('#pBody').innerHTML=body; $('#pFoot').innerHTML=foot;
+    $('#panel').classList.toggle('panel--wide',!!wide);
+    $('#panel').classList.add('on'); $('#panel').setAttribute('aria-hidden','false'); $('#scrim').classList.add('on');
+  },
+  close(){ $('#panel').classList.remove('on'); $('#panel').setAttribute('aria-hidden','true'); $('#scrim').classList.remove('on'); }
+};
+$('#pClose').onclick=Panel.close; $('#scrim').onclick=Panel.close;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') Panel.close(); });
+
+/* ---------------- menü ---------------- */
+const NAV=[
+ {items:[{k:'dashboard',i:'🏠',t:'Dashboard'},{k:'arama',i:'🔍',t:'Global Arama'}]},
+ {g:'CRM',items:[{k:'musteriler',i:'👥',t:'Müşteriler',c:1},{k:'kisiler',i:'👤',t:'Kişiler',c:1},{k:'aktiviteler',i:'🗓',t:'Aktiviteler',c:1},{k:'firsatlar',i:'🎯',t:'Fırsatlar',c:1}]},
+ {g:'Satış',items:[{k:'teklifler',i:'📄',t:'Teklifler / Proforma',c:1},{k:'siparisler',i:'🧾',t:'Siparişler',c:1},{k:'sevkiyatlar',i:'🚚',t:'Sevkiyatlar',c:1},{k:'faturalar',i:'📑',t:'Faturalar',c:1},{k:'tahsilatlar',i:'💰',t:'Tahsilatlar',c:1}]},
+ {g:'Katalog',items:[{k:'urunler',i:'📦',t:'Ürünler',c:1},{k:'kategoriler',i:'🗂',t:'Kategoriler',c:1},{k:'markalar',i:'🏷',t:'Markalar',c:1},{k:'import',i:'⇅',t:'Import Merkezi',c:1},{k:'fiyat',i:'💲',t:'Fiyat Listeleri',c:1}]},
+ {g:'Pazarlama',items:[{k:'kampanyalar',i:'📣',t:'Kampanyalar',c:1},{k:'eposta',i:'✉',t:'E-posta Gönderimi',c:1}]},
+ {g:'Raporlar',items:[{k:'satis-rapor',i:'📊',t:'Satış Raporları',c:1},{k:'urun-rapor',i:'📈',t:'Ürün Raporları',c:1},{k:'musteri-analizi',i:'👣',t:'Müşteri Analizi',c:1},{k:'performans',i:'⚡',t:'Performans',c:1}]},
+ {g:'Yönetim',items:[{k:'tema',i:'🎨',t:'Tema Stüdyosu',c:1},{k:'ayarlar',i:'⚙',t:'Ayarlar',c:1},{k:'kullanicilar',i:'🔐',t:'Kullanıcılar',c:1},{k:'yedekleme',i:'💾',t:'Yedekleme',c:1},{k:'loglar',i:'📋',t:'Sistem Logları',c:1}]}
+];
+const navItem = k => NAV.flatMap(s=>s.items).find(x=>x.k===k);
+function paintNav(active){
+  $('#nav').innerHTML = NAV.map(s=>(s.g?`<div class="sb-group">${s.g}</div>`:'')+
+    s.items.map(it=>`<button class="ctl sb-item${it.k===active?' on':''}" data-go="${it.k}">
+      <span class="sb-i">${it.i}</span><span class="sb-t">${it.t}</span>${it.c?'<span class="sb-chev">❯</span>':''}</button>`).join('')).join('');
+}
+
+/* ---------------- veri ---------------- */
+const DB={
+ customers:store.get('customers',[
+  {id:'c1',code:'M-0001',name:'ASELSAN',contact:'Murat Yıldız',city:'Ankara',phone:'0312 592 10 00',email:'satinalma@aselsan.com.tr',tax:'0730014...'},
+  {id:'c2',code:'M-0002',name:'TUSAŞ',contact:'Elif Demir',city:'Ankara',phone:'0312 811 18 00',email:'tedarik@tusas.com',tax:'8590033...'},
+  {id:'c3',code:'M-0003',name:'Topkapı Üniversitesi',contact:'Prof. Ayşe Kaya',city:'İstanbul',phone:'0212 555 44 33',email:'lab@topkapi.edu.tr',tax:'8340011...'},
+  {id:'c4',code:'M-0004',name:'Agreka Aromaterapi',contact:'Selin Arslan',city:'İzmir',phone:'0232 444 22 11',email:'info@agreka.com',tax:'0120099...'},
+  {id:'c5',code:'M-0005',name:'ROKETSAN',contact:'Kemal Öz',city:'Ankara',phone:'0312 860 55 00',email:'satinalma@roketsan.com.tr',tax:'7350022...'}]),
+ products:store.get('products',[
+  {id:'p1',code:'ETV-120',name:'Etüv 120 L Doğal Konveksiyonlu',cat:'Etüv ve Kurutma',unit:'ADET',price:48500,vat:20,img:'🔥',stock:12},
+  {id:'p2',code:'CKR-04',name:'Çeker Ocak 1200 mm Laboratuvar Tipi',cat:'Çeker Ocak',unit:'ADET',price:186000,vat:20,img:'🌬',stock:4},
+  {id:'p3',code:'TZG-180',name:'Laboratuvar Tezgahı 1800 mm Epoksi',cat:'Tezgah',unit:'METRE',price:21500,vat:20,img:'🧪',stock:26},
+  {id:'p4',code:'SGT-40',name:'Soğutma Sistemi -40°C Derin Dondurucu',cat:'Soğutma',unit:'ADET',price:264000,vat:20,img:'❄',stock:3},
+  {id:'p5',code:'SSU-15',name:'Saf Su Cihazı 15 L/saat Tip II',cat:'Saf Su',unit:'ADET',price:92500,vat:20,img:'💧',stock:7},
+  {id:'p6',code:'MKR-X1',name:'Mikroskop Trinoküler 1000x',cat:'Optik',unit:'ADET',price:57800,vat:20,img:'🔬',stock:9}]),
+ quotes:store.get('quotes',[
+  {id:'q1',no:'TK-2026-0042',date:'14.09.2026',cust:'ASELSAN',subject:'Laboratuvar Cihazları',total:1320000,status:'wait',last:'14.09.2026'},
+  {id:'q2',no:'TK-2026-0041',date:'13.09.2026',cust:'TUSAŞ',subject:'Ar-Ge Laboratuvarı',total:820000,status:'talk',last:'13.09.2026'},
+  {id:'q3',no:'TK-2026-0040',date:'12.09.2026',cust:'Topkapı Üniversitesi',subject:'Eğitim Laboratuvarı',total:450000,status:'sent',last:'12.09.2026'},
+  {id:'q4',no:'TK-2026-0039',date:'12.09.2026',cust:'Agreka Aromaterapi',subject:'Sterilizasyon Etüvü',total:285000,status:'talk',last:'12.09.2026'},
+  {id:'q5',no:'TK-2026-0038',date:'11.09.2026',cust:'ROKETSAN',subject:'Test Laboratuvarı',total:1950000,status:'draft',last:'11.09.2026'}])
+};
+const save=k=>store.set(k,DB[k]);
+const ST={draft:['Taslak',''],sent:['Gönderildi','info'],talk:['Görüşülüyor','warn'],wait:['Onay Bekliyor','brand'],won:['Kazanıldı','ok']};
+const UNITS=['ADET','METRE','METRETÜL','SET','TAKIM','PAKET','KG','LİTRE'];
+
+/* ---------------- router ---------------- */
+let route='dashboard';
+const ROUTES={dashboard:pgDashboard,musteriler:pgCustomers,urunler:pgProducts,teklifler:pgQuotes,
+  'yeni-teklif':pgQuoteEditor,tema:pgTheme};
+function go(k){
+  route=k; paintNav(k==='yeni-teklif'?'teklifler':k);
+  document.body.classList.remove('edit'); edit=false;
+  (ROUTES[k]||(()=>pgStub(k)))(); window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(b){e.preventDefault(); go(b.dataset.go);}});
+const render = html => $('#view').innerHTML = `<div class="page">${html}</div>`;
+
+/* ===========================================================================
+   LİSTE EKRANI — tek motor. Müşteri, ürün, teklif ve bütün stub'lar aynı yapı.
+   =========================================================================== */
+function listPage({title,sub,newLabel,onNew,filters='',cols,getRows,empty}){
+  const acts = (newLabel?UI.btn({t:newLabel,i:'＋',v:'primary',id:'pNew'}):'')
+    + UI.btn({t:'Dışa Aktar',i:'⇩'});
+  render(UI.page({title,sub,acts}) + UI.card({flush:true,
+    body:`<div class="card__b">${UI.toolbar(UI.search('lq','Ara...')+filters+'<span class="spacer"></span>'+UI.btn({t:'Filtreler',i:'⚙',s:'sm'}))}</div>
+          <div id="lTable"></div>`}));
+  const paint=()=>{
+    const rows=getRows($('#lq').value.trim().toLowerCase(), $('#lf')?.value||'');
+    $('#lTable').innerHTML = UI.table({cols,rows,empty});
+    $$('#lTable [data-act]').forEach(b=>b.onclick=()=>{
+      const r = getRows($('#lq').value.trim().toLowerCase(), $('#lf')?.value||'')[+b.closest('tr').dataset.i];
+      (cols.find(c=>c.acts)?.onAct||(()=>{}))(b.dataset.act,r);
+    });
+  };
+  $('#lq').oninput=paint; if($('#lf')) $('#lf').onchange=paint;
+  if(onNew) $('#pNew').onclick=()=>onNew(paint);
+  paint(); return paint;
+}
+const ACTS = `${UI.iconBtn('✎',{act:'edit',title:'Düzenle'})}${UI.iconBtn('⋯',{act:'more',title:'Diğer'})}`;
+
+function pgCustomers(){
+  listPage({
+    title:'Müşteriler', sub:`${DB.customers.length} kayıt · tümü aktif`, newLabel:'Yeni Müşteri',
+    onNew:done=>panelCustomer(null,()=>done()),
+    filters:`<select class="inp" id="lf" style="width:150px"><option value="">Tüm şehirler</option>
+      ${[...new Set(DB.customers.map(c=>c.city))].map(c=>`<option>${c}</option>`).join('')}</select>`,
+    cols:[
+      {t:'Kod',w:'96px',render:r=>`<span class="t-strong">${r.code}</span>`},
+      {t:'Firma',render:r=>`<div class="cell"><span class="thumb thumb--sm">🏢</span><span style="min-width:0"><b>${esc(r.name)}</b><small>${esc(r.city)}</small></span></div>`},
+      {t:'Yetkili',k:'contact'},{t:'Telefon',k:'phone'},{t:'E-posta',k:'email'},
+      {t:'Vergi No',k:'tax'},
+      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:(a,r)=>a==='edit'?panelCustomer(r):toast(r.name)}
+    ],
+    getRows:(q,f)=>DB.customers.filter(c=>(!q||(c.name+c.contact+c.phone+c.city+c.code).toLowerCase().includes(q))&&(!f||c.city===f))
+  });
+}
+function pgProducts(){
+  listPage({
+    title:'Ürünler', sub:`${DB.products.length} ürün · görsel kutuları ile`, newLabel:'Yeni Ürün',
+    onNew:done=>panelProduct(()=>done()),
+    filters:`<select class="inp" id="lf" style="width:170px"><option value="">Tüm kategoriler</option>
+      ${[...new Set(DB.products.map(p=>p.cat))].map(c=>`<option>${c}</option>`).join('')}</select>`,
+    cols:[
+      {t:'Ürün',render:r=>`<div class="cell">${UI.thumb(r.img)}<span style="min-width:0"><b>${esc(r.name)}</b><small>${r.code} · ${esc(r.cat)}</small></span></div>`},
+      {t:'Birim',w:'92px',k:'unit'},
+      {t:'Birim Fiyat',w:'120px',align:'right',cls:'t-num',render:r=>`₺${money(r.price)}`},
+      {t:'KDV',w:'62px',align:'center',render:r=>`%${r.vat}`},
+      {t:'Stok',w:'70px',align:'right',cls:'t-num',k:'stock'},
+      {t:'Durum',w:'110px',render:r=>UI.pill(r.stock>5?'Stokta':'Sınırlı', r.stock>5?'ok':'warn')},
+      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:(a,r)=>toast(r.name)}
+    ],
+    getRows:(q,f)=>DB.products.filter(p=>(!q||(p.code+p.name+p.cat).toLowerCase().includes(q))&&(!f||p.cat===f))
+  });
+}
+function pgQuotes(){
+  listPage({
+    title:'Teklifler / Proforma', sub:`${DB.quotes.length} kayıt`, newLabel:'Yeni Proforma',
+    onNew:()=>go('yeni-teklif'),
+    filters:`<select class="inp" id="lf" style="width:160px"><option value="">Tüm durumlar</option>
+      ${Object.entries(ST).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select>`,
+    cols:[
+      {t:'Teklif No',w:'132px',render:r=>`<span class="t-strong">${r.no}</span>`},
+      {t:'Tarih',w:'100px',k:'date'},
+      {t:'Müşteri',render:r=>`<div class="cell"><span class="thumb thumb--sm">🏢</span><span style="min-width:0"><b>${esc(r.cust)}</b><small>${esc(r.subject)}</small></span></div>`},
+      {t:'Tutar',w:'128px',align:'right',cls:'t-num',render:r=>`₺${money0(r.total)}`},
+      {t:'Durum',w:'132px',render:r=>UI.pill(ST[r.status][0],ST[r.status][1])},
+      {t:'Son İşlem',w:'110px',k:'last'},
+      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,
+       onAct:a=>a==='edit'?go('yeni-teklif'):toast('İşlemler')}
+    ],
+    getRows:(q,f)=>DB.quotes.filter(x=>(!q||(x.no+x.cust+x.subject).toLowerCase().includes(q))&&(!f||x.status===f))
+  });
+}
+function pgStub(k){
+  const it=navItem(k)||{t:k,i:'📄'};
+  listPage({
+    title:`${it.i} ${it.t}`, sub:'Aynı iskelet · içerik onaydan sonra bağlanacak', newLabel:'Yeni Kayıt',
+    onNew:()=>Panel.open({title:`Yeni ${it.t}`,
+      body:UI.card({title:'Kayıt Bilgileri',body:`<div class="form">${UI.field({label:'Başlık'})}${UI.field({label:'Durum',opts:['Aktif','Pasif']})}
+        ${UI.field({label:'Açıklama',rows:4,wide:true})}</div>`}),
+      foot:UI.btn({t:'Vazgeç',act:'close'})+UI.btn({t:'Kaydet',v:'primary',act:'close'})}),
+    cols:[{t:'Kod',w:'96px',render:r=>`<span class="t-strong">${r.code}</span>`},
+      {t:'Kayıt',render:r=>`<div class="cell"><span class="thumb thumb--sm">${it.i}</span><span><b>${esc(r.name)}</b><small>${esc(r.note)}</small></span></div>`},
+      {t:'Tarih',w:'110px',k:'date'},
+      {t:'Tutar',w:'120px',align:'right',cls:'t-num',render:r=>`₺${money0(r.total)}`},
+      {t:'Durum',w:'120px',render:r=>UI.pill(r.st[0],r.st[1])},
+      {t:'',w:'86px',align:'right',acts:true,render:()=>`<div class="dt__acts">${ACTS}</div>`,onAct:()=>toast('Demo kayıt')}],
+    getRows:q=>{
+      const base=[['Aktif',''],['Onaylandı','ok'],['Beklemede','warn'],['Gönderildi','info']];
+      return [...Array(6)].map((_,i)=>({code:`${it.t.slice(0,2).toUpperCase()}-00${i+1}`,name:`${it.t} kaydı ${i+1}`,
+        note:'Demo veri · gerçek modül bağlanacak',date:`${10+i}.09.2026`,total:(i+1)*48500,st:base[i%4]}))
+        .filter(r=>!q||r.name.toLowerCase().includes(q));
+    }
+  });
+}
+
+/* ===========================================================================
+   DASHBOARD
+   =========================================================================== */
+const W={
+ kpi:{t:'Özet Kartlar',span:12,r:wKpi},
+ perf:{t:'Teklif Performansı',span:5,r:wPerf},
+ durum:{t:'Durum Dağılımı',span:4,r:wDurum},
+ grup:{t:'Ürün Grupları',span:3,r:wGrup},
+ tablo:{t:'Son Teklifler',span:12,r:wTablo},
+ rapor:{t:'Hızlı Raporlar',span:8,r:wRapor},
+ sistem:{t:'Sistem Durumu',span:4,r:wSistem}
+};
+const DEF=Object.entries(W).map(([k,v])=>({k,w:v.span,on:true}));
+let layout=store.get('layout',null)||JSON.parse(JSON.stringify(DEF)), edit=false;
+
+function pgDashboard(){
+  render(UI.page({title:'Hoş geldiniz, Ertan Ekinci', sub:"Bugün 14 Eylül 2026, pazartesi. ARTEVA CRM'e hoş geldiniz.",
+    acts:`<span class="meta" style="font-weight:650;color:var(--ink)">Hızlı İşlemler</span>
+      ${UI.btn({t:'Yeni Teklif',i:'＋',go:'yeni-teklif'})}${UI.btn({t:'Yeni Müşteri',i:'＋',id:'dNewC'})}
+      ${UI.btn({t:'Yeni Ürün',i:'＋',id:'dNewP'})}${UI.btn({t:'Aktivite Ekle',i:'＋'})}
+      ${UI.btn({t:'Dashboard Düzenle',i:'⋯',id:'dEdit'})}`})
+    + `<div id="bar"></div><div class="dash"><div class="zone" id="zone"></div><div class="rail">${rail()}</div></div>`);
+  $('#dEdit').onclick=toggleEdit; $('#dNewC').onclick=()=>panelCustomer(); $('#dNewP').onclick=()=>panelProduct();
+  paintZone();
+}
+function toggleEdit(){
+  edit=!edit; document.body.classList.toggle('edit',edit);
+  $('#bar').innerHTML = edit ? `<div class="card"><div class="card__b"><div class="toolbar">
+      <b class="h3">🧩 Dashboard Düzenle</b><span class="meta">Aç/kapat · sürükleyerek taşı · genişliği değiştir</span>
+      <span class="spacer"></span>
+      ${Object.entries(W).map(([k,v])=>UI.btn({t:v.t,s:'sm',act:'tg:'+k,on:!!layout.find(x=>x.k===k)?.on})).join('')}
+      ${UI.btn({t:'Varsayılan',i:'↺',s:'sm',act:'reset'})}${UI.btn({t:'Düzeni Kaydet',i:'💾',v:'primary',s:'sm',act:'save'})}
+    </div></div></div>` : '';
+  $$('#bar [data-act]').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.act;
+    if(a==='save'){store.set('layout',layout);return toast('Dashboard düzeni kaydedildi.');}
+    if(a==='reset'){layout=JSON.parse(JSON.stringify(DEF));store.del('layout');}
+    if(a.startsWith('tg:')){const k=a.slice(3);const it=layout.find(x=>x.k===k);it?it.on=!it.on:layout.push({k,w:W[k].span,on:true});}
+    paintZone(); edit=!edit; toggleEdit();
+  });
+  paintZone();
+}
+function paintZone(){
+  const z=$('#zone'); if(!z) return;
+  z.innerHTML = layout.filter(x=>x.on&&W[x.k]).map(x=>
+    `<div class="w" data-w="${x.k}" draggable="${edit}" style="grid-column:span ${x.w}">${W[x.k].r(x)}</div>`).join('');
+  $$('#zone .w').forEach(el=>{
+    el.addEventListener('dragstart',e=>{if(!edit)return;el.classList.add('drag');e.dataTransfer.setData('text/plain',el.dataset.w)});
+    el.addEventListener('dragend',()=>el.classList.remove('drag'));
+    el.addEventListener('dragover',e=>{if(!edit)return;e.preventDefault();el.classList.add('over')});
+    el.addEventListener('dragleave',()=>el.classList.remove('over'));
+    el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');
+      const f=e.dataTransfer.getData('text/plain'),t=el.dataset.w; if(!f||f===t)return;
+      const fi=layout.findIndex(x=>x.k===f),ti=layout.findIndex(x=>x.k===t);
+      layout.splice(ti,0,layout.splice(fi,1)[0]); paintZone();});
+    $$('[data-act]',el).forEach(b=>b.onclick=ev=>{
+      ev.stopPropagation(); const it=layout.find(x=>x.k===el.dataset.w); if(!it)return;
+      if(b.dataset.act==='off')it.on=false;
+      if(b.dataset.act==='wide')it.w=Math.min(12,it.w+2);
+      if(b.dataset.act==='narrow')it.w=Math.max(3,it.w-2);
+      paintZone(); if(edit){edit=!edit;toggleEdit();}
+    });
+  });
+}
+const wTools = `<div class="w-tools">${UI.iconBtn('−',{s:'xs',v:'',act:'narrow',title:'Küçült'})}
+  ${UI.iconBtn('＋',{s:'xs',v:'',act:'wide',title:'Büyüt'})}${UI.iconBtn('×',{s:'xs',v:'',act:'off',title:'Kaldır'})}</div>`;
+
+function wKpi(){
+  const k=(t,v,d,i,flat)=>`<div class="kpi"><div><div class="t">${t}</div><div class="v">${v}</div>
+    <div class="d${flat?' flat':''}">${d}</div></div><div class="i">${i}</div></div>`;
+  return UI.card({title:'Özet', acts:wTools, body:`<div class="kpis">
+    ${k('Aktif Teklifler','38','↑ %12 bu ay','📄')}${k('Teklif Tutarı','₺4,82M','↑ %8,4 bu ay','📊')}
+    ${k('Onay Bekleyen','7','3 kayıt bugün takip edilmeli','🕐',1)}${k('Dönüşüm Oranı','%31,6','↑ 4,1 puan','📈')}</div>`});
+}
+function wPerf(){
+  const M=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl'],a=[18,19,27,26,31,26,29,36,41],b=[9,11,17,19,21,20,23,27,28];
+  const H=168,Wd=520,max=50,bw=17,st=(Wd-34)/M.length,y=v=>H-(v/max)*(H-18);
+  let g='',bars='';
+  [0,10,20,30,40,50].forEach(v=>{g+=`<line x1="30" x2="${Wd}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/>
+    <text x="24" y="${y(v)+3}" font-size="10" fill="var(--ink-3)" text-anchor="end">${v}</text>`});
+  M.forEach((m,i)=>{const x=34+i*st;
+    bars+=`<rect x="${x}" y="${y(a[i])}" width="${bw}" height="${H-y(a[i])}" rx="3" fill="#9aa5b5"/>
+      <rect x="${x+bw+2}" y="${y(b[i])}" width="${bw}" height="${H-y(b[i])}" rx="3" fill="#e8535f"/>
+      <text x="${x+bw}" y="${H+14}" font-size="10" fill="var(--ink-3)" text-anchor="middle">${m}</text>`});
+  return UI.card({title:'Aylık Teklif Performansı',
+    acts:`<div class="legend"><span><i style="background:#9aa5b5"></i>Oluşturulan</span><span><i style="background:#e8535f"></i>Kazanılan</span></div>${wTools}`,
+    body:`<svg viewBox="0 0 ${Wd} ${H+22}" style="width:100%;height:auto">${g}${bars}</svg>`});
+}
+function wDurum(){
+  const d=[['Taslak',9,'#5b8def'],['Gönderildi',12,'#6fb3f5'],['Görüşülüyor',7,'#f4c15d'],
+    ['Onay Bekliyor',7,'#f08a93'],['Kazanıldı',3,'#3aa76d'],['Kaybedildi',0,'#e2555f']];
+  const tot=d.reduce((s,x)=>s+x[1],0),R=52,C=2*Math.PI*R; let o=0;
+  const arcs=d.filter(x=>x[1]).map(x=>{const l=(x[1]/tot)*C;
+    const e=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${x[2]}" stroke-width="20"
+      stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-o}" transform="rotate(-90 70 70)"/>`; o+=l; return e}).join('');
+  return UI.card({title:'Teklif Durum Dağılımı',acts:wTools,body:`<div class="donut">
+    <svg viewBox="0 0 140 140" style="width:136px;height:136px;flex:none">${arcs}
+      <text x="70" y="65" text-anchor="middle" font-size="10" fill="var(--ink-3)">Toplam</text>
+      <text x="70" y="82" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">${tot}</text>
+      <text x="70" y="95" text-anchor="middle" font-size="9" fill="var(--ink-3)">Teklif</text></svg>
+    <div class="donut__l">${d.map(x=>`<div><i style="width:9px;height:9px;border-radius:50%;background:${x[2]};display:inline-block"></i>${x[0]}<b>${x[1]}</b></div>`).join('')}</div></div>`});
+}
+function wGrup(){
+  const r=[['Etüv ve Kurutma',12],['Çeker Ocak',9],['Laboratuvar Tezgahı',6],['Soğutma Sistemleri',5],['Saf Su Sistemleri',3]];
+  return UI.card({title:'En Çok Teklif Verilen Gruplar',acts:wTools,body:`<div class="hbars">
+    ${r.map(x=>`<div class="hbar"><span>${x[0]}</span><span class="hbar__t"><span class="hbar__f" style="width:${x[1]/12*100}%"></span></span><b>${x[1]}</b></div>`).join('')}</div>`});
+}
+function wTablo(){
+  return `<section class="card">
+    <div class="tabs">${['Son Teklifler','Takip Edilmesi Gerekenler','Son Müşteriler','Son Aktiviteler']
+      .map((t,i)=>`<button class="ctl tab${i?'':' on'}">${t}</button>`).join('')}
+      <span class="spacer" style="flex:1"></span>${UI.btn({t:'Tümünü Gör',s:'sm',go:'teklifler'})}${wTools}</div>
+    ${UI.table({cols:[
+      {t:'Teklif No',w:'132px',render:r=>`<span class="t-strong">${r.no}</span>`},
+      {t:'Tarih',w:'100px',k:'date'},
+      {t:'Müşteri',render:r=>`<div class="cell"><span class="thumb thumb--sm">🏢</span><span style="min-width:0"><b>${esc(r.cust)}</b><small>${esc(r.subject)}</small></span></div>`},
+      {t:'Tutar',w:'128px',align:'right',cls:'t-num',render:r=>`₺${money0(r.total)}`},
+      {t:'Durum',w:'132px',render:r=>UI.pill(ST[r.status][0],ST[r.status][1])},
+      {t:'Son İşlem',w:'110px',k:'last'},
+      {t:'',w:'56px',align:'right',render:()=>`<div class="dt__acts">${UI.iconBtn('⋯',{title:'İşlemler'})}</div>`}
+    ],rows:DB.quotes})}</section>`;
+}
+function wRapor(){
+  const q=(i,t,s,bg,c)=>`<button class="ctl quad"><span class="i" style="background:${bg};color:${c}">${i}</span>
+    <span><b>${t}</b><small>${s}</small></span></button>`;
+  return UI.card({title:'Hızlı Raporlar',acts:wTools,body:`<div class="quads">
+    ${q('📊','Satış Raporu','Aylık / Yıllık / Ürün','var(--info-50)','var(--info)')}
+    ${q('👥','Müşteri Analizi','Sektör / Bölge','var(--ok-50)','var(--ok)')}
+    ${q('📦','Ürün Performansı','En çok teklif','var(--warn-50)','var(--warn)')}
+    ${q('📈','Dönüşüm Raporu','Teklif → Sipariş','var(--brand-50)','var(--brand)')}</div>`});
+}
+function wSistem(){
+  return UI.card({title:'Sistem Durumu',acts:wTools,body:`<div class="triple">
+    <div><b><span class="dot" style="display:inline-block;margin-right:5px"></span>Uygulama</b><small>Çalışıyor</small></div>
+    <div><b><span class="dot" style="display:inline-block;margin-right:5px"></span>Veritabanı</b><small>Çalışıyor</small></div>
+    <div><b><span class="dot" style="display:inline-block;margin-right:5px"></span>E-posta</b><small>Aktif</small></div>
+  </div><p class="meta" style="text-align:center;margin:12px 0 0">Yedekleme <b style="color:var(--ok)">Tamam</b></p>`});
+}
+function rail(){
+  const ag=[['10:00','ASELSAN - Teknik Görüşme','Online Toplantı'],['11:30','Agreka - Teklif Takibi','Telefon Görüşmesi'],
+    ['14:00','TMO - Numune Cihaz Bilgisi','E-posta Gönderimi'],['16:00','İç Toplantı','Ofis']];
+  const ac=[['📄','ASELSAN teklif güncellendi','2 saat önce','var(--brand-50)','var(--brand)'],
+    ['👤','Agreka müşteri kaydı oluşturuldu','4 saat önce','var(--ok-50)','var(--ok)'],
+    ['✉','TUSAŞ teklif gönderildi','5 saat önce','var(--info-50)','var(--info)'],
+    ['🗓','Yeni aktivite eklendi','6 saat önce','var(--warn-50)','var(--warn)']];
+  const cal='<span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>'
+    +[...Array(30)].map((_,i)=>`<b class="ctl ${i+1===14?'on':''}">${i+1}</b>`).join('');
+  return UI.card({title:'Eylül 2026',acts:UI.iconBtn('‹',{title:'Önceki'})+UI.iconBtn('›',{title:'Sonraki'}),
+      flush:true,body:`<div class="cal">${cal}</div>`})
+   + UI.card({title:'Bugünün Ajandası',acts:UI.btn({t:'Tümü',s:'sm'}),flush:true,
+      body:`<div class="row-list">${ag.map(a=>`<div class="ag"><time>${a[0]}</time><div><b>${a[1]}</b><small>${a[2]}</small></div></div>`).join('')}</div>`})
+   + UI.card({title:'Son Aktiviteler',acts:UI.btn({t:'Tümü',s:'sm'}),flush:true,
+      body:`<div class="row-list">${ac.map(a=>`<div class="act"><span class="i" style="background:${a[3]};color:${a[4]}">${a[0]}</span><div><b>${a[1]}</b><small>${a[2]}</small></div></div>`).join('')}</div>`});
+}
+
+/* ===========================================================================
+   YENİ PROFORMA
+   =========================================================================== */
+let PF=null;
+const line=()=>({id:uid(),code:'',name:'',desc:'',img:'',qty:1,unit:'ADET',price:0,dType:'P',dPct:0,dAmt:0,vat:20,alt:false});
+function pgQuoteEditor(){
+  PF=PF||{cust:'',cur:'TRY',subject:'',lines:[line()],pay:'%50 peşin, %50 teslimatta',del:'Fabrika teslim',war:'2 yıl'};
+  render(UI.page({title:'Yeni Proforma',sub:'Ekrandan çıkmadan müşteri ve ürün ekleyebilirsiniz.',
+      acts:UI.btn({t:'Listeye dön',i:'←',go:'teklifler'})+UI.btn({t:'Proformayı Kaydet',i:'💾',v:'primary',id:'pfSave'})})
+   + `<div class="pf"><div style="display:grid;gap:var(--sp-4);min-width:0">
+      ${UI.card({title:'Müşteri ve Genel Bilgiler',acts:UI.btn({t:'Yeni Müşteri',i:'＋',s:'sm',id:'pfNewC'}),
+        body:`<div class="form" style="--cols:3">
+          <label class="field field--wide"><span>Müşteri</span><select class="inp" id="pfC"><option value="">— Müşteri seçin —</option>
+            ${DB.customers.map(c=>`<option value="${c.id}"${PF.cust===c.id?' selected':''}>${esc(c.name)} · ${c.city}</option>`).join('')}</select></label>
+          <label class="field"><span>Para Birimi</span><select class="inp" id="pfCur">${['TRY','EUR','USD'].map(c=>`<option${PF.cur===c?' selected':''}>${c}</option>`).join('')}</select></label>
+          <label class="field"><span>Teklif Tarihi</span><input class="inp" type="date" value="2026-09-14"></label>
+          <label class="field"><span>Geçerlilik</span><input class="inp" value="30 gün"></label>
+          <label class="field field--wide"><span>Konu / Proje</span><input class="inp" id="pfS" value="${esc(PF.subject)}" placeholder="Örn. Ar-Ge Laboratuvarı Cihaz Alımı"></label>
+        </div><p class="meta" id="pfCI" style="margin-top:var(--sp-3)"></p>`})}
+      ${UI.card({title:'Ürün Satırları',flush:true,
+        acts:`${UI.btn({t:'Boş Satır',i:'＋',s:'sm',id:'pfB'})}${UI.btn({t:'Ürün Seç',i:'📦',s:'sm',id:'pfP'})}${UI.btn({t:'Hızlı Ürün',i:'⚡',s:'sm',id:'pfQ'})}`,
+        body:`<div class="lines" id="pfL"></div>`})}
+      ${UI.card({title:'Ticari Şartlar',body:`<div class="form" style="--cols:1">
+        ${UI.field({label:'Ödeme Şartları',name:'pay',value:PF.pay})}
+        ${UI.field({label:'Teslim Şartları',name:'del',value:PF.del})}
+        ${UI.field({label:'Garanti',name:'war',value:PF.war})}</div>`})}
+    </div>
+    <div style="display:grid;gap:var(--sp-4)">
+      ${UI.card({title:'Toplamlar',body:`<div class="totals" id="pfT"></div>`})}
+      ${UI.card({title:'Ürün Kataloğu',body:`<input class="inp" id="pfSr" placeholder="Ürün ara..." style="margin-bottom:var(--sp-3)">
+        <div class="picks" id="pfCat"></div>`})}
+    </div></div>`);
+  $('#pfC').onchange=e=>{PF.cust=e.target.value;custInfo()};
+  $('#pfCur').onchange=e=>{PF.cur=e.target.value;paintLines()};
+  $('#pfS').oninput=e=>PF.subject=e.target.value;
+  $('#pfB').onclick=()=>{PF.lines.push(line());paintLines()};
+  $('#pfP').onclick=()=>panelPicker();
+  $('#pfQ').onclick=()=>panelProduct(p=>addLine(p));
+  $('#pfNewC').onclick=()=>panelCustomer(null,c=>{
+    PF.cust=c.id;
+    $('#pfC').innerHTML=`<option value="">— Müşteri seçin —</option>`+DB.customers.map(x=>`<option value="${x.id}"${x.id===c.id?' selected':''}>${esc(x.name)} · ${x.city}</option>`).join('');
+    custInfo(); toast('Müşteri oluşturuldu ve proformaya bağlandı.');
+  });
+  $('#pfSave').onclick=()=>{
+    const c=DB.customers.find(x=>x.id===PF.cust); if(!c) return toast('Önce müşteri seçin.');
+    const t=tot();
+    DB.quotes.unshift({id:uid(),no:'TK-2026-'+String(43+DB.quotes.length).padStart(4,'0'),date:'14.09.2026',
+      cust:c.name,subject:PF.subject||'Proforma',total:Math.round(t.g),status:'draft',last:'14.09.2026'});
+    save('quotes'); PF=null; toast('Proforma kaydedildi.'); go('teklifler');
+  };
+  $('#pfSr').oninput=e=>paintCat(e.target.value);
+  custInfo(); paintLines(); paintCat('');
+}
+function custInfo(){const c=DB.customers.find(x=>x.id===PF.cust);
+  $('#pfCI').textContent=c?`${c.contact} · ${c.phone} · ${c.email} · VN ${c.tax}`:'Müşteri seçilmedi.'}
+function addLine(p,alt=false){
+  PF.lines=PF.lines.filter(l=>l.code||l.name||l.price);
+  PF.lines.push({...line(),code:p.code,name:p.name,img:p.img,unit:p.unit,price:p.price,vat:p.vat,alt});
+  paintLines();
+}
+function calc(l){const g=+l.qty*+l.price, d=l.dType==='P'?g*(+l.dPct)/100:+l.dAmt, n=Math.max(0,g-d);
+  return {g,d,n,v:n*(+l.vat)/100}}
+function tot(){let s=0,d=0,v=0;PF.lines.forEach(l=>{if(l.alt)return;const c=calc(l);s+=c.g;d+=c.d;v+=c.v});
+  return {s,d,n:s-d,v,g:s-d+v}}
+function paintLines(){
+  const cur=PF.cur;
+  $('#pfL').innerHTML = UI.table({
+    cols:[
+      {t:'',w:'24px',render:()=>`<div class="grip" title="Sürükleyip sıralayın">⋮⋮</div>`},
+      {t:'Görsel',w:'48px',render:l=>UI.thumb(l.img,true)},
+      {t:'Ürün Kodu',w:'110px',render:(l,i)=>`<input class="inp inp--flush" value="${esc(l.code)}" data-f="code" data-i="${i}" placeholder="Kod">`},
+      {t:'Ürün Adı / Açıklama',render:(l,i)=>`${l.alt?'<span class="tag">MUADİL</span>':''}
+        <input class="inp inp--flush" value="${esc(l.name)}" data-f="name" data-i="${i}" placeholder="Ürün adı">
+        <textarea class="inp inp--flush" rows="1" data-f="desc" data-i="${i}" placeholder="Teklife özel açıklama...">${esc(l.desc)}</textarea>`},
+      {t:'Miktar',w:'84px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="0.01" value="${l.qty}" data-f="qty" data-i="${i}">`},
+      {t:'Birim',w:'104px',render:(l,i)=>`<select class="inp inp--flush" data-f="unit" data-i="${i}">${UNITS.map(u=>`<option${l.unit===u?' selected':''}>${u}</option>`).join('')}</select>`},
+      {t:'Birim Fiyat',w:'118px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="0.01" value="${l.price}" data-f="price" data-i="${i}">`},
+      {t:'İsk %',w:'86px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" max="100" step="0.01" value="${(+l.dPct).toFixed(2)}" data-f="dPct" data-i="${i}">`},
+      {t:'İsk Tutar',w:'112px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="0.01" value="${(+l.dAmt).toFixed(2)}" data-f="dAmt" data-i="${i}">`},
+      {t:'KDV',w:'78px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="1" value="${l.vat}" data-f="vat" data-i="${i}">`},
+      {t:'Satır Toplamı',w:'116px',align:'right',cls:'t-num',render:l=>`<div style="padding-top:7px">${money(calc(l).n)} ${cur}</div>`},
+      {t:'İşlemler',w:'168px',align:'right',render:(l,i)=>`<div class="dt__acts" style="padding-top:4px">
+        ${UI.iconBtn('🔄',{s:'xs',v:'',act:'alt',title:'Muadil ürün ekle'})}
+        ${l.alt?UI.iconBtn('⊘',{s:'xs',v:'',act:'unalt',title:'Muadil işaretini kaldır'}):''}
+        ${UI.iconBtn('⧉',{s:'xs',v:'',act:'copy',title:'Satırı kopyala'})}
+        ${UI.iconBtn('↑',{s:'xs',v:'',act:'up',title:'Yukarı'})}
+        ${UI.iconBtn('↓',{s:'xs',v:'',act:'down',title:'Aşağı'})}
+        ${UI.iconBtn('🗑',{s:'xs',v:'',act:'del',title:'Sil'})}</div>`}
+    ],
+    rows:PF.lines, empty:'Satır yok. “Boş Satır” veya “Ürün Seç” ile ekleyin.'
+  });
+  $$('#pfL tbody tr').forEach((tr,i)=>{
+    if(PF.lines[i]?.alt) tr.classList.add('alt');
+    tr.draggable=true;
+    tr.addEventListener('dragstart',e=>{tr.classList.add('drag');e.dataTransfer.setData('text/plain',i)});
+    tr.addEventListener('dragend',()=>tr.classList.remove('drag'));
+    tr.addEventListener('dragover',e=>{e.preventDefault();tr.classList.add('over')});
+    tr.addEventListener('dragleave',()=>tr.classList.remove('over'));
+    tr.addEventListener('drop',e=>{e.preventDefault();tr.classList.remove('over');
+      const f=+e.dataTransfer.getData('text/plain'); if(f===i)return;
+      PF.lines.splice(i,0,PF.lines.splice(f,1)[0]); paintLines()});
+  });
+  $$('#pfL [data-f]').forEach(el=>{
+    // Yazarken tablo yeniden kurulmaz; yalnızca türeyen hücreler tazelenir.
+    // Böylece imleç kaybolmaz ve DOM baştan yazılmaz.
+    const h=()=>{
+      const i=+el.dataset.i, l=PF.lines[i], f=el.dataset.f, g=+l.qty*+l.price;
+      if(f==='dPct'){l.dType='P';l.dPct=+el.value||0;l.dAmt=g*l.dPct/100;setPair(i,'dAmt',l.dAmt)}
+      else if(f==='dAmt'){l.dType='A';l.dAmt=+el.value||0;l.dPct=g?l.dAmt/g*100:0;setPair(i,'dPct',l.dPct)}
+      else l[f]=['qty','price','vat'].includes(f)?(+el.value||0):el.value;
+      if(['qty','price'].includes(f)){
+        const n=+l.qty*+l.price;
+        if(l.dType==='P'){l.dAmt=n*(+l.dPct)/100;setPair(i,'dAmt',l.dAmt)}
+        else{l.dPct=n?(+l.dAmt)/n*100:0;setPair(i,'dPct',l.dPct)}
+      }
+      const cell=$(`#pfL tbody tr[data-i="${i}"] td.t-num`);
+      if(cell) cell.innerHTML=`<div style="padding-top:7px">${money(calc(l).n)} ${PF.cur}</div>`;
+      paintTot();
+    };
+    el.oninput=h; el.onchange=h;
+  });
+  $$('#pfL [data-act]').forEach(b=>b.onclick=()=>{
+    const i=+b.closest('tr').dataset.i,a=b.dataset.act;
+    if(a==='del')PF.lines.splice(i,1);
+    if(a==='copy')PF.lines.splice(i+1,0,{...PF.lines[i],id:uid()});
+    if(a==='up'&&i>0)PF.lines.splice(i-1,0,PF.lines.splice(i,1)[0]);
+    if(a==='down'&&i<PF.lines.length-1)PF.lines.splice(i+1,0,PF.lines.splice(i,1)[0]);
+    if(a==='unalt')PF.lines[i].alt=false;
+    if(a==='alt')return panelPicker(p=>{
+      PF.lines.splice(i+1,0,{...line(),code:p.code,name:p.name,img:p.img,unit:p.unit,price:p.price,vat:p.vat,alt:true});
+      paintLines(); toast('Muadil ürün eklendi (toplamlara dahil değil).')});
+    paintLines();
+  });
+  paintTot();
+}
+// Eşlenik iskonto alanını, kullanıcı o alanda yazarken ezmeden günceller.
+function setPair(i,f,v){
+  const el=$(`#pfL [data-f="${f}"][data-i="${i}"]`);
+  if(el && document.activeElement!==el) el.value=Number(v).toFixed(2);
+}
+function paintTot(){const t=tot(),c=PF.cur;
+  $('#pfT').innerHTML=`<div><span>Ara Toplam</span><b>${money(t.s)} ${c}</b></div>
+    <div><span>Toplam İskonto</span><b style="color:var(--brand)">− ${money(t.d)} ${c}</b></div>
+    <div><span>Net Tutar</span><b>${money(t.n)} ${c}</b></div>
+    <div><span>KDV</span><b>${money(t.v)} ${c}</b></div>
+    <div class="g"><span>Genel Toplam</span><b>${money(t.g)} ${c}</b></div>
+    <p class="meta">Muadil satırlar toplamlara dahil edilmez.</p>`}
+function paintCat(q){
+  const rows=DB.products.filter(p=>!q||(p.code+p.name+p.cat).toLowerCase().includes(q.toLowerCase()));
+  $('#pfCat').innerHTML=rows.map(p=>`<button class="ctl pick" data-p="${p.id}">${UI.thumb(p.img,true)}
+    <span style="flex:1;min-width:0"><b style="display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)">${esc(p.name)}</b>
+    <small style="font-size:var(--fs-xs);color:var(--ink-3)">${p.code} · ₺${money0(p.price)} · ${p.unit}</small></span>
+    <span style="color:var(--brand);font-weight:700">＋</span></button>`).join('')||'<p class="meta">Sonuç yok.</p>';
+  $$('#pfCat [data-p]').forEach(b=>b.onclick=()=>{addLine(DB.products.find(p=>p.id===b.dataset.p));toast('Ürün satıra eklendi.')});
+}
+
+/* ===========================================================================
+   PANELLER (hepsi sağdan dikey)
+   =========================================================================== */
+function panelCustomer(rec,done){
+  Panel.open({title:rec?'Müşteriyi Düzenle':'Yeni Müşteri',
+    body:`<div id="dup"></div>`+UI.card({title:'Firma Bilgileri',body:`<div class="form">
+      ${UI.field({label:'Firma Adı',name:'name',value:rec?.name||'',wide:true,ph:'Örn. ASELSAN'})}
+      ${UI.field({label:'Yetkili',name:'contact',value:rec?.contact||''})}
+      ${UI.field({label:'Şehir',name:'city',value:rec?.city||''})}
+      ${UI.field({label:'Telefon',name:'phone',value:rec?.phone||''})}
+      ${UI.field({label:'E-posta',name:'email',value:rec?.email||''})}
+      ${UI.field({label:'Vergi No',name:'tax',value:rec?.tax||'',wide:true})}</div>`}),
+    foot:UI.btn({t:'Vazgeç',act:'close'})+UI.btn({t:rec?'Güncelle':'Kaydet ve Bağla',v:'primary',act:'save'})});
+  const get=n=>$(`#pBody [data-f="${n}"]`).value.trim();
+  $('#pBody [data-f="name"]').oninput=e=>{
+    const v=e.target.value.trim().toLowerCase();
+    const hit=v.length>2&&DB.customers.find(c=>c.id!==rec?.id&&(c.name.toLowerCase().includes(v)||v.includes(c.name.toLowerCase())));
+    $('#dup').innerHTML=hit?`<div class="note">⚠ Benzer kayıt bulundu: <b>${esc(hit.name)}</b> (${hit.code}). Mükerrer kayıt olabilir.</div>`:'';
+  };
+  $('#pFoot [data-act="close"]').onclick=Panel.close;
+  $('#pFoot [data-act="save"]').onclick=()=>{
+    const name=get('name'); if(!name) return toast('Firma adı zorunlu.');
+    if(rec){ Object.assign(rec,{name,contact:get('contact'),city:get('city'),phone:get('phone'),email:get('email'),tax:get('tax')}); }
+    else { rec={id:uid(),code:'M-'+String(DB.customers.length+1).padStart(4,'0'),name,contact:get('contact'),
+      city:get('city'),phone:get('phone'),email:get('email'),tax:get('tax')}; DB.customers.push(rec); }
+    save('customers'); Panel.close(); toast('Müşteri kaydedildi.'); done&&done(rec);
+  };
+}
+function panelProduct(done){
+  Panel.open({title:'Hızlı Yeni Ürün',
+    body:UI.card({title:'Ürün Bilgileri',body:`<div class="form">
+      ${UI.field({label:'Ürün Kodu',name:'code'})}${UI.field({label:'Kategori',name:'cat',value:'Genel'})}
+      ${UI.field({label:'Ürün Adı',name:'name',wide:true})}
+      ${UI.field({label:'Birim',name:'unit',opts:UNITS})}${UI.field({label:'Birim Fiyat',name:'price',type:'number',value:'0'})}
+      ${UI.field({label:'KDV %',name:'vat',type:'number',value:'20'})}${UI.field({label:'Görsel (emoji)',name:'img',value:'📦'})}</div>`}),
+    foot:UI.btn({t:'Vazgeç',act:'close'})+UI.btn({t:'Kaydet',v:'primary',act:'save'})});
+  const get=n=>$(`#pBody [data-f="${n}"]`).value;
+  $('#pFoot [data-act="close"]').onclick=Panel.close;
+  $('#pFoot [data-act="save"]').onclick=()=>{
+    const name=get('name').trim(); if(!name) return toast('Ürün adı zorunlu.');
+    const p={id:uid(),code:get('code')||'YNI-'+DB.products.length,name,cat:get('cat'),unit:get('unit'),
+      price:+get('price')||0,vat:+get('vat')||20,img:get('img')||'📦',stock:0};
+    DB.products.push(p); save('products'); Panel.close(); toast('Ürün eklendi.'); done&&done(p);
+  };
+}
+function panelPicker(pick){
+  Panel.open({title:'Ürün Seç',
+    body:`<input class="inp" id="pkq" placeholder="Kod veya ad ara...">`+UI.card({flush:true,body:`<div class="picks" id="pkl" style="max-height:none;padding:var(--sp-3)"></div>`}),
+    foot:UI.btn({t:'Kapat',act:'close'})});
+  $('#pFoot [data-act="close"]').onclick=Panel.close;
+  const paint=(q='')=>{
+    $('#pkl').innerHTML=DB.products.filter(p=>!q||(p.code+p.name).toLowerCase().includes(q.toLowerCase()))
+      .map(p=>`<button class="ctl pick" data-p="${p.id}">${UI.thumb(p.img,true)}
+        <span style="flex:1;min-width:0"><b style="display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)">${esc(p.name)}</b>
+        <small style="font-size:var(--fs-xs);color:var(--ink-3)">${p.code} · ₺${money0(p.price)} · ${p.unit}</small></span>
+        <span style="color:var(--brand);font-weight:700">＋</span></button>`).join('')||'<p class="meta">Sonuç yok.</p>';
+    $$('#pkl [data-p]').forEach(b=>b.onclick=()=>{const p=DB.products.find(x=>x.id===b.dataset.p);Panel.close();pick?pick(p):addLine(p)});
+  };
+  paint(); $('#pkq').oninput=e=>paint(e.target.value);
+}
+
+/* ---------------- Tema Stüdyosu ---------------- */
+function pgTheme(){
+  render(UI.page({title:'Tema Stüdyosu',sub:'Ana tema ve sidebar teması birbirinden bağımsız.'})
+   + UI.card({title:'Görünüm',body:`<div class="form" style="--cols:3;max-width:680px">
+      ${UI.field({label:'Ana Tema',name:'th',opts:[['light','Açık'],['dark','Koyu']],value:document.body.classList.contains('t-dark')?'dark':'light'})}
+      ${UI.field({label:'Sidebar Teması',name:'sb',opts:[['light','Açık'],['dark','Koyu']],value:document.body.classList.contains('sb-dark')?'dark':'light'})}
+      ${UI.field({label:'Ana Renk',name:'col',type:'color',value:store.get('brand','#e11d2a')})}
+    </div><p class="meta" style="margin-top:var(--sp-3)">Tercihler tarayıcıda saklanır.</p>`}));
+  $('[data-f="th"]').onchange=e=>{document.body.classList.toggle('t-dark',e.target.value==='dark');store.set('theme',e.target.value)};
+  $('[data-f="sb"]').onchange=e=>{document.body.classList.toggle('sb-dark',e.target.value==='dark');store.set('sbTheme',e.target.value)};
+  $('[data-f="col"]').oninput=e=>{document.documentElement.style.setProperty('--brand',e.target.value);store.set('brand',e.target.value)};
+}
+
+/* ---------------- boot ---------------- */
+$('#burger').onclick=()=>document.body.classList.toggle('sb-min');
+$('#theme').onclick=()=>{const d=!document.body.classList.contains('t-dark');
+  document.body.classList.toggle('t-dark',d);store.set('theme',d?'dark':'light')};
+$('#new').onclick=()=>go('yeni-teklif');
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#q').focus()}});
+if(store.get('theme')==='dark')document.body.classList.add('t-dark');
+if(store.get('sbTheme')==='dark')document.body.classList.add('sb-dark');
+if(store.get('brand'))document.documentElement.style.setProperty('--brand',store.get('brand'));
+go('dashboard');
+</script>
+</body>
+</html>
