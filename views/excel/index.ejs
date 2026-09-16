@@ -1,0 +1,21 @@
+<% layout('layout') -%>
+<header class="page-head pro-module-hero excel-hub">
+ <div><span class="eyebrow">TOPLU AKTARIM MERKEZİ</span><h1>Excel Müşteri / Ürün İçe ve Dışa Aktarma</h1><p>Şablon indir, mevcut listeyi dışa aktar veya toplu Excel yükle. Ana kayıtlar hard-delete edilmez; aktif/pasif/arşiv mantığı korunur.</p></div>
+ <div class="pro-module-hero__meta"><% if(capabilities.customersExport||capabilities.customersImport){ %><span class="pill">Müşteri: <%=stats.customers%></span><% } %><% if(capabilities.productsExport||capabilities.productsImport){ %><span class="pill">Ürün: <%=stats.products%></span><% } %></div>
+</header>
+<section class="pro-module-page excel-hub">
+ <section class="card pro-module-card soft-delete-note"><b>Veri koruma standardı</b><span>Proforma, müşteri, ürün, fatura ve revizyon kayıtları kesinlikle silinmez. Excel işlemleri mevcut kayıtları kontrollü günceller; ana veri korunur.</span></section>
+ <section class="grid two">
+  <% if(capabilities.customersExport||capabilities.customersImport){ %><article class="card pro-module-card"><div class="card-head"><div><h2>Müşteri Excel Paneli</h2><small>Toplu müşteri yükleme ve dışa aktarma.</small></div><span class="pill"><%=stats.customers%> kayıt</span></div>
+   <p>Önce şablonu indirin, aynı kolonlarla doldurun ve içe aktarın.</p>
+   <% if(capabilities.customersExport){ %><div class="pro-module-actions"><a class="btn btn--sm" href="/customers/import-template.xls">Şablon</a><a class="btn btn--sm btn--soft" href="/customers/export.xls">Dışa Aktar</a></div><% } %>
+   <% if(capabilities.customersImport){ %><form class="excel-upload-strip" method="post" action="/customers/import-excel?_csrf=<%=encodeURIComponent(csrfToken)%>" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><input required type="file" name="excel" accept=".xlsx,.xls,.csv"><button class="btn btn--primary btn--sm">İçe Aktar</button></form><% } %>
+  </article><% } %>
+  <% if(capabilities.productsExport||capabilities.productsImport){ %><article class="card pro-module-card"><div class="card-head"><div><h2>Ürün Excel Paneli</h2><small>Ürün/hizmetleri toplu yükleme ve dışa aktarma.</small></div><span class="pill"><%=stats.products%> kayıt</span></div>
+   <p>Ürün kodu, fiyat, KDV, açıklama ve dosya linkleri aynı formatta yönetilir.</p>
+   <% if(capabilities.productsExport){ %><div class="pro-module-actions"><a class="btn btn--sm" href="/products/import-template.xls">Şablon</a><a class="btn btn--sm btn--soft" href="/products/export.xls">Dışa Aktar</a></div><% } %>
+   <% if(capabilities.productsImport){ %><form class="excel-upload-strip" method="post" action="/products/import-excel?_csrf=<%=encodeURIComponent(csrfToken)%>" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><input required type="file" name="excel" accept=".xlsx,.xls,.csv"><button class="btn btn--primary btn--sm">İçe Aktar</button></form><% } %>
+  </article><% } %>
+ </section>
+ <section class="mini-status-grid"><div><small>Desteklenen dosyalar</small><b>.xlsx / .xls / .csv</b></div><div><small>Önerilen işlem</small><b>Şablon ile aktarım</b></div><div><small>Veri politikası</small><b>Silmeden güncelle</b></div></section>
+</section>

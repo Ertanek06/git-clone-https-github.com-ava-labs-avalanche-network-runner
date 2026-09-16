@@ -1,0 +1,23 @@
+(()=>{
+ const cspNonce=document.currentScript?.nonce||'';
+ const list=document.getElementById('blockList'),hidden=document.getElementById('blockOrder'),form=document.getElementById('templateStudioForm'),mini=document.getElementById('studioMiniPreview');
+ const htmlEditor=document.getElementById('customHtml'),cssEditor=document.getElementById('customCss'),htmlFrame=document.getElementById('htmlLivePreview'),refreshBtn=document.getElementById('refreshHtmlPreview');
+ let blocks=Array.isArray(window.TEMPLATE_BLOCKS)?window.TEMPLATE_BLOCKS:[];
+ const names={header:'Firma Başlığı',customer:'Müşteri Kartı',items:'Ürün Tablosu',totals:'Toplamlar',terms:'Teslimat ve Ödeme',bank:'Banka Bilgileri',signature:'İmza ve Kaşe',footer:'Alt Bilgi'};
+ const save=()=>{if(hidden)hidden.value=JSON.stringify(blocks)};
+ function renderBlocks(){if(!list)return;list.innerHTML='';blocks.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.draggable=true;b.textContent=`↕ ${names[x]||x}`;b.dataset.index=i;b.addEventListener('dragstart',()=>b.classList.add('dragging'));b.addEventListener('dragend',()=>b.classList.remove('dragging'));b.addEventListener('dragover',e=>e.preventDefault());b.addEventListener('drop',e=>{e.preventDefault();const from=Number(list.querySelector('.dragging')?.dataset.index);if(Number.isFinite(from)&&from!==i){const [it]=blocks.splice(from,1);blocks.splice(i,0,it);renderBlocks()}});list.appendChild(b)});save()}
+ function updateMini(){if(!form||!mini)return;const layout=form.elements.namedItem('layout_key')?.value||'classic';const primary=form.elements.namedItem('primary_color')?.value||'#245ba7';const accent=form.elements.namedItem('accent_color')?.value||'#d83238';mini.className='template-mini template-mini--studio layout-'+layout;mini.style.setProperty('--p',primary);mini.style.setProperty('--a',accent);mini.classList.toggle('is-custom-html',!!document.getElementById('useCustomHtml')?.checked)}
+ const demo={
+  '{{DISPLAY_NO}}':'ORNEK-MUSTERI-TEK260001','{{COMPANY_LOGO}}':'<div class="demo-logo">FİRMA LOGOSU</div>','{{COMPANY_NAME}}':'ÖRNEK FİRMA PROFİLİ','{{COMPANY_ADDRESS}}':'Örnek adres / Ankara','{{COMPANY_PHONE}}':'0312 000 00 00','{{COMPANY_EMAIL}}':'info@example.com','{{CUSTOMER_NAME}}':'ÖRNEK MÜŞTERİ A.Ş.','{{CUSTOMER_ADDRESS}}':'Örnek müşteri adresi / İstanbul','{{CUSTOMER_PHONE}}':'0212 000 00 00','{{CUSTOMER_EMAIL}}':'satinalma@example.com',
+  '{{ITEMS_TABLE}}':'<table class="manual-items"><thead><tr><th>No</th><th>Ürün</th><th>Açıklama</th><th>Miktar</th><th>Toplam</th></tr></thead><tbody><tr><td>1</td><td>Örnek Ürün</td><td>Örnek ürün açıklaması</td><td>1</td><td>1.250 EUR</td></tr></tbody></table>',
+  '{{TOTALS_TABLE}}':'<div class="manual-totals"><div><span>Ara toplam</span><b>1.250 EUR</b></div><div class="manual-grand"><span>Genel toplam</span><b>1.500 EUR</b></div></div>',
+  '{{TERMS_BLOCK}}':'<section class="manual-terms"><h3>TESLİMAT, ÖDEME VE GARANTİ KOŞULLARI</h3><p><b>Ödeme:</b> Sipariş ile birlikte %50 peşin.</p><p><b>Teslimat:</b> 4-6 hafta.</p></section>',
+  '{{BANK_BLOCK}}':'<section class="manual-bank"><h3>BANKA HESAP BİLGİLERİ</h3><p>Örnek Banka · EUR IBAN · SWIFT / BIC</p></section>',
+  '{{SIGNATURE_BLOCK}}':'<section class="manual-signatures"><div><b>Teklifi Veren / Yetkili</b><br>Ad Soyad / Unvan</div><div><b>Müşteri Onayı</b><br>Kaşe / İmza</div></section>',
+  '{{FOOTER_BLOCK}}':'<footer class="manual-footer">Örnek adres · info@example.com · 0312 000 00 00</footer>'
+ };
+ const cleanHtml=raw=>String(raw||'').replace(/<script[\s\S]*?<\/script\s*>/gi,'').replace(/<iframe[\s\S]*?<\/iframe\s*>/gi,'').replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,'').replace(/javascript\s*:/gi,'');
+ function renderHtmlPreview(){if(!htmlFrame)return;let html=cleanHtml(htmlEditor?.value||'');Object.entries(demo).forEach(([k,v])=>{html=html.split(k).join(v)});const css=String(cssEditor?.value||'').replace(/<\/?style[^>]*>/gi,'').replace(/@import[\s\S]*?;/gi,'').replace(/javascript\s*:/gi,'');htmlFrame.srcdoc=`<!doctype html><html><head><meta charset="utf-8"><style nonce="${cspNonce}">body{margin:0;padding:12px;font-family:Arial,sans-serif;font-size:11px;color:#14233d}.demo-logo{display:grid;place-items:center;width:120px;height:42px;border:1px dashed #94a3b8;background:#f8fafc;font-weight:800}${css}</style></head><body>${html}</body></html>`}
+ let timer;const schedule=()=>{clearTimeout(timer);timer=setTimeout(renderHtmlPreview,180)};
+ form?.addEventListener('input',()=>{updateMini();schedule()});form?.addEventListener('change',()=>{updateMini();schedule()});refreshBtn?.addEventListener('click',renderHtmlPreview);renderBlocks();updateMini();renderHtmlPreview();
+})();

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const pkg=JSON.parse(read('package.json'));
+assert.equal(pkg.version,'3.8.57');
+assert.match(read('src/config.js'),/v3.8.57-crmv1.45-web-import-upsert-ui-document-fix/);
+assert.match(read('views/quotes/form.ejs'),/quote-lines-toolbar-v11/);
+assert.match(read('views/quotes/form.ejs'),/quoteStickyItemCount/);
+assert.match(read('public/css/app.css'),/crmV13 — Proforma oluştur/);
+assert.match(read('public/css/app.css'),/position:sticky!important/);
+assert.match(read('public/js/quote-form.js'),/Ctrl\+Enter/);
+assert.match(read('public/js/quote-form.js'),/ResizeObserver/);
+console.log('crmV13 contracts 8/8 OK');

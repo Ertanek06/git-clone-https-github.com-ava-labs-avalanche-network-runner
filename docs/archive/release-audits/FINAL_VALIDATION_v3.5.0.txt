@@ -1,0 +1,19 @@
+CRM / ERP EFSANA36 v3.5.0 LOGIN STUDIO WYSIWYG PRO
+
+STATIC_CHECKS=15/15 OK
+JAVASCRIPT_SYNTAX=OK
+BASH_SYNTAX=OK
+EJS_SYNTAX=46/46 OK
+MONEY_CALC_TESTS=4/4 OK
+PERMISSION_DEFAULT_TESTS=4/4 OK
+MIGRATION_TESTS=2/2 OK
+SCHEMA_VERSION=30
+SQLITE_INTEGRITY=OK
+FOREIGN_KEY_ERRORS=0
+LOGIN_STUDIO_STRUCTURE_TESTS=1/1 OK
+LOGIN_MEDIA_SEED_FILES=11/11 OK
+LOGIN_MEDIA_SYNC_INITIAL=11 OK
+LOGIN_MEDIA_TOMBSTONE_RESTORE_PREVENTION=OK
+CSS_PARSE_ERRORS=0
+
+Not: Çalışma ortamındaki DNS kısıtı nedeniyle npm registry bağımlılıklarının tamamı yerel ortamda indirilemedi. Bağımlılık gerektirmeyen tüm kaynak, migration, EJS sözdizimi, medya senkronizasyonu ve paket bütünlüğü testleri çalıştırılmıştır. Hedef sunucudaki update-live.sh, npm ci sonrasında aynı kalite kapılarını yeniden çalıştırır.

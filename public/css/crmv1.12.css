@@ -1,0 +1,123 @@
+/* crmv1.12 — mobile proforma preview: full-height modal, touch scrolling and A4 fit. */
+
+#globalPreviewModal.is-quote-preview-v112 .preview-modal__card{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  overflow:hidden!important;
+}
+#globalPreviewModal.is-quote-preview-v112 #globalPreviewFrame{
+  display:block!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:auto!important;
+  border:0!important;
+  touch-action:pan-x pan-y!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+@media(max-width:760px){
+  #globalPreviewModal.is-quote-preview-v112{
+    align-items:stretch!important;
+    justify-items:stretch!important;
+    padding:0!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__card{
+    width:100vw!important;
+    max-width:100vw!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    padding:0!important;
+    border-radius:0!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__toolbar{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;
+    min-width:0!important;
+    padding:calc(6px + env(safe-area-inset-top)) 7px 6px!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__toolbar>div:first-child{
+    display:flex!important;
+    align-items:center!important;
+    min-width:0!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 #globalPreviewTitle{
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    font-size:12px!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 #globalPreviewHint{display:none!important}
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions{
+    display:flex!important;
+    grid-template-columns:none!important;
+    align-items:center!important;
+    flex-wrap:nowrap!important;
+    gap:5px!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    padding:1px 0 2px!important;
+    scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions::-webkit-scrollbar{display:none!important}
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions .btn,
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions form,
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions form button,
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions .icon-btn{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:max-content!important;
+    min-height:32px!important;
+    margin:0!important;
+    white-space:nowrap!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions .icon-btn{
+    width:34px!important;
+    min-width:34px!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__actions [data-preview-close]{
+    position:absolute!important;
+    z-index:3!important;
+    top:calc(6px + env(safe-area-inset-top))!important;
+    right:7px!important;
+    margin:0!important;
+  }
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__toolbar>div:first-child{padding-right:42px!important}
+}
+
+@media screen and (max-width:760px){
+  html:has(body.embedded-proforma-preview-v112),
+  body.embedded-proforma-preview-v112{
+    min-height:100%!important;
+    height:auto!important;
+    overflow:auto!important;
+    overscroll-behavior:auto!important;
+    touch-action:pan-x pan-y!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  body.embedded-proforma-preview-v112{margin:0!important;padding:6px!important}
+  body.embedded-proforma-preview-v112 #print-pages{
+    display:block!important;
+    transform-origin:top left!important;
+    margin:0 auto!important;
+  }
+  body.embedded-proforma-preview-v112 .print-page{margin:0 0 12px!important}
+}
+
+@media print{
+  body.embedded-proforma-preview-v112 #print-pages{
+    zoom:1!important;
+    width:auto!important;
+    margin:0!important;
+  }
+}

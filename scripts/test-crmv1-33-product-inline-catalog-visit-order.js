@@ -1,0 +1,45 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+const pkg = JSON.parse(read("package.json"));
+const build = JSON.parse(read("BUILD_INFO.json"));
+const products = read("src/routes/products.js");
+const preview = read("views/products/preview.ejs");
+const catalog = read("views/products/catalog-print.ejs");
+const quotes = read("src/routes/quotes.js");
+const sent = read("views/quotes/sent.ejs");
+const app = read("public/js/app.js");
+
+assert.equal(pkg.version, "3.8.57");
+assert.equal(build.build, "crmv1.45");
+assert.equal(build.release, "v3.8.57-crmv1.45-web-import-upsert-ui-document-fix");
+assert.match(quotes, /ORDER BY CASE WHEN verified_last_viewed_at IS NULL THEN 1 ELSE 0 END ASC, verified_last_viewed_at DESC/);
+assert.match(quotes, /quote_view_events[\s\S]*ORDER BY created_at DESC,id DESC/);
+assert.match(sent, /Son ziyaret/);
+assert.match(sent, /verified_last_viewed_at/);
+assert.match(preview, /data-product-edit-toggle/);
+assert.match(preview, /data-product-edit-action/);
+assert.match(preview, /productInlineEditFormV133/);
+assert.match(preview, /data-inline-edit-only/);
+assert.match(preview, /name="sale_price"/);
+assert.match(preview, /field:'brochure'/);
+assert.match(preview, /field:'ce_certificate'/);
+assert.match(preview, /field:'user_manual'/);
+assert.doesNotMatch(preview, /product-preview-editor-v20__head/);
+assert.match(products, /r\.get\("\/:id\/catalog-print"/);
+assert.match(products, /remove_brochure/);
+assert.match(products, /remove_ce_certificate/);
+assert.match(products, /remove_user_manual/);
+assert.match(catalog, /ÜRÜN KATALOĞU/);
+assert.match(catalog, /Ürün Açıklaması/);
+assert.doesNotMatch(catalog, /sale_price|Satış fiyatı|Birim Fiyat/);
+assert.match(app, /productCatalogPrint/);
+assert.match(app, /catalog-print\?auto=1/);
+assert.match(products, /req\.body\.purchase_price !== undefined/);
+assert.match(products, /req\.body\.vat_rate !== undefined/);
+
+console.log("CRMV1.34_PRODUCT_INLINE_CATALOG_VISIT_ORDER=25/25 OK");

@@ -1,0 +1,24 @@
+<% layout('layout') -%>
+<%
+const en=locale==='en';
+const cards=[
+  {visible:can('settings','view'),icon:'🎨',title:en?'Theme & Appearance':'Tema ve Görünüm',desc:en?'Your personal interface, sidebar and icon settings':'Kişisel arayüz, sidebar ve ikon ayarlarınız',href:'/settings/theme'},
+  {visible:can('settings','view'),icon:'🏢',title:en?'Company Profiles':'Firma Profilleri',desc:en?'Company identity, logo, bank, stamp / signature and PDF footer':'Firma kimliği, logo, banka, kaşe / imza ve PDF alt bilgisi',href:'/profiles'},
+  {visible:can('settings','view'),icon:'📄',title:en?'Proforma Templates':'Proforma Şablonları',desc:en?'Structural templates, HTML / CSS studio and live previews':'Yapısal tasarımlar, HTML / CSS stüdyosu ve canlı ön izlemeler',href:'/templates'},
+  {visible:can('settings','admin'),icon:'🔐',title:en?'Login Design':'Login Tasarımı',desc:en?'Login logo, wall image, texts and overlay':'Giriş logosu, duvar görseli, metinler ve koyuluk oranı',href:'/settings/login'},
+  {visible:can('settings','admin'),icon:'⚙️',title:en?'General Operations Settings':'Genel Operasyon Ayarları',desc:en?'Numbering, currency, delivery and payment defaults in one place':'Numaralandırma, döviz, teslimat ve ödeme varsayılanları tek sayfada',href:'/settings/general'},
+  {visible:can('integrations','admin'),icon:'🔌',title:en?'Integrations':'Entegrasyonlar',desc:en?'SMTP, e-mail delivery and invoice connection settings':'SMTP, e-posta gönderimi ve fatura bağlantı ayarları',href:'/integrations'},
+  {visible:can('backups','admin'),icon:'🗄️',title:en?'Backup':'Yedekleme',desc:en?'Protected data export, restore and backup history':'Korumalı veri dışa aktarma, geri yükleme ve yedek geçmişi',href:'/backups'},
+  {visible:can('users','admin'),icon:'👤',title:en?'User Management':'Kullanıcı Yönetimi',desc:en?'Roles, authorization matrix and user accounts':'Roller, yetki matrisi ve kullanıcı hesapları',href:'/users'},
+  {visible:can('audit','view'),icon:'🧾',title:en?'Audit Logs':'İşlem Kayıtları',desc:en?'Operational activity history':'Operasyon hareket geçmişi',href:'/audit'},
+  {visible:['SUPER_ADMIN','TENANT_ADMIN'].includes(user?.role),icon:'🩺',title:en?'System Health':'Sistem Sağlık Merkezi',desc:en?'Database, storage, document tools and backup verification':'Veritabanı, depolama, belge araçları ve yedek doğrulaması',href:'/system-health'}
+].filter(card=>card.visible);
+%>
+<header class="page-head">
+  <div><span class="eyebrow"><%=en?'SYSTEM MANAGEMENT':'SİSTEM YÖNETİMİ'%></span><h1><%=t('settings_center')%></h1><p><%=en?'Only the modules authorized for your account are shown.':'Yalnızca hesabınızın yetkili olduğu modüller gösterilir.'%></p></div>
+</header>
+<section class="settings-grid settings-grid--aligned">
+  <% cards.forEach(card=>{ %>
+    <a class="setting-card" href="<%=card.href%>"><h2><span aria-hidden="true"><%=card.icon%></span><%=card.title%></h2><p><%=card.desc%></p><span><%=en?'Open':'Aç'%> →</span></a>
+  <% }) %>
+</section>

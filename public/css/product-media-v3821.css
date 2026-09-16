@@ -1,0 +1,105 @@
+/*
+ * crmV20 v3821 — gerçek tam ürün görseli yerleşimi
+ * Görsel kutuya göre büyütülür/küçültülür; hiçbir kenar kırpılmaz.
+ */
+
+/* Önceki width:100% kurallarını özellikle geçersiz kıl.
+   Kare/dikey görseller yatay kutuda genişliğe göre büyüyüp alttan kesilmemeli. */
+.line-edit-preview img,
+.quick-product-image-preview img,
+.quote-product-option__thumb img,
+.quote-line-image img,
+.quote-detail-thumb img,
+.import-product-image-box img,
+.product-image-preview img,
+.product-thumb img,
+.thumb img,
+[data-product-image-box] img,
+.product-preview-studio-v20__image img {
+  position:static!important;
+  inset:auto!important;
+  display:block!important;
+  flex:0 1 auto!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:50% 50%!important;
+  margin:auto!important;
+  padding:0!important;
+  transform:none!important;
+  transform-origin:center!important;
+  clip:auto!important;
+  clip-path:none!important;
+  filter:none!important;
+  opacity:1!important;
+  box-sizing:border-box!important;
+}
+
+/* Proforma satırı düzenleme: orijinal kare görselin tamamını gösterecek büyük alan. */
+.line-edit-modal .line-edit-preview-label {
+  min-width:0!important;
+  align-self:start!important;
+}
+.line-edit-modal .line-edit-preview {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:340px!important;
+  min-height:340px!important;
+  max-height:340px!important;
+  margin-top:6px!important;
+  padding:12px!important;
+  overflow:hidden!important;
+  contain:layout paint!important;
+  border:1px dashed color-mix(in srgb,var(--primary,#245ba7) 38%,var(--border,#dbe5f2))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-sizing:border-box!important;
+}
+.line-edit-modal .line-edit-preview > img {
+  width:auto!important;
+  height:auto!important;
+  max-width:calc(100% - 2px)!important;
+  max-height:calc(100% - 2px)!important;
+}
+
+/* Yeni ürün penceresi de aynı şekilde tam görsel gösterir. */
+.quick-product-modal-v16 .quick-product-image-preview {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  contain:layout paint!important;
+  background:#fff!important;
+}
+
+/* Küçük kutularda merkezleme; büyütme uğruna kırpma yok. */
+.quote-product-option__thumb,
+.quote-line-image,
+.quote-detail-thumb,
+.import-product-image-box,
+.product-image-preview,
+.product-thumb,
+.thumb,
+[data-product-image-box] {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  box-sizing:border-box!important;
+}
+
+@media (max-width:760px) {
+  .line-edit-modal .line-edit-preview {
+    height:min(310px,42vh)!important;
+    min-height:min(310px,42vh)!important;
+    max-height:min(310px,42vh)!important;
+  }
+}

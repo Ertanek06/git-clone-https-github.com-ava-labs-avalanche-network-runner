@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const pkg=JSON.parse(read('package.json'));
+const build=JSON.parse(read('BUILD_INFO.json'));
+const preview=read('views/products/preview.ejs');
+assert.equal(pkg.version,'3.8.57');
+assert.equal(build.build,'crmv1.45');
+assert.equal(build.release,'v3.8.57-crmv1.45-web-import-upsert-ui-document-fix');
+assert.match(preview,/product-preview-price-pill-v21/);
+assert.match(preview,/-webkit-text-fill-color:#083b73!important/);
+assert.match(preview,/background:#dcecff!important/);
+assert.match(preview,/\.product-preview-price-v16 \[data-product-display-price\]/);
+console.log('crmv1.45 product price pill contracts: ok');

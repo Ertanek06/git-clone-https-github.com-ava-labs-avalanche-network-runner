@@ -1,0 +1,19 @@
+<% layout('layout') -%>
+<% const modTr={customers:'Müşteriler',products:'Ürünler',quotes:'Proformalar',approvals:'Onaylar',orders:'Siparişler',settings:'Ayarlar',users:'Kullanıcılar',audit:'İşlem Kayıtları'}; const actTr={view:'Gör',create:'Ekle',edit:'Düzenle',archive:'Arşivle',approve:'Onayla',export:'Dışa Aktar',admin:'Yönet'}; const actInfo={view:'Kayıtları görüntüleme yetkisi.',create:'Yeni kayıt oluşturma yetkisi.',edit:'Mevcut kaydı değiştirme yetkisi.',archive:'Kaydı silmeden arşivleme yetkisi.',approve:'Teklif/onay süreçlerinde karar verme yetkisi.',export:'Liste ve rapor dışa aktarma yetkisi.',admin:'Ayar ve yönetim işlemlerine erişim yetkisi.'}; const roleInfo={SUPER_ADMIN:'Sistem sahibi. Tüm yetkiler zorunlu açık kalır.',TENANT_ADMIN:'Firma yöneticisi. Operasyon ve kullanıcı yönetimi yapabilir.',STAFF:'Satış/operasyon kullanıcısı. Kayıt oluşturur ve düzenler.',VIEWER:'Salt okuma kullanıcısı. Değişiklik yapamaz.'}; %>
+<header class="page-head"><div><span class="eyebrow">YETKİ YÖNETİMİ</span><h1>Rol ve Yetki Matrisi</h1><p>Modül bazlı yetkileri sade kartlardan yönetin. Başlıklara gelince açıklama görünür.</p></div><a class="btn" href="/users">Kullanıcılar</a></header>
+<form class="permission-panel" method="post" action="/users/permissions"><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+  <section class="permission-info card"><b>Kısa bilgi</b><span>Yetkiler modül bazlı tutulur. SUPER_ADMIN her zaman tam yetkilidir. Değişiklikler işlem kayıtlarına düşer.</span></section>
+  <div class="permission-role-grid">
+  <% Object.keys(matrix).forEach((role,idx)=>{ %>
+    <details class="card permission-role-card" <%=idx<2?'open':''%>><summary><div><b title="<%=roleInfo[role]||''%>"><%=role%></b><small><%=roleInfo[role]||''%></small></div><span><%=modules.reduce((a,m)=>a+(matrix[role]?.[m]||[]).length,0)%> yetki</span></summary>
+      <div class="permission-mini-table">
+        <div class="permission-mini-head"><span>Modül</span><span>Yetkiler</span></div>
+        <% modules.forEach(m=>{ const list=matrix[role]?.[m]||[]; %>
+          <div class="permission-mini-row"><b title="<%=modTr[m]||m%>"><%=modTr[m]||m%></b><div class="permission-checks"><% actions.forEach(a=>{ %><label title="<%=actInfo[a]||a%>"><input type="checkbox" name="<%=role%>[<%=m%>][]" value="<%=a%>" <%=list.includes(a)?'checked':''%> <%=role==='SUPER_ADMIN'?'disabled checked':''%>><span><%=actTr[a]||a%></span></label><% }) %></div></div>
+        <% }) %>
+      </div>
+    </details>
+  <% }) %>
+  </div>
+  <div class="sticky-save permission-save"><span>Değişiklikleri kaydetmeden çıkarsanız yetkiler uygulanmaz.</span><button class="btn btn--primary">Matrisi Kaydet</button></div>
+</form>

@@ -1,0 +1,20 @@
+<%
+ const sortPart=typeof sort==='string'&&sort?`&sort=${encodeURIComponent(sort)}`:'';
+ const statusPart=typeof status==='string'&&status?`&status=${encodeURIComponent(status)}`:'';
+ const filterPart=typeof filter==='string'&&filter&&filter!=='all'?`&filter=${encodeURIComponent(filter)}`:'';
+ const flowPart=typeof flow==='string'&&flow&&flow!=='all'?`&flow=${encodeURIComponent(flow)}`:'';
+ const allMode=typeof showAll!=='undefined'&&Boolean(showAll);
+ const currentPage=typeof page!=='undefined'?Math.max(1,Number(page)||1):1;
+ const pageLimit=typeof limit!=='undefined'?Math.max(1,Number(limit)||30):30;
+ const pageTotal=typeof total!=='undefined'?Math.max(0,Number(total)||0):0;
+ const pageCount=Math.max(1,Math.ceil(pageTotal/pageLimit));
+ const base=`?q=${encodeURIComponent(typeof q!=='undefined'?(q||''):'')}&limit=${encodeURIComponent(pageLimit)}${sortPart}${statusPart}${filterPart}${flowPart}`;
+%>
+<nav class="pager pager--v17" aria-label="Sayfalama">
+ <span>Toplam: <b><%=pageTotal%></b><% if(allMode){ %> · tüm kayıtlar gösteriliyor<% }else if(pageTotal){ %> · Sayfa <b><%=currentPage%>/<%=pageCount%></b><% } %></span>
+ <div class="pager__actions">
+  <% if(!allMode&&currentPage>1){ %><a class="btn btn--sm btn--soft" href="<%=base%>&page=<%=currentPage-1%>" rel="prev">‹ Önceki</a><% } %>
+  <% if(!allMode&&currentPage<pageCount){ %><a class="btn btn--sm btn--soft" href="<%=base%>&page=<%=currentPage+1%>" rel="next">Sonraki ›</a><% } %>
+  <% if(allMode){ %><a class="btn btn--sm btn--soft" href="<%=base%>">Sayfalı Göster</a><% }else if(pageTotal>pageLimit){ %><a class="btn btn--sm btn--primary" href="<%=base%>&show=all">Tümünü Göster (<%=pageTotal%>)</a><% } %>
+ </div>
+</nav>

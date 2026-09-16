@@ -1,0 +1,44 @@
+<% layout('layout') -%>
+<%
+ const statusLabel={QUEUED:'Sırada',RUNNING:'Taranıyor',SCANNING:'Taranıyor',IMPORTING:'CRM’e Aktarılıyor',READY:'Kontrole Hazır',IMPORTED:'CRM’e Aktarıldı',SAVED:'CRM’e Aktarıldı',AUTO_NEW_SYNC:'Otomatik yeni ürün',AUTO_PRICE_SYNC:'Otomatik fiyat güncelleme',AUTO_ERROR:'Otomatik senkron hatası',ERROR:'Hata',CANCELLED:'Durduruldu'};
+ const stageLabel={queued:'Hazırlanıyor',discover:'Kaynak keşfi',sitemap:'Sitemap taraması',crawl:'Site taraması',probe:'Ürün sayfası doğrulama',analyze:'Ürün analizi',import:'CRM’e aktarım',ready:'Kontrol tablosu hazır',imported:'CRM’e aktarıldı',error:'Hata',cancelled:'Durduruldu'};
+ const fmt=(v)=>v?new Date(Number(v)).toLocaleString('tr-TR'):'-';
+%>
+<header class="page-head pro-headline">
+  <div><span class="eyebrow">🌐 WEB ÜRÜN TARAMASI</span><h1>Tarama / Aktarım Geçmişi</h1><p>Devam eden, tamamlanan ve hatalı taramaların gerçek durumunu buradan takip edin. Sayfadan çıksanız bile çalışan taramaya geri dönebilirsiniz.</p></div>
+  <div class="row-actions"><form method="post" action="/products/import-web/history-cleanup"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--sm btn--soft" type="submit" data-confirm="30 günden eski geçici tarama dosyaları temizlensin mi? Kalıcı aktarım sayaçları korunur.">Geçici Dosyaları Temizle</button></form><a class="btn btn--sm" href="/products/import-web">← Tarama Merkezi</a></div>
+</header>
+<section class="card web-history-card">
+  <% if(!(history||[]).length){ %><div class="empty-state"><b>Henüz tarama kaydı yok.</b><span>Bir web sitesi taraması başlattığınızda işlem burada görünecek.</span></div><% } else { %>
+  <div class="table-scroll"><table class="lined web-history-table"><thead><tr><th>Başlangıç</th><th>Kaynak</th><th>Durum / Aşama</th><th>İlerleme</th><th>Bulunan / Analiz</th><th>Son hareket</th><th>Sonuç</th><th>İşlem</th></tr></thead><tbody>
+  <% history.forEach(h=>{ const running=['QUEUED','RUNNING','SCANNING','IMPORTING'].includes(h.live_status); const ready=['READY','IMPORTED','SAVED'].includes(h.live_status); %>
+    <tr class="web-history-row <%=running?'is-running':''%> <%=h.live_status==='ERROR'?'is-error':''%>">
+      <td><b><%=fmt(h.started_at||h.created_at)%></b><small>ID: <%=h.job_id?h.job_id.slice(0,10):h.id.slice(0,10)%></small></td>
+      <td><b><%=h.source_name||'Web sitesi'%></b><small><%=h.base_url||'-'%></small></td>
+      <td><span class="web-history-status s-<%=String(h.live_status||'').toLowerCase()%>"><%=statusLabel[h.live_status]||h.live_status||'-'%></span><small><%=stageLabel[h.stage]||h.stage||'-'%></small></td>
+      <td>
+        <% if(h.progress==null && running){ %><div class="web-history-live"><span></span><em>Canlı keşif</em></div>
+        <% } else { const progressValue=Math.max(0,Math.min(100,Number(h.progress||0))); %><progress class="web-history-progress" max="100" value="<%=progressValue%>" aria-label="Tarama ilerlemesi"><%=progressValue%>%</progress><small><%=progressValue%>%</small><% } %>
+      </td>
+      <td><b><%=Number(h.discovered_count||0)%> ürün</b><small><%=Number(h.analyzed_count||0)%> analiz · <%=Number(h.warning_count||0)%> uyarı</small></td>
+      <td><b><%=fmt(h.updated_at)%></b><small><%=h.completed_at?'Bitiş: '+fmt(h.completed_at):'İşlem devam ediyor'%></small></td>
+      <td>
+        <% if(h.live_status==='IMPORTED'||h.live_status==='SAVED'){ %><div class="web-history-result"><b class="is-new">＋ <%=Number(h.added_count||0)%> yeni</b><b class="is-update">↻ <%=Number(h.updated_count||0)%> güncellendi</b><small><%=Number(h.skipped_count||0)%> atlandı</small></div>
+        <% } else if(h.error){ %><span class="web-history-error"><%=h.error%></span>
+        <% } else if(ready){ %><b>Kontrol tablosu hazır</b><small>CRM’e kaydetmeden önce inceleyebilirsiniz.</small>
+        <% } else { %><span class="muted">Canlı veri bekleniyor</span><% } %>
+      </td>
+      <td class="web-history-actions">
+        <% if(h.open_url){ %><a class="btn btn--sm <%=running?'btn--primary':'btn--soft'%>" href="<%=h.open_url%>"><%=running?'Canlı Durumu Aç':ready?'Sonuçları Aç':'Detayı Aç'%></a><% } %>
+        <% if(running && h.job_id && h.live_status!=='IMPORTING'){ %><form method="post" action="/products/import-web/scan/<%=h.job_id%>/cancel"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--sm btn--danger" type="submit" data-confirm="Bu tarama durdurulsun mu?">Durdur</button></form><% } %>
+        <% if(['ERROR','CANCELLED'].includes(h.live_status)&&h.job_id){ %><form method="post" action="/products/import-web/scan/<%=h.job_id%>/retry"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--sm btn--primary" type="submit">Kaldığı Yerden Devam Et</button></form><% } %>
+        <% if(!running){ %><form method="post" action="/products/import-web/history/<%=h.id%>/delete"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--sm btn--danger" type="submit" data-confirm="Bu tarama geçmişi ve geçici sonuç dosyaları silinsin mi?">Sil</button></form><% } %>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody></table></div>
+  <% } %>
+</section>
+<style nonce="<%=cspNonce%>">
+.web-history-card{padding:0}.pro-headline>.row-actions{flex:0 0 auto!important;max-width:none!important}.pro-headline>.row-actions .btn,.web-history-actions .btn{max-width:none!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important}.web-history-table{min-width:1280px}.web-history-table td{vertical-align:middle}.web-history-table small{display:block;color:var(--muted);margin-top:4px;line-height:1.3}.web-history-row.is-running{background:#f8fbff}.web-history-row.is-error{background:#fff8f8}.web-history-status{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900}.web-history-status.s-running,.web-history-status.s-scanning,.web-history-status.s-queued,.web-history-status.s-importing{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.web-history-status.s-ready{background:#ecfdf5;color:#166534;border-color:#86efac}.web-history-status.s-imported,.web-history-status.s-saved{background:#f0fdf4;color:#166534;border-color:#86efac}.web-history-status.s-error{background:#fff1f2;color:#b91c1c;border-color:#fecaca}.web-history-status.s-cancelled{background:#f8fafc;color:#475569}.web-history-progress{display:block;width:120px;height:9px;border:0;border-radius:999px;overflow:hidden;background:var(--soft);appearance:none;-webkit-appearance:none}.web-history-progress::-webkit-progress-bar{background:var(--soft);border:1px solid var(--line);border-radius:999px}.web-history-progress::-webkit-progress-value{background:var(--primary);border-radius:999px}.web-history-progress::-moz-progress-bar{background:var(--primary);border-radius:999px}.web-history-live{display:flex;align-items:center;gap:7px}.web-history-live span{width:9px;height:9px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 0 rgba(22,163,74,.45);animation:webPulse 1.3s infinite}.web-history-live em{font-style:normal;font-size:11px;font-weight:800;color:#166534}.web-history-result{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.web-history-result b{padding:4px 7px;border-radius:8px;font-size:10px}.web-history-result .is-new{background:#ecfdf5;color:#166534}.web-history-result .is-update{background:#eff6ff;color:#1d4ed8}.web-history-error{display:block;max-width:260px;color:#b91c1c;font-size:11px;line-height:1.35}.web-history-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-width:270px}.web-history-actions form{margin:0}@keyframes webPulse{70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+</style>

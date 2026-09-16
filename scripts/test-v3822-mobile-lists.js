@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=p=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
+const layout=read('views/layout.ejs');
+const css=read('public/css/mobile-lists-v3822.css');
+const assetBuild=read('scripts/build-assets.js');
+assert.match(layout,/assetBundle\.styles/);
+assert.match(assetBuild,/mobile-lists-v3822\.css/);
+assert.match(css,/@media \(max-width: 760px\)/);
+assert.match(css,/table\[data-mobile-cards\] tbody tr[\s\S]*height: auto !important/);
+assert.match(css,/td\.is-column-hidden-v3817/);
+assert.match(css,/\.product-table tbody td:nth-child\(4\) \{ order: 1; \}/);
+assert.match(css,/\.customer-table tbody td:nth-child\(3\) \{ order: 1; \}/);
+assert.match(css,/\.quotes-table tbody td:nth-child\(2\) \{ order: 1; \}/);
+assert.match(css,/\.product-form-modern \.asset-upload[\s\S]*grid-column: 1 !important/);
+assert.match(css,/object-fit: contain !important/);
+console.log('v3.8.25 mobile list contracts 9\/9 OK');

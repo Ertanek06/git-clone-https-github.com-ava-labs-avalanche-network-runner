@@ -1,0 +1,47 @@
+CRM / ERP EFSANA36 v3.4.0 — FINAL DOĞRULAMA RAPORU
+Tarih: 2026-07-15
+
+1) STATİK KALİTE KAPISI
+- Tüm src/public JavaScript dosyaları: node --check BAŞARILI
+- Tüm Bash dosyaları: bash -n BAŞARILI
+- 46/46 EJS şablonu: delimiter ve çıkarılmış JavaScript söz dizimi BAŞARILI
+- Sahte href="#" kontrolü: BAŞARILI
+- .env / SQLite / WAL / SHM paket kalıntısı kontrolü: BAŞARILI
+- Dahili/erişilemeyen NPM registry URL kontrolü: BAŞARILI
+- Multipart CSRF kontrolü: BAŞARILI
+- Eski UI marka metni kontrolü: BAŞARILI
+
+2) VERİTABANI
+- Temiz kurulum migration testi: BAŞARILI
+- Eski/uyumluluk kolonları bulunan DB üzerinde yükseltme testi: BAŞARILI
+- Son şema sürümü: 30
+- PRAGMA integrity_check: OK
+- PRAGMA foreign_key_check: 0 hata
+
+3) İŞ KURALLARI
+- Para/kuruş hesabı testleri: 4/4 BAŞARILI
+- Varsayılan izin matrisi güvenlik testleri: 4/4 BAŞARILI
+- Audit hard-delete kalıbı: BULUNMADI
+- SMTP rejectUnauthorized:false kalıbı: BULUNMADI
+- DB dosyasını copyFileSync ile yedekleme kalıbı: BULUNMADI
+- Hassas runtime dosyası: BULUNMADI
+
+4) OPERASYON
+- Online SQLite backup, integrity, foreign key ve SHA-256 doğrulaması kodlandı.
+- Shared veri/yedek/private upload dizinleri release dışına alındı.
+- Health kontrollü güncelleme ve önceki release’e otomatik dönüş kodlandı.
+- systemd servis kurulumu, otomatik restart ve graceful SIGTERM desteği kodlandı.
+- Günlük backup ve canlı destek saklama politikası cron kurulumu kodlandı.
+
+5) PAKET SINIRLAMASI
+Bu çalışma ortamındaki global NPM/ağ yönlendirmesi paket tarball isteklerini erişilemeyen dahili Artifactory adresine çevirdiği için npm ci tamamlanamadı. Bu nedenle gerçek Express sunucusu, native better-sqlite3, SMTP ve tarayıcı/PDF akışları bu konteynerde başlatılamadı. package-lock.json genel registry.npmjs.org URL’leriyle kontrol edildi. Hedef sunucuda aşağıdaki kapı zorunludur:
+
+  npm ci
+  npm run check
+  npm test
+  npm run migrate
+  npm start
+  curl -fsS http://127.0.0.1:3120/health
+
+6) CANLIYA GEÇİŞ KARARI
+Kod, paket, migration ve statik güvenlik kontrolleri BAŞARILI. İlk canlı geçişte rol bazlı tarayıcı testi, SMTP sertifika testi, örnek backup/restore tatbikatı ve tüm proforma şablonlarında A4 baskı kontrolü uygulanmalıdır.

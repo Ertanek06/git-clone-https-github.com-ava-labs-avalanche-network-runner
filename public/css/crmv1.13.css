@@ -1,0 +1,63 @@
+/* crmv1.25 preview recovery — native scrolling, no full-surface loading covers. */
+.customer-preview-page .customer-inline-preview{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.customer-preview-page .customer-inline-preview>header{position:relative!important;z-index:2!important}
+.customer-preview-page #customerInlinePreviewClose{
+  display:grid!important;place-items:center!important;
+  width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;
+  padding:0!important;border:1px solid #9ec7ef!important;border-radius:10px!important;
+  background:#eaf4ff!important;color:#155a9f!important;font-size:22px!important;font-weight:900!important;
+  line-height:1!important;opacity:1!important;
+}
+.customer-preview-page #customerInlinePreviewFrame{
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  height:min(72vh,760px)!important;min-height:460px!important;max-height:none!important;
+  margin:0!important;border:0!important;overflow:auto!important;background:#e8edf3!important;
+  touch-action:pan-x pan-y!important;-webkit-overflow-scrolling:touch!important;
+}
+.customer-preview-page .customer-inline-preview.is-loading-v114>header::after,
+#globalPreviewModal.is-preview-loading-v114 .preview-modal__toolbar::after{
+  content:"Yükleniyor…";display:inline-flex;align-items:center;justify-content:center;
+  min-height:24px;padding:3px 9px;border:1px solid #c9d8ea;border-radius:999px;
+  background:#f8fbff;color:#334155;font:700 11px/1.2 system-ui,sans-serif;white-space:nowrap;
+}
+#globalPreviewModal .preview-modal__card{position:relative}
+#globalPreviewModal #globalPreviewFrame{overflow:auto!important;touch-action:pan-x pan-y!important;-webkit-overflow-scrolling:touch!important}
+#globalPreviewModal.is-preview-loading-v113 .preview-modal__card::after,
+#globalPreviewModal.is-preview-loading-v113 .preview-modal__card::before,
+.customer-preview-page .customer-inline-preview.is-loading-v113::after{content:none!important;display:none!important}
+#globalPreviewModal.is-preview-loading-v113 #globalPreviewFrame,
+.customer-preview-page .customer-inline-preview.is-loading-v113 #customerInlinePreviewFrame{visibility:visible!important}
+#globalPreviewModal .preview-modal__actions [data-preview-close]{
+  display:inline-grid!important;place-items:center!important;width:36px!important;min-width:36px!important;
+  height:36px!important;min-height:36px!important;padding:0!important;border:1px solid #f0a4aa!important;
+  border-radius:10px!important;background:#fff0f1!important;color:#b42318!important;opacity:1!important;
+  visibility:visible!important;font-family:Arial,sans-serif!important;font-size:24px!important;font-weight:900!important;
+  line-height:1!important;text-indent:0!important;box-shadow:0 2px 8px rgba(180,35,24,.14)!important;
+}
+
+@media(max-width:760px){
+  .customer-preview-page .customer-inline-preview:not([hidden]){
+    position:fixed!important;inset:0!important;z-index:10000!important;
+    display:grid!important;grid-template-rows:auto minmax(0,1fr)!important;
+    width:100%!important;max-width:100%!important;height:100dvh!important;max-height:100dvh!important;
+    margin:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#e8edf3!important;
+  }
+  .customer-preview-page .customer-inline-preview>header{
+    min-height:48px!important;padding:6px 8px!important;background:#fff!important;
+  }
+  .customer-preview-page .customer-inline-preview>header strong{
+    min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:13px!important;
+  }
+  .customer-preview-page #customerInlinePreviewFrame{
+    width:100vw!important;height:100%!important;min-height:0!important;overflow:auto!important;background:#e8edf3!important;
+  }
+  .customer-preview-page .customer-inline-preview.is-loading-v114>header::after{font-size:10px;padding:2px 7px}
+  #globalPreviewModal.is-preview-loading-v114 .preview-modal__toolbar::after{position:absolute;left:50%;bottom:4px;transform:translateX(-50%)}
+}

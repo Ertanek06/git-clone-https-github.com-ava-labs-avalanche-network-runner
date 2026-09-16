@@ -1,0 +1,14 @@
+import fs from "fs";
+import assert from "assert";
+const read=(p)=>fs.readFileSync(new URL("../"+p,import.meta.url),"utf8");
+const pkg=JSON.parse(read("package.json"));
+const build=JSON.parse(read("BUILD_INFO.json"));
+const view=read("views/products/import-web-history.ejs");
+assert.equal(pkg.version,"3.8.57");
+assert.equal(build.build,"crmv1.45");
+assert.equal(build.release,"v3.8.57-crmv1.45-web-import-upsert-ui-document-fix");
+assert.doesNotMatch(view,/<(?!%)[a-z][^>]*\sstyle\s*=/i);
+assert.match(view,/<progress class="web-history-progress"[\s\S]*max="100"[\s\S]*value="<%=progressValue%>"/);
+assert.match(view,/::-webkit-progress-value/);
+assert.match(view,/::-moz-progress-bar/);
+console.log("CRMV1_38_WEB_HISTORY_CSP=6\/6 OK");

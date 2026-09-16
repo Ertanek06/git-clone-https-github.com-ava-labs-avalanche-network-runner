@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const pkg=JSON.parse(read('package.json'));
+assert.equal(pkg.version,'3.8.57');
+const css=read('public/css/app.css');
+const js=read('public/js/quote-form.js');
+const view=read('views/quotes/form.ejs');
+assert.match(css,/quick-product-modal-open/);
+assert.match(css,/background-color:#ffffff!important/);
+assert.match(css,/quick-product-modal-v16\.is-open > \.modal-card\.quick-product-modal-card-v16/);
+assert.match(css,/opacity:1!important/);
+assert.match(css,/overflow-y:auto!important/);
+assert.match(js,/document\.body\.appendChild\(modal\)/);
+assert.match(js,/quick-product-modal-open/);
+assert.match(view,/aria-modal="true"/);
+assert.match(view,/quickProductModalTitle/);
+console.log('crmV19 contracts 10\/10 OK');

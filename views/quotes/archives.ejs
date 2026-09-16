@@ -1,0 +1,91 @@
+<% layout('layout') -%>
+<% const snap=raw=>{try{return JSON.parse(raw||'{}')}catch{return {}}}; %>
+<header class="page-head">
+  <div>
+    <span class="eyebrow">PROFORMA / ARŞİV</span>
+    <h1>Arşivlenen Proformalar</h1>
+    <p>Arşivlenen kayıtlar burada tutulur. Gerekirse arşivden çıkarıp listeye geri alabilirsiniz.</p>
+  </div>
+  <div class="row-actions"><a class="btn" href="/quotes">← Proforma Listesi</a></div>
+</header>
+
+<form class="filterbar" method="get">
+  <input name="q" value="<%=q||''%>" placeholder="Teklif no, müşteri, sipariş no veya konu ara">
+  <button class="btn btn--primary">Ara</button>
+</form>
+
+<form id="archiveBulkForm" method="post" action="/quotes/archives/bulk-hide" data-confirm="Seçili arşiv kayıtları listeden kaldırılsın mı? Ana proforma verisi silinmez.">
+  <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+  <div class="bulk-toolbar">
+    <label class="checkline"><input type="checkbox" data-check-all data-target-form="archiveBulkForm"> Tümünü seç</label>
+    <button class="btn btn--danger btn--sm" type="submit" data-requires-selection="archiveBulkForm" disabled>🗑 Seçilileri Listeden Kaldır</button>
+    <span class="muted"><b data-selection-count="archiveBulkForm">0</b> kayıt seçildi</span>
+  </div>
+</form>
+
+<section class="card table-scroll list-table-card">
+    <table class="lined quotes-table pro-table archive-table archive-table-v71">
+      <colgroup>
+        <col data-csp-style="width:34px">
+        <col data-csp-style="width:130px">
+        <col>
+        <col data-csp-style="width:86px">
+        <col data-csp-style="width:106px">
+        <% if(canSeeFinancials){ %>
+          <col data-csp-style="width:94px">
+          <col data-csp-style="width:110px">
+        <% } %>
+        <col data-csp-style="width:112px">
+        <col data-csp-style="width:158px">
+      </colgroup>
+      <thead>
+        <tr>
+          <th><span class="sr-only">Seç</span></th>
+          <th>No</th>
+          <th>Müşteri</th>
+          <th>Tarih</th>
+          <th>Son Durum</th>
+          <% if(canSeeFinancials){ %><th>Ödeme</th><th>Toplam</th><% } %>
+          <th>Arşiv Tarihi</th>
+          <th class="actions-col actions-col--4">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if(!rows.length){ %>
+          <tr><td colspan="<%=canSeeFinancials?9:7%>" class="empty">Arşivlenmiş proforma bulunamadı.</td></tr>
+        <% } %>
+        <% rows.forEach(qt=>{const c=snap(qt.customer_snapshot_json),p=snap(qt.profile_snapshot_json),d=quoteDisplayNo(qt,p); %>
+          <tr>
+            <td><input type="checkbox" name="ids" value="<%=qt.id%>" form="archiveBulkForm" aria-label="<%=d%> kaydını seç"></td>
+            <td><b><%=d%></b><% if(qt.order_no){ %><small class="block">Sipariş: <%=qt.order_no%></small><% } %></td>
+            <td><%=c.company_name||'-'%></td>
+            <td><%=qt.quote_date||'-'%></td>
+            <td>
+              <span class="tag <%=statusClass(qt.status)%>"><%=statusLabel(qt.status)%></span>
+              <% if(qt.order_status&&qt.order_status!=='NONE'){ %><small class="block"><%=statusLabel(qt.order_status)%></small><% } %>
+            </td>
+            <% if(canSeeFinancials){ %>
+              <td><span class="tag <%=statusClass(qt.payment_status)%>"><%=statusLabel(qt.payment_status)%></span></td>
+              <td><b><%=Number(qt.grand_total||0).toFixed(2)%> <%=qt.currency%></b></td>
+            <% } %>
+            <td><%=qt.deleted_at?new Date(Number(qt.deleted_at)).toLocaleString('tr-TR'):'-'%></td>
+            <td class="actions-cell actions-cell--4">
+              <div class="table-action-list table-action-list--dense">
+                <button type="button" class="table-action is-preview" data-label="Ön İzle" title="Ön İzle" aria-label="<%=d%> kaydını ön izle" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=qt.id%>/preview" data-preview-open="/quotes/<%=qt.id%>/print"><%- include('../partials/table-action-icon',{iconName:'preview'}) %></button>
+                <a class="table-action is-print" href="/quotes/<%=qt.id%>/print" target="_blank" rel="noopener" data-label="PDF" title="PDF" aria-label="<%=d%> PDF belgesini aç"><%- include('../partials/table-action-icon',{iconName:'print'}) %></a>
+                <form method="post" action="/quotes/<%=qt.id%>/restore" data-confirm-submit="1" data-confirm-title="Arşivden çıkarılsın mı?" data-confirm-message="Bu proforma tekrar aktif listeye alınacaktır. Onaylıyor musunuz?" data-confirm-ok="Evet, Geri Al">
+                  <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                  <button class="table-action is-success" type="submit" data-label="Arşivden Çıkar" title="Arşivden Çıkar" aria-label="<%=d%> kaydını arşivden çıkar"><%- include('../partials/table-action-icon',{iconName:'restore'}) %></button>
+                </form>
+                <form method="post" action="/quotes/<%=qt.id%>/archive-hide" data-confirm="Bu arşiv kaydı listeden kaldırılsın mı? Ana proforma verisi veritabanında korunur.">
+                  <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                  <button class="table-action is-delete" type="submit" data-label="Listeden Kaldır" title="Listeden Kaldır" aria-label="<%=d%> arşiv kaydını listeden kaldır"><%- include('../partials/table-action-icon',{iconName:'delete'}) %></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+</section>
+<%- include('../partials/pager',{q,page,limit,total,sort:'',showAll:typeof showAll!=='undefined'&&showAll}) %>

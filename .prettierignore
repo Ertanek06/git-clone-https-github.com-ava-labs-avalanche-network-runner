@@ -1,0 +1,7 @@
+node_modules/
+public/build/
+data/
+backups/
+private-uploads/
+shared/
+src/vendor/

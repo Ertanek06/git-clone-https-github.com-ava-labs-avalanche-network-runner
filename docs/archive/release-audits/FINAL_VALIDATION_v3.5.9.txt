@@ -1,0 +1,23 @@
+ARTEVA CRM/ERP v3.5.9 FINAL VALIDATION
+========================================
+
+Version: 3.5.9
+Release: v3.5.9-excel-import-whatsapp-window-theme-studio
+Schema: 34 (unchanged)
+
+PASSED
+- JavaScript syntax checks
+- Bash syntax checks
+- EJS delimiter/static template checks
+- Upload extension + magic-byte contract checks
+- Separate WhatsApp popup-window contract
+- Theme/Login-Studio skeleton and live-preview contract
+- V359 contract suite: 25/25
+- Real XLSX workbook parser: product extraction, Turkish number parsing, currency mapping
+- Strict empty workbook behavior: NO_PRODUCT_ROWS / HTTP 422, no temporary blank product
+- V359 Excel parser suite: 8/8
+
+ENVIRONMENT NOTE
+- The isolated build environment could not complete a full npm ci because one indirect registry package was not cached.
+- Source/static suites and the real XLSX parser integration test completed successfully.
+- The live update script performs npm ci on the target server before restart and health verification.

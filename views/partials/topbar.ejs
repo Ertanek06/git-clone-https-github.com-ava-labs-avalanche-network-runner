@@ -1,0 +1,32 @@
+<header class="topbar" data-responsive-topbar>
+  <button class="icon-btn topbar__hamburger" type="button" data-sidebar-toggle aria-label="<%=locale==='en'?'Open/close menu':'Menüyü aç/kapat'%>">☰</button>
+  <button class="icon-btn mobile-back-btn global-page-back-v13" type="button" data-mobile-back data-fallback="/" title="<%=locale==='en'?'Back':'Geri'%>" aria-label="<%=locale==='en'?'Back':'Geri'%>" <%=path==='/'||path==='/dashboard'?'hidden':''%>>←</button>
+  <nav class="locale-flags" aria-label="<%=t('language')%>"><a class="locale-flag <%=locale==='tr'?'is-active':''%>" href="/settings/locale/tr?next=<%=encodeURIComponent(path||'/')%>" title="Türkçe" <%=locale==='tr'?'aria-current="page"':''%>><img src="/public/flags/tr.svg" alt=""><b>TR</b></a><a class="locale-flag <%=locale==='en'?'is-active':''%>" href="/settings/locale/en?next=<%=encodeURIComponent(path||'/')%>" title="English" <%=locale==='en'?'aria-current="page"':''%>><img src="/public/flags/gb.svg" alt=""><b>EN</b></a></nav>
+  <a class="icon-btn mobile-topbar-home mobile-topbar-home-v13" href="/" title="<%=locale==='en'?'Home':'Ana Sayfa'%>" aria-label="<%=locale==='en'?'Home':'Ana Sayfa'%>">⌂</a>
+  <div class="ui-zoom-controls" aria-label="<%=locale==='en'?'Interface scale':'Arayüz ölçeği'%>"><button type="button" class="ui-zoom-btn" data-ui-zoom="out" title="<%=locale==='en'?'Zoom out':'Arayüzü küçült'%>">−</button><button type="button" class="ui-zoom-label" data-ui-zoom="reset" title="<%=locale==='en'?'Default scale: 100%':'Varsayılan ölçek: %100'%>" data-ui-zoom-label>100%</button><button type="button" class="ui-zoom-btn" data-ui-zoom="in" title="<%=locale==='en'?'Zoom in':'Arayüzü büyüt'%>">＋</button></div>
+  <div class="topbar__pills topbar__live-info">
+    <span class="pill pill--date" title="<%=locale==='en'?'Current date':'Güncel tarih'%>"><i>📅</i><b data-live-date><%=new Date().toLocaleDateString(locale==='en'?'en-GB':'tr-TR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'})%></b></span>
+    <span class="pill pill--time" title="<%=locale==='en'?'Current time':'Güncel saat'%>"><i>🕒</i><b data-live-time><%=new Date().toLocaleTimeString(locale==='en'?'en-GB':'tr-TR',{hour:'2-digit',minute:'2-digit'})%></b></span>
+    <span class="pill pill--currency pill--eur" title="Euro / TL"><i>💶</i><span>Euro</span><b data-eur>—</b></span>
+    <span class="pill pill--currency pill--usd" title="Dolar / TL"><i>💵</i><span><%=locale==='en'?'USD':'Dolar'%></span><b data-usd>—</b></span>
+  </div>
+  <div class="topbar__right" data-topbar-actions>
+    <details class="topbar-search" data-topbar-search>
+      <summary class="icon-btn topbar-search__toggle" title="<%=locale==='en'?'Global Search':'Genel Arama'%>" aria-label="<%=locale==='en'?'Global Search':'Genel Arama'%>">⌕</summary>
+      <div class="topbar-search__pop">
+        <form class="topbar-search__form" method="get" action="/search">
+          <label class="topbar-search__field">
+            <span aria-hidden="true">⌕</span>
+            <input class="global-search" name="q" placeholder="<%=locale==='en'?'Company, customer no, product code, quote no...':'Firma, müşteri no, ürün kodu, teklif no...'%>" aria-label="<%=locale==='en'?'Global Search':'Genel Arama'%>" autocomplete="off">
+          </label>
+          <button class="btn btn--primary btn--sm topbar-search__submit" type="submit"><%=locale==='en'?'Search':'Ara'%></button>
+        </form>
+        <small><%=locale==='en'?'Search customers, products, proformas, order numbers, phones, tax numbers and product codes.':'Üst bardan müşteri, ürün, proforma, sipariş no, telefon, vergi no ve ürün kodu arayın.'%></small>
+      </div>
+    </details>
+    <% if(supportWhatsAppUrl){ %><a class="support-btn support-btn--whatsapp" href="<%=supportWhatsAppUrl%>" target="_blank" rel="noopener" title="<%=locale==='en'?'Open active company WhatsApp support':'Aktif firma yetkilisinin WhatsApp hattına yönlendirir'%>" aria-label="<%=locale==='en'?'WhatsApp support':'WhatsApp destek'%>"><span class="whatsapp-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 11.7a8.7 8.7 0 0 1-12.9 7.6L3 20.7l1.4-4.6a8.7 8.7 0 1 1 16.3-4.4Z"/><path d="M8.2 7.2c.4-.4 1-.3 1.3.1l1.2 1.8c.2.3.1.8-.1 1.1l-.7.7c.7 1.4 1.8 2.5 3.2 3.2l.7-.7c.3-.3.8-.3 1.1-.1l1.8 1.2c.4.3.5.9.1 1.3l-.7.7c-.8.8-2 .9-3 .5a11.2 11.2 0 0 1-6.3-6.3c-.4-1-.2-2.2.5-3l.9-.5Z"/></svg></span><span class="support-btn__label"><%=t('support')%></span></a><% }else{ %><span class="support-btn support-btn--whatsapp support-btn--disabled" title="<%=locale==='en'?'No mobile phone in active company profile':'Aktif firma profilinde cep telefonu bulunamadı'%>" aria-label="<%=locale==='en'?'WhatsApp support line is not configured':'WhatsApp destek hattı tanımlı değil'%>"><span class="whatsapp-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 11.7a8.7 8.7 0 0 1-12.9 7.6L3 20.7l1.4-4.6a8.7 8.7 0 1 1 16.3-4.4Z"/><path d="M8.2 7.2c.4-.4 1-.3 1.3.1l1.2 1.8c.2.3.1.8-.1 1.1l-.7.7c.7 1.4 1.8 2.5 3.2 3.2l.7-.7c.3-.3.8-.3 1.1-.1l1.8 1.2c.4.3.5.9.1 1.3l-.7.7c-.8.8-2 .9-3 .5a11.2 11.2 0 0 1-6.3-6.3c-.4-1-.2-2.2.5-3l.9-.5Z"/></svg></span><span class="support-btn__label"><%=t('support')%></span></span><% } %>
+    <% if(can('settings','view')){ %><a class="icon-btn topbar-settings-link" href="/settings" title="<%=t('settings')%>" aria-label="<%=t('settings')%>">⚙</a><% } %>
+    <span class="user-chip"><%=user?.full_name||user?.username||'-'%></span>
+    <form class="topbar-logout" method="post" action="/logout" data-auth-session-form="logout"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="icon-btn icon-btn--logout" type="submit" title="<%=t('logout')%>" aria-label="<%=t('logout')%>">⏻</button></form>
+  </div>
+</header>

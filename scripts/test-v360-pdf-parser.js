@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+process.env.PRIVATE_UPLOAD_DIR=fs.mkdtempSync(path.join(os.tmpdir(),'arteva-v360-pdf-'));
+const {analyzeProformaFile}=await import('../src/services/proforma-product-import.service.js');
+const filePath=path.resolve('tests/fixtures/proforma-sample.pdf');
+const result=await analyzeProformaFile({path:filePath,originalname:'proforma-sample.pdf',size:fs.statSync(filePath).size});
+assert.equal(result.rows.length,2);
+assert.deepEqual(result.rows.map(x=>x.code),['AR-1001','AR-2002']);
+assert.deepEqual(result.rows.map(x=>x.unit),['ADET','ADET']);
+assert.deepEqual(result.rows.map(x=>x.currency),['EUR','EUR']);
+assert.deepEqual(result.rows.map(x=>x.price),[1250,3800]);
+assert.ok(result.meta.sources.includes('pdftotext-layout')||result.meta.sources.includes('javascript'));
+console.log('V360_PDF_PARSER_TESTS=6/6 OK');

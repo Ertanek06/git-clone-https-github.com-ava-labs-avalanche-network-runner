@@ -1,0 +1,49 @@
+<% layout('layout') -%>
+<%
+ const en=locale==='en';
+ const L=en?{
+  eyebrow:'PRODUCT IMPORT CENTER',title:'Import Products from Proforma',desc:'Upload a supplier proforma in PDF or Excel format. Only verified product lines are analyzed; company and customer information is never imported.',back:'Product List',history:'Import History',uploadTitle:'Upload and scan proforma',uploadHelp:'The source file is validated first. Product columns are then detected and an editable preview opens before any record is written.',file:'PDF or Excel proforma',scan:'Scan File and Open Preview',formats:'PDF, XLSX, XLS and CSV',limit:'Maximum file size: 100 MB',steps:'Processing flow',stepsHelp:'Each stage is marked live as the server completes it.',step1:'Validate file type and size',step2:'Extract text, tables and column headers',step3:'Match product code, name, description, quantity, unit, price and currency',step4:'Run OCR only when the PDF has no usable text layer',step5:'Reject unverifiable rows instead of creating incorrect products',step6:'Save selected rows only and handle duplicate product codes safely',waiting:'Waiting',verify:'Waiting for server verification',guarantee:'Safe import rules',guaranteeHelp:'Protection controls are verified during analysis.',g1:'Customer, supplier and company identity fields are ignored.',g2:'Product code, name and price remain editable until final save.',g3:'The preview button shows the exact product card before saving.',g4:'Cancel leaves the module without creating any record.',g5:'A failure never commits a partial product batch.',preview:'Editable preview fields',fields:['Product code','Product name','Description','Quantity','Unit','Price','Currency','VAT','Image'],selectHint:'Choose a file to begin',source:'Source file',secure:'No record is created during scanning'
+ }:{
+  eyebrow:'ÜRÜN AKTARIM MERKEZİ',title:'Proformadan Ürün Aktar',desc:'Tedarikçi proformasını PDF veya Excel olarak yükleyin. Yalnızca doğrulanmış ürün satırları analiz edilir; firma ve müşteri bilgileri ürün kartlarına aktarılmaz.',back:'Ürün Listesi',history:'Aktarım Geçmişi',uploadTitle:'Proformayı yükle ve tara',uploadHelp:'Önce kaynak dosya doğrulanır. Ardından ürün sütunları bulunur ve hiçbir kayıt yazılmadan düzenlenebilir ön izleme açılır.',file:'PDF veya Excel proforma',scan:'Dosyayı Tara ve Ön İzlemeyi Aç',formats:'PDF, XLSX, XLS ve CSV',limit:'Dosya boyutu en fazla 100 MB',steps:'İşlem akışı',stepsHelp:'Sunucu tamamladığı her adımı canlı olarak işaretler.',step1:'Dosya türünü ve boyutunu doğrula',step2:'Metin, tablo ve sütun başlıklarını çıkar',step3:'Ürün kodu, adı, açıklaması, miktarı, birimi, fiyatı ve para birimini eşleştir',step4:'PDF metin katmanı yoksa yalnızca gerekli sayfalarda OCR çalıştır',step5:'Doğrulanamayan satırları yanlış ürün oluşturmadan ayır',step6:'Yalnız seçili satırları kaydet ve aynı ürün kodlarını güvenli yönet',waiting:'Bekliyor',verify:'Sunucu doğrulaması bekleniyor',guarantee:'Güvenli aktarım kuralları',guaranteeHelp:'Koruma kontrolleri analiz sırasında doğrulanır.',g1:'Müşteri, tedarikçi ve firma kimlik alanları aktarılmaz.',g2:'Ürün kodu, adı ve fiyatı son kayda kadar elle düzeltilebilir.',g3:'Ön izleme düğmesi kaydedilecek gerçek ürün kartını gösterir.',g4:'Vazgeç işlemi hiçbir kayıt oluşturmadan modülden çıkar.',g5:'Hata oluşursa ürünlerin bir kısmı kaydedilmiş halde bırakılmaz.',preview:'Ön izlemede düzenlenen alanlar',fields:['Ürün kodu','Ürün adı','Açıklama','Miktar','Birim','Fiyat','Para birimi','KDV','Görsel'],selectHint:'Başlamak için dosya seçin',source:'Kaynak dosya',secure:'Tarama sırasında hiçbir kayıt oluşturulmaz'
+ };
+ const steps=[L.step1,L.step2,L.step3,L.step4,L.step5,L.step6];
+ const rules=[L.g1,L.g2,L.g3,L.g4,L.g5];
+%>
+<header class="page-head pro-headline product-import-page-head product-import-page-head-v18">
+ <div><span class="eyebrow">📥 <%=L.eyebrow%></span><h1><%=L.title%></h1><p><%=L.desc%></p></div>
+ <div class="row-actions"><a class="btn btn--sm btn--soft" href="/products/import-proforma/history">📚 <%=L.history%></a><a class="btn btn--sm" href="/products">← <%=L.back%></a></div>
+</header>
+
+<section class="product-import-workspace-v18">
+ <article class="card product-import-upload-v18">
+  <header class="product-import-card-head-v18"><span class="product-import-head-icon-v18">📄</span><div><h2><%=L.uploadTitle%></h2><p><%=L.uploadHelp%></p></div><span class="product-import-safe-pill-v18">🛡️ <%=L.secure%></span></header>
+  <form method="post" action="/products/import-proforma/analyze?_csrf=<%=encodeURIComponent(csrfToken)%>" enctype="multipart/form-data" class="proforma-import-upload-form-v18" data-upload-form data-import-progress-form>
+   <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+   <label class="proforma-import-dropzone-v18">
+    <span class="proforma-import-dropzone-icon-v18">⇧</span>
+    <span class="proforma-import-dropzone-copy-v18"><b><%=L.file%></b><small><%=L.formats%></small><em><%=L.limit%></em></span>
+    <span class="proforma-import-file-control-v18"><input required type="file" name="proforma_file" accept=".pdf,.xlsx,.xls,.csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"><i><%=L.selectHint%></i></span>
+   </label>
+   <button class="btn btn--primary btn--alive product-import-submit-v18" type="submit"><span aria-hidden="true">⌕</span><b><%=L.scan%></b></button>
+  </form>
+  <div class="product-import-preview-fields-v18"><div><b><%=L.preview%></b><small><%=L.source%></small></div><div class="product-import-field-chips-v18"><% L.fields.forEach(field=>{ %><span><%=field%></span><% }) %></div></div>
+ </article>
+
+ <article class="card product-import-process-v18" data-import-process-panel>
+  <header class="product-import-card-head-v18"><span class="product-import-head-icon-v18">🧭</span><div><h2><%=L.steps%></h2><p><%=L.stepsHelp%></p></div></header>
+  <ol class="product-import-steps-v18">
+   <% steps.forEach((step,index)=>{ %>
+   <li data-import-step="<%=index+1%>" data-step-state="<%=L.waiting%>">
+    <span class="product-import-step-number-v18"><%=index+1%></span>
+    <span class="product-import-step-copy-v18"><b><%=step%></b><small><%=L.verify%></small></span>
+    <span class="product-import-step-state-v18"><%=L.waiting%></span>
+   </li>
+   <% }) %>
+  </ol>
+ </article>
+</section>
+
+<section class="card product-import-rules-v18" data-import-rules-panel>
+ <header class="product-import-card-head-v18"><span class="product-import-head-icon-v18">🛡️</span><div><h2><%=L.guarantee%></h2><p><%=L.guaranteeHelp%></p></div></header>
+ <div class="product-import-rule-grid-v18"><% rules.forEach(rule=>{ %><div class="product-import-rule-v18" data-import-rule><i><span>•</span></i><b><%=rule%></b></div><% }) %></div>
+</section>

@@ -1,0 +1,164 @@
+/*
+ * crmV20 product media integrity hotfix
+ * Product images must always be visible in full. No crop, zoom or partial view.
+ */
+
+/* Shared full-image rule for every product-media surface. */
+.line-edit-preview img,
+.quick-product-image-preview img,
+.quote-product-option__thumb img,
+.quote-line-image img,
+.quote-detail-thumb img,
+.import-product-image-box img,
+.product-image-preview img,
+.product-thumb img,
+.thumb img,
+[data-product-image-box] img,
+.product-preview-studio-v20__image img {
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  padding:4px!important;
+  margin:auto!important;
+  transform:none!important;
+  filter:none!important;
+  opacity:1!important;
+  box-sizing:border-box!important;
+}
+
+/* Quotation-line edit modal: large, clear, full-height preview. */
+.line-edit-modal .line-edit-preview-label {
+  min-width:0!important;
+  align-self:start!important;
+}
+.line-edit-modal .line-edit-preview {
+  display:grid!important;
+  place-items:center!important;
+  width:100%!important;
+  height:230px!important;
+  min-height:230px!important;
+  max-height:230px!important;
+  margin-top:6px!important;
+  padding:10px!important;
+  overflow:hidden!important;
+  border:1px dashed color-mix(in srgb,var(--primary,#245ba7) 38%,var(--border,#dbe5f2))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  color:var(--muted,#718198)!important;
+}
+.line-edit-modal .line-edit-preview img {
+  padding:2px!important;
+}
+.line-edit-modal #lineEditImageEmpty {
+  padding:18px!important;
+  text-align:center!important;
+}
+
+/* Product selection dropdown. */
+.quote-product-option__thumb {
+  width:66px!important;
+  height:66px!important;
+  min-width:66px!important;
+  border-radius:11px!important;
+  background:#fff!important;
+}
+
+/* Product image inside the editable quotation row. */
+.quote-pro-v58 .quote-items--v90 .quote-line-image-stack,
+.quote-pro-v58 .quote-items--v89 .quote-line-image-stack,
+.quote-line-image-stack {
+  width:74px!important;
+  min-width:74px!important;
+  overflow:visible!important;
+}
+.quote-pro-v58 .quote-items--v90 .quote-line-image,
+.quote-pro-v58 .quote-items--v89 .quote-line-image,
+.quote-items .quote-line-image,
+.quote-line-image {
+  width:66px!important;
+  height:72px!important;
+  min-width:66px!important;
+  min-height:72px!important;
+  border-radius:11px!important;
+  background:#fff!important;
+  overflow:hidden!important;
+}
+.quote-pro-v58 .quote-items--v90 .quote-line-image img,
+.quote-pro-v58 .quote-items--v89 .quote-line-image img,
+.quote-items .quote-line-image img,
+.quote-line-image img {
+  object-fit:contain!important;
+  padding:3px!important;
+}
+
+/* Saved quotation/detail screen. */
+.quote-detail-thumb {
+  width:92px!important;
+  height:92px!important;
+  min-width:92px!important;
+  border-radius:12px!important;
+  background:#fff!important;
+}
+
+/* Product import and standard list thumbnails. */
+.import-product-image-box {
+  width:104px!important;
+  height:92px!important;
+  min-width:104px!important;
+  min-height:92px!important;
+  background:#fff!important;
+}
+.thumb,
+.product-thumb {
+  width:66px!important;
+  height:66px!important;
+  min-width:66px!important;
+  min-height:66px!important;
+  background:#fff!important;
+}
+
+/* Quick-product modal remains large and never crops portrait products. */
+.quick-product-modal-v16 .quick-product-image-preview {
+  height:300px!important;
+  min-height:300px!important;
+  max-height:300px!important;
+  padding:10px!important;
+  background:#fff!important;
+}
+
+@media (max-width:760px) {
+  .line-edit-modal .line-edit-preview {
+    height:210px!important;
+    min-height:210px!important;
+    max-height:210px!important;
+  }
+  .quote-product-option__thumb {
+    width:58px!important;
+    height:58px!important;
+    min-width:58px!important;
+  }
+  .quote-detail-thumb {
+    width:78px!important;
+    height:78px!important;
+    min-width:78px!important;
+  }
+}
+
+/* Reserve enough table width so the larger full image never overlaps adjacent cells. */
+.quote-pro-v58 .quote-items--v90 col.col-image,
+.quote-pro-v58 .quote-items--v89 col.col-image {
+  width:82px!important;
+}
+.quote-pro-v58 .quote-items--v90 td.quote-image-cell,
+.quote-pro-v58 .quote-items--v90 th:first-child,
+.quote-pro-v58 .quote-items--v89 td.quote-image-cell,
+.quote-pro-v58 .quote-items--v89 th:first-child {
+  width:82px!important;
+  min-width:82px!important;
+  max-width:82px!important;
+  overflow:visible!important;
+}

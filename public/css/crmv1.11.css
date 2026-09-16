@@ -1,0 +1,66 @@
+/* crmv1.11 — customer title visibility, 20-system theme fidelity, dark surfaces,
+   sticky Home navigation, dashboard-card legibility and navigation flash guard. */
+
+/* Theme choice lives in one place: the 20-system hub. The form field stays present
+   for persistence/JS but its old duplicate selector is not shown. */
+.theme-select-v17{display:none!important}
+.theme-preset-grid-v18{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important}
+.theme-preset-card-v18{min-width:0!important;min-height:62px!important}
+.theme-preset-card-v18>span:not(.theme-preset-no-v18):not(.theme-preset-mini-v18){min-width:0!important}
+.theme-preset-card-v18 b,.theme-preset-card-v18 small{display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+/* Preview geometry for the ten additional navigation families promoted in v1.11.
+   The other ten are already paired to their real sidebar contracts by crmv1.10. */
+.theme-preview-canvas-v359[data-sidebar-style="navy-rail"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;border-right:5px solid color-mix(in srgb,var(--pv-primary) 55%,var(--pv-sidebar-border))!important;box-shadow:8px 0 24px #0003!important}.theme-preview-canvas-v359[data-sidebar-style="navy-rail"] [data-theme-demo-menu]>a{border-radius:8px!important;border-left:3px solid transparent!important}
+.theme-preview-canvas-v359[data-sidebar-style="graphite-compact"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;padding:8px!important;box-shadow:none!important}.theme-preview-canvas-v359[data-sidebar-style="graphite-compact"] [data-theme-demo-menu]>a{min-height:39px!important;border:0!important;border-radius:5px!important}
+.theme-preview-canvas-v359[data-sidebar-style="booking-clean"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;border-right:1px solid var(--pv-sidebar-border)!important;box-shadow:none!important}.theme-preview-canvas-v359[data-sidebar-style="booking-clean"] [data-theme-demo-menu]>a{border-width:0 0 0 3px!important;border-radius:0!important;background:transparent!important}
+.theme-preview-canvas-v359[data-sidebar-style="blue-glass"] .theme-preview-sidebar-v359{margin:10px!important;height:calc(100% - 20px)!important;border-radius:24px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--pv-primary) 58%,var(--pv-sidebar-bg)),color-mix(in srgb,var(--pv-primary) 32%,var(--pv-sidebar-bg)))!important;box-shadow:10px 0 30px #0003!important}.theme-preview-canvas-v359[data-sidebar-style="blue-glass"] [data-theme-demo-menu]>a{border-radius:16px!important;backdrop-filter:blur(8px)!important}
+.theme-preview-canvas-v359[data-sidebar-style="dark-trip"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0 14px 14px 0!important;box-shadow:9px 0 30px #0006!important}.theme-preview-canvas-v359[data-sidebar-style="dark-trip"] [data-theme-demo-menu]>a{border-radius:12px!important;border-color:transparent!important}
+.theme-preview-canvas-v359[data-sidebar-style="light-corporate"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;border-right:2px solid var(--pv-sidebar-border)!important;box-shadow:5px 0 18px color-mix(in srgb,var(--pv-primary) 7%,transparent)!important}.theme-preview-canvas-v359[data-sidebar-style="light-corporate"] [data-theme-demo-menu]>a{border-radius:8px!important}
+.theme-preview-canvas-v359[data-sidebar-style="ideasoft-clean"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;border-right:1px solid var(--pv-sidebar-border)!important;box-shadow:none!important}.theme-preview-canvas-v359[data-sidebar-style="ideasoft-clean"] [data-theme-demo-menu]>a{border:0!important;border-radius:10px!important;background:transparent!important}.theme-preview-canvas-v359[data-sidebar-style="ideasoft-clean"] [data-theme-demo-menu]>a.is-active{box-shadow:inset 3px 0 var(--pv-primary)!important}
+.theme-preview-canvas-v359[data-sidebar-style="accordion-tree"] .theme-preview-sidebar-v359{margin:0!important;height:100%!important;border-radius:0!important;border-right:1px solid var(--pv-sidebar-border)!important}.theme-preview-canvas-v359[data-sidebar-style="accordion-tree"] [data-theme-demo-menu]>a{border-radius:12px!important}.theme-preview-canvas-v359[data-sidebar-style="accordion-tree"] .theme-demo-submenu-v18{border-left:2px solid color-mix(in srgb,var(--pv-primary) 42%,var(--pv-sidebar-border))!important}
+.theme-preview-canvas-v359[data-sidebar-style="soft-blue"] .theme-preview-sidebar-v359{margin:8px!important;height:calc(100% - 16px)!important;border-radius:18px!important;box-shadow:0 10px 26px color-mix(in srgb,var(--pv-primary) 10%,transparent)!important}.theme-preview-canvas-v359[data-sidebar-style="soft-blue"] [data-theme-demo-menu]>a{border-radius:13px!important}
+.theme-preview-canvas-v359[data-sidebar-style="collapsible-pro"] .theme-preview-sidebar-v359{margin:6px!important;height:calc(100% - 12px)!important;border-radius:14px!important;box-shadow:0 10px 24px #0002!important}.theme-preview-canvas-v359[data-sidebar-style="collapsible-pro"] [data-theme-demo-menu]>a{border-radius:13px!important;box-shadow:0 4px 10px color-mix(in srgb,var(--pv-primary) 7%,transparent)!important}
+
+/* Customer List: undo the crmv1.9 width:1% company rule. Three title words remain
+   readable and the complete value is retained as a title/accessible label by JS. */
+.app-main .page-wrap .customer-table{table-layout:auto!important;width:100%!important}
+.app-main .page-wrap .customer-table col:nth-child(3){width:clamp(190px,18vw,260px)!important}
+.app-main .page-wrap .customer-table th:nth-child(3),
+.app-main .page-wrap .customer-table td:nth-child(3),
+.app-main .page-wrap .customer-table .customer-company-column-v111{width:clamp(190px,18vw,260px)!important;min-width:190px!important;max-width:260px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.app-main .page-wrap .customer-table td:nth-child(3) .customer-name-link,
+.app-main .page-wrap .customer-table td:nth-child(3) .customer-name-link b{display:block!important;width:100%!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;text-align:left!important}
+
+/* Home remains available while the menu list underneath it scrolls/expands. */
+.sidebar .menu>a.menu__item[href="/"]{position:sticky!important;top:0!important;z-index:14!important;margin-bottom:5px!important;background:var(--menu-bg,var(--card,#fff))!important;box-shadow:0 7px 15px color-mix(in srgb,var(--text,#14233d) 8%,transparent)!important}
+.sidebar .menu>a.menu__item[href="/"].is-active{background:var(--menu-active-bg)!important;color:var(--menu-active-text)!important;border-color:var(--menu-active-border)!important}
+
+/* Dashboard card headers: keep icon/title/summary in predictable lanes even after a
+   user resizes a widget down to its minimum width. */
+.dashboard-freeboard-v372>.dashboard-widget-v63{container-type:inline-size!important}
+.dashboard-freeboard-v372>.dashboard-widget-v63>.card-head{min-width:0!important;min-height:72px!important;align-content:start!important;padding:11px 162px 10px 14px!important}
+.dashboard-widget-v63>.card-head>div{min-width:0!important;overflow:hidden!important}
+.dashboard-widget-v63>.card-head h2{display:-webkit-box!important;min-width:0!important;margin:0!important;overflow:hidden!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;text-overflow:ellipsis!important;overflow-wrap:anywhere!important;font-size:14.5px!important;line-height:1.22!important}
+.dashboard-widget-v63>.card-head small{display:-webkit-box!important;min-width:0!important;max-width:100%!important;margin-top:3px!important;overflow:hidden!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;text-overflow:ellipsis!important;font-size:10.5px!important;line-height:1.25!important}
+.dashboard-widget-v63>.card-head>a,.dashboard-widget-v63>.card-head>.row-actions{min-width:0!important;max-width:100%!important;overflow:hidden!important}
+.dashboard-widget-catalog-v18>button{grid-template-columns:42px minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;align-items:center!important;min-width:0!important;min-height:80px!important;padding:10px 11px!important}
+.dashboard-widget-catalog-v18>button>span{grid-row:1/3!important;width:38px!important;height:38px!important;align-self:center!important}
+.dashboard-widget-catalog-v18>button>b,.dashboard-widget-catalog-v18>button>small{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}.dashboard-widget-catalog-v18>button>b{white-space:nowrap!important}.dashboard-widget-catalog-v18>button>small{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;line-height:1.25!important}
+@container (max-width:430px){.dashboard-freeboard-v372>.dashboard-widget-v63>.card-head{padding:51px 12px 10px!important;min-height:108px!important}.dashboard-freeboard-v372>.dashboard-widget-v63 .dash-tools-v372{left:12px!important;right:auto!important;top:9px!important}}
+
+/* Navigation never covers the current page. The browser keeps useful content
+   visible until the next response is painted. */
+html.ui-nav-pending-v111 body:before,html.ui-nav-pending-v111 body:after{content:none!important;display:none!important}
+.theme-dark-pro,.theme-midnight-ops,.theme-dark-invert,.theme-neon-grid,.theme-carbon-fiber,.theme-midnight-blue{color-scheme:dark}
+
+@media(max-width:1200px){.theme-preset-grid-v18{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:760px){
+ .theme-preset-grid-v18{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .theme-preset-card-v18{min-height:66px!important;padding:7px!important}
+ .app-main .page-wrap .customer-table th:nth-child(3),.app-main .page-wrap .customer-table td:nth-child(3),.app-main .page-wrap .customer-table .customer-company-column-v111{width:100%!important;min-width:0!important;max-width:none!important}
+ .dashboard-widget-catalog-v18>button{min-height:76px!important}
+ .mobile-home-v4__panel>header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:8px!important}.mobile-home-v4__panel>header>div{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important}.mobile-home-v4__panel>header>div>span{flex:0 0 auto!important}.mobile-home-v4__panel>header h2{min-width:0!important;margin:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:13px!important}.mobile-home-v4__panel>header>a{white-space:nowrap!important}
+ .sidebar .menu>a.menu__item[href="/"]{top:0!important}
+}
+@media(max-width:430px){.theme-preset-grid-v18{grid-template-columns:1fr!important}.theme-preset-card-v18{min-height:60px!important}}

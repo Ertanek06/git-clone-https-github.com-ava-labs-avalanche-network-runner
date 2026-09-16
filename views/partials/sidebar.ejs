@@ -1,0 +1,153 @@
+<%
+const navPath=String(path||'');
+const navFlow=String(query?.flow||'');
+const isNewPath=base=>navPath===`${base}/new`;
+const isListPath=base=>navPath===base||(navPath.startsWith(`${base}/`)&&!isNewPath(base));
+const quoteListActive=navPath==='/quotes'||(
+  navPath.startsWith('/quotes/')
+  && !navPath.startsWith('/quotes/new')
+  && !navPath.startsWith('/quotes/processes')
+  && !navPath.startsWith('/quotes/archives')
+  && !navPath.startsWith('/quotes/sent')
+);
+const quoteArchiveActive=navPath.startsWith('/quotes/archives');
+const productImportActive=navPath.startsWith('/products/import-proforma');
+const productWebImportActive=navPath.startsWith('/products/import-web');
+const productListActive=navPath==='/products'||(
+  navPath.startsWith('/products/')
+  && !isNewPath('/products')
+  && !productImportActive
+  && !productWebImportActive
+);
+const canUseExcel=can('customers','export')
+  || can('products','export')
+  || can('customers','create')
+  || can('customers','edit')
+  || can('products','create')
+  || can('products','edit');
+const canUseSystemHealth=['SUPER_ADMIN','TENANT_ADMIN'].includes(user?.role);
+const canUseUsers=can('users','admin');
+%>
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-rail-toggle" type="button" data-sidebar-collapse aria-label="<%=locale==='en'?'Collapse or expand menu':'Menüyü daralt veya genişlet'%>" title="<%=locale==='en'?'Collapse or expand menu':'Menüyü daralt veya genişlet'%>"><span data-sidebar-collapse-icon>‹</span></button>
+  <div class="brand-card">
+    <div class="brand-logo"><% if(activeProfile?.logo_url){ %><img src="<%=activeProfile.logo_url%>" alt="<%=locale==='en'?'Company logo':'Firma logosu'%>" loading="eager"><% }else{ %><span class="media-fallback-v19"><span aria-hidden="true">＋</span><small><%=locale==='en'?'Add logo':'Logo ekle'%></small></span><% } %></div>
+    <div class="brand-card__top"><span><%=t('welcome')%></span><b class="status-dot"><%=t('active')%></b></div>
+    <strong class="brand-name"><%=activeProfile?.short_name||activeProfile?.company_name||t('company_profile')%></strong>
+    <small><%=activeProfile?.company_name||'-'%></small>
+    <% if(can('settings','admin')){ %><a class="btn btn--soft btn--sm brand-profile-action" href="<%=activeProfile?`/profiles/${activeProfile.id}/edit`:'/profiles'%>"><%=t('profile_edit')%></a>
+    <% }else if(can('settings','view')){ %><a class="btn btn--soft btn--sm brand-profile-action" href="/profiles"><%=t('profiles')%></a><% } %>
+  </div>
+
+  <nav class="menu" id="sidebarMenu" aria-label="<%=locale==='en'?'Main menu':'Ana menü'%>">
+    <a class="menu__item <%=navPath==='/'?'is-active':''%>" href="/" title="<%=t('home')%>" <%=navPath==='/'?'aria-current="page"':''%>><i data-icon="home"></i><span class="menu-home-label"><%=t('home')%></span></a>
+
+    <span class="menu-section-label"><%=locale==='en'?'Records':'Kayıtlar'%></span>
+
+    <% if(can('settings','view')){ %>
+    <details <%=navPath.startsWith('/profiles')?'open':''%>>
+      <summary title="<%=t('profiles')%>"><i data-icon="profile"></i><span><%=t('profiles')%></span></summary>
+      <a class="<%=isListPath('/profiles')?'is-active':''%>" href="/profiles" aria-current="<%=isListPath('/profiles')?'page':'false'%>"><%=t('profile_list')%></a>
+      <% if(can('settings','admin')){ %><a class="<%=isNewPath('/profiles')?'is-active':''%>" href="/profiles/new" aria-current="<%=isNewPath('/profiles')?'page':'false'%>"><%=t('profile_new')%></a><% } %>
+    </details>
+    <% } %>
+
+    <% if(can('customers','view')){ %>
+    <details <%=navPath.startsWith('/customers')?'open':''%>>
+      <summary title="<%=t('customers')%>"><i data-icon="customers"></i><span><%=t('customers')%></span></summary>
+      <a class="<%=isListPath('/customers')?'is-active':''%>" href="/customers" aria-current="<%=isListPath('/customers')?'page':'false'%>"><%=t('customer_list')%></a>
+      <% if(can('customers','create')){ %><a class="<%=isNewPath('/customers')?'is-active':''%>" href="/customers/new" aria-current="<%=isNewPath('/customers')?'page':'false'%>"><%=t('customer_new')%></a><% } %>
+    </details>
+    <% } %>
+
+    <% if(can('products','view')){ %>
+    <details <%=navPath.startsWith('/products')?'open':''%>>
+      <summary title="<%=t('products')%>"><i data-icon="products"></i><span><%=t('products')%></span></summary>
+      <a class="<%=productListActive?'is-active':''%>" href="/products" aria-current="<%=productListActive?'page':'false'%>"><%=t('product_list')%></a>
+      <% if(can('products','create')){ %><a class="<%=isNewPath('/products')?'is-active':''%>" href="/products/new" aria-current="<%=isNewPath('/products')?'page':'false'%>"><%=t('product_new')%></a><% } %>
+      <% if(can('products','create')||can('products','edit')){ %><a class="<%=productImportActive?'is-active':''%>" href="/products/import-proforma" aria-current="<%=productImportActive?'page':'false'%>"><%=locale==='en'?'Import from Proforma':'Proformadan Ürün Aktar'%></a><a class="<%=productWebImportActive?'is-active':''%>" href="/products/import-web" aria-current="<%=productWebImportActive?'page':'false'%>"><%=locale==='en'?'Import from Website':'Web Sitesinden Ürün Aktar'%></a><% } %>
+    </details>
+    <% } %>
+
+    <% if(canUseExcel){ %>
+      <a class="menu__item <%=navPath==='/excel'?'is-active':''%>" href="/excel" title="<%=locale==='en'?'Excel Transfer Center':'Excel Aktarım Merkezi'%>" aria-current="<%=navPath==='/excel'?'page':'false'%>"><i data-icon="transfer"></i><span><%=locale==='en'?'Excel Transfer':'Excel Aktarımı'%></span></a>
+    <% } %>
+
+    <span class="menu-section-label"><%=locale==='en'?'Sales Process':'Satış Süreci'%></span>
+
+    <% if(can('quotes','view')||can('invoices','view')||can('settings','view')){ %>
+    <details <%=((navPath.startsWith('/quotes')&&!navPath.startsWith('/quotes/processes'))||navPath.startsWith('/templates')||navPath.startsWith('/invoices'))?'open':''%>>
+      <summary title="<%=t('proforma')%>"><i data-icon="quotes"></i><span><%=t('proforma')%></span></summary>
+      <% if(can('quotes','view')){ %>
+        <a class="<%=quoteListActive?'is-active':''%>" href="/quotes" aria-current="<%=quoteListActive?'page':'false'%>"><%=t('quote_list')%></a>
+        <% if(can('quotes','export')){ %><a class="<%=navPath==='/quotes/sent'?'is-active':''%>" href="/quotes/sent" aria-current="<%=navPath==='/quotes/sent'?'page':'false'%>"><%=locale==='en'?'Sent Proformas':'Gönderilen Proformalar'%></a><% } %>
+        <% if(can('quotes','create')){ %><a class="<%=isNewPath('/quotes')?'is-active':''%>" href="/quotes/new" aria-current="<%=isNewPath('/quotes')?'page':'false'%>"><%=t('quote_new')%></a><% } %>
+        <% if(can('quotes','archive')){ %><a class="<%=quoteArchiveActive?'is-active':''%>" href="/quotes/archives" aria-current="<%=quoteArchiveActive?'page':'false'%>"><%=locale==='en'?'Archives':'Arşivler'%></a><% } %>
+      <% } %>
+      <% if(can('settings','view')){ %><a class="<%=navPath.startsWith('/templates')?'is-active':''%>" href="/templates" aria-current="<%=navPath.startsWith('/templates')?'page':'false'%>"><%=t('templates')%></a><% } %>
+      <% if(can('invoices','view')){ %><a class="<%=navPath.startsWith('/invoices')?'is-active':''%>" href="/invoices" aria-current="<%=navPath.startsWith('/invoices')?'page':'false'%>"><%=locale==='en'?'Invoice Integration':'Fatura Entegrasyonu'%></a><% } %>
+    </details>
+    <% } %>
+
+    <% if(can('quotes','view')){ %>
+    <details <%=navPath.startsWith('/quotes/processes')?'open':''%>>
+      <summary title="<%=locale==='en'?'Offer & Order Workflows':'Teklif ve Sipariş Süreçleri'%>"><i data-icon="process"></i><span><%=locale==='en'?'Offer & Order Workflows':'Teklif ve Sipariş Süreçleri'%></span></summary>
+      <a class="<%=navPath==='/quotes/processes'&&!navFlow?'is-active':''%>" href="/quotes/processes" aria-current="<%=navPath==='/quotes/processes'&&!navFlow?'page':'false'%>"><%=locale==='en'?'Workflow Center':'Süreç Merkezi'%></a>
+      <a class="<%=navPath==='/quotes/processes'&&navFlow==='pending'?'is-active':''%>" href="/quotes/processes?flow=pending" aria-current="<%=navPath==='/quotes/processes'&&navFlow==='pending'?'page':'false'%>"><%=locale==='en'?'Pending Approval':'Onay Bekleyen'%></a>
+      <a class="<%=navPath==='/quotes/processes'&&navFlow==='revision'?'is-active':''%>" href="/quotes/processes?flow=revision" aria-current="<%=navPath==='/quotes/processes'&&navFlow==='revision'?'page':'false'%>"><%=locale==='en'?'Revision Requested':'Revize İstenen'%></a>
+      <% if(can('orders','view')){ %>
+        <a class="<%=navPath==='/quotes/processes'&&navFlow==='ordered'?'is-active':''%>" href="/quotes/processes?flow=ordered" aria-current="<%=navPath==='/quotes/processes'&&navFlow==='ordered'?'page':'false'%>"><%=locale==='en'?'Converted Orders':'Siparişe Dönüşen'%></a>
+        <a class="<%=navPath==='/quotes/processes'&&navFlow==='production'?'is-active':''%>" href="/quotes/processes?flow=production" aria-current="<%=navPath==='/quotes/processes'&&navFlow==='production'?'page':'false'%>"><%=locale==='en'?'Production':'Üretim Süreci'%></a>
+        <a class="<%=navPath==='/quotes/processes'&&navFlow==='delivered'?'is-active':''%>" href="/quotes/processes?flow=delivered" aria-current="<%=navPath==='/quotes/processes'&&navFlow==='delivered'?'page':'false'%>"><%=locale==='en'?'Delivered':'Teslim Edilen'%></a>
+      <% } %>
+    </details>
+    <% } %>
+
+    <% if(can('live','view')){ %>
+    <details <%=navPath.startsWith('/live')?'open':''%>>
+      <summary title="<%=locale==='en'?'Live support and visitor tracking':'Canlı Destek ve Ziyaretçi Takibi'%>"><i data-icon="support"></i><span><%=locale==='en'?'Live Support':'Canlı Destek'%></span></summary>
+      <a class="<%=navPath==='/live'?'is-active':''%>" href="/live" aria-current="<%=navPath==='/live'?'page':'false'%>"><%=locale==='en'?'Live Visitors':'Canlı Ziyaretçiler'%></a>
+      <a class="<%=navPath.startsWith('/live/chats')?'is-active':''%>" href="/live/chats" aria-current="<%=navPath.startsWith('/live/chats')?'page':'false'%>"><%=locale==='en'?'Chats':'Sohbetler'%></a>
+      <a class="<%=navPath.startsWith('/live/history')?'is-active':''%>" href="/live/history" aria-current="<%=navPath.startsWith('/live/history')?'page':'false'%>"><%=locale==='en'?'Visitor History':'Ziyaretçi Geçmişi'%></a>
+      <% if(can('live','admin')){ %><a class="<%=navPath.startsWith('/live/settings')?'is-active':''%>" href="/live/settings" aria-current="<%=navPath.startsWith('/live/settings')?'page':'false'%>"><%=locale==='en'?'Live Support Settings':'Canlı Destek Ayarları'%></a><% } %>
+    </details>
+    <% } %>
+
+    <span class="menu-section-label"><%=locale==='en'?'System':'Sistem'%></span>
+
+    <% if(can('settings','view')||can('integrations','admin')||can('backups','admin')||canUseSystemHealth){ %>
+    <details <%=navPath.startsWith('/settings')||navPath.startsWith('/setup')||navPath.startsWith('/backups')||navPath.startsWith('/integrations')||navPath.startsWith('/system-health')||navPath.startsWith('/recovery')?'open':''%>>
+      <summary title="<%=t('settings')%>"><i data-icon="settings"></i><span><%=t('settings')%></span></summary>
+      <% if(can('settings','view')){ %>
+        <a class="<%=navPath==='/settings'?'is-active':''%>" href="/settings" aria-current="<%=navPath==='/settings'?'page':'false'%>"><%=t('settings_center')%></a>
+        <a class="<%=navPath==='/settings/theme'?'is-active':''%>" href="/settings/theme" aria-current="<%=navPath==='/settings/theme'?'page':'false'%>"><%=t('theme')%></a>
+      <% } %>
+      <% if(can('settings','admin')){ %>
+        <a class="<%=navPath==='/settings/login'?'is-active':''%>" href="/settings/login" aria-current="<%=navPath==='/settings/login'?'page':'false'%>"><%=t('login_design')%></a>
+        <a class="<%=navPath==='/settings/general'?'is-active':''%>" href="/settings/general" aria-current="<%=navPath==='/settings/general'?'page':'false'%>"><%=locale==='en'?'General Operations Settings':'Genel Operasyon Ayarları'%></a>
+        <a class="<%=navPath.startsWith('/setup')?'is-active':''%>" href="/setup" aria-current="<%=navPath.startsWith('/setup')?'page':'false'%>"><%=locale==='en'?'Initial Setup':'İlk Kurulum'%></a>
+      <% } %>
+      <% if(can('backups','admin')){ %><a class="<%=navPath.startsWith('/backups')?'is-active':''%>" href="/backups" aria-current="<%=navPath.startsWith('/backups')?'page':'false'%>"><%=locale==='en'?'Backup':'Yedekleme'%></a><% } %>
+      <% if(canUseSystemHealth){ %><a class="<%=navPath.startsWith('/system-health')?'is-active':''%>" href="/system-health" aria-current="<%=navPath.startsWith('/system-health')?'page':'false'%>"><%=locale==='en'?'System Health':'Sistem Sağlık Merkezi'%></a><% } %>
+      <% if(canUseSystemHealth){ %><a class="<%=navPath.startsWith('/recovery')?'is-active':''%>" href="/recovery" aria-current="<%=navPath.startsWith('/recovery')?'page':'false'%>"><%=locale==='en'?'Archive & Recovery':'Arşiv ve Kurtarma'%></a><% } %>
+      <% if(can('integrations','admin')){ %><a class="<%=navPath.startsWith('/integrations')?'is-active':''%>" href="/integrations" aria-current="<%=navPath.startsWith('/integrations')?'page':'false'%>"><%=locale==='en'?'Integrations':'Entegrasyonlar'%></a><% } %>
+    </details>
+    <% } %>
+
+    <% if(canUseUsers||can('audit','view')){ %>
+    <details <%=navPath.startsWith('/users')||navPath.startsWith('/audit')?'open':''%>>
+      <summary title="<%=t('admin')%>"><i data-icon="admin"></i><span><%=t('admin')%></span></summary>
+      <% if(canUseUsers){ %>
+        <a class="<%=navPath==='/users'?'is-active':''%>" href="/users" aria-current="<%=navPath==='/users'?'page':'false'%>"><%=t('users')%></a>
+        <a class="<%=navPath.startsWith('/users/permissions')?'is-active':''%>" href="/users/permissions" aria-current="<%=navPath.startsWith('/users/permissions')?'page':'false'%>"><%=locale==='en'?'Permission Matrix':'Yetki Matrisi'%></a>
+      <% } %>
+      <% if(can('audit','view')){ %><a class="<%=navPath.startsWith('/audit')?'is-active':''%>" href="/audit" aria-current="<%=navPath.startsWith('/audit')?'page':'false'%>"><%=t('audit')%></a><% } %>
+    </details>
+    <% } %>
+  </nav>
+
+  <form class="sidebar-logout" method="post" action="/logout" data-auth-session-form="logout">
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <button class="btn btn--danger btn--block" type="submit" title="<%=t('logout')%>"><span class="sidebar-logout__icon">⏻</span><span class="sidebar-logout__label"><%=t('logout')%></span></button>
+  </form>
+</aside>

@@ -1,0 +1,254 @@
+/* crmv1.15 — one stable first-paint scale. The server-rendered head writes
+   --panel-zoom before CSS arrives, so v3.3.79 typography starts at its saved
+   size instead of flashing at 100% and snapping to the user's preference. */
+:root{--panel-z79:var(--panel-zoom,1)}
+
+/* Product preview is intentionally a compact, internally scrollable work
+   window. Product classes are now assigned synchronously before modal paint. */
+@media(min-width:1001px){
+  #globalPreviewModal.is-product-preview-v3 .preview-modal__card,
+  #globalPreviewModal.is-product-preview-v13 .preview-modal__card{
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr)!important;
+    width:min(820px,62vw)!important;
+    height:min(620px,72dvh)!important;
+    min-width:620px!important;
+    min-height:420px!important;
+    max-width:calc(100vw - 48px)!important;
+    max-height:calc(100dvh - 56px)!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+}
+#globalPreviewModal.is-product-preview-v3 #globalPreviewFrame,
+#globalPreviewModal.is-product-preview-v13 #globalPreviewFrame{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  overflow:auto!important;
+  border:0!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+@media(max-width:1000px){
+  #globalPreviewModal.is-product-preview-v3 .preview-modal__card,
+  #globalPreviewModal.is-product-preview-v13 .preview-modal__card{
+    width:calc(100vw - 20px)!important;
+    height:min(760px,84dvh)!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:calc(100vw - 20px)!important;
+    max-height:calc(100dvh - 24px)!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+}
+
+/* Quote previews also receive their final geometry before the modal opens.
+   Disable geometry/opacity animation so iframe load and pagination cannot make
+   the window look as if it is switching from an old UI to a new one. */
+#globalPreviewModal.is-quote-preview-v112,
+#globalPreviewModal.is-quote-preview-v112 .preview-modal__card,
+#globalPreviewModal.is-quote-preview-v112 .preview-modal__toolbar,
+#globalPreviewModal.is-quote-preview-v112 #globalPreviewFrame,
+.customer-preview-page .customer-inline-preview,
+.customer-preview-page #customerInlinePreviewFrame{
+  transition:none!important;
+  animation:none!important;
+}
+#globalPreviewModal.is-quote-preview-v112 .preview-modal__card{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  width:min(1240px,calc(100vw - 28px))!important;
+  height:min(860px,calc(100dvh - 28px))!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 28px)!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+#globalPreviewModal.is-quote-preview-v112 .preview-modal__toolbar{position:relative!important}
+#globalPreviewModal.is-preview-loading-v114 .preview-modal__toolbar::after{
+  position:absolute!important;
+  left:50%!important;
+  bottom:3px!important;
+  z-index:4!important;
+  transform:translateX(-50%)!important;
+  pointer-events:none!important;
+}
+#globalPreviewModal.is-quote-preview-v112 #globalPreviewFrame{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  border:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+@media(max-width:760px){
+  #globalPreviewModal.is-quote-preview-v112 .preview-modal__card{
+    width:100vw!important;
+    max-width:100vw!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    border-radius:0!important;
+  }
+}
+
+/* Dashboard widget headers: content and controls share an explicit grid.
+   Nothing is absolutely layered over titles, summaries or "Tümünü Gör". */
+@media(min-width:1001px){
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto!important;
+    grid-template-areas:"widget-copy widget-tools" "widget-action widget-tools"!important;
+    align-items:start!important;
+    align-content:start!important;
+    gap:5px 10px!important;
+    min-width:0!important;
+    min-height:68px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:10px 11px!important;
+    overflow:visible!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>div:first-child:not(.dash-tools-v372){
+    grid-area:widget-copy!important;
+    display:grid!important;
+    gap:3px!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>h2:first-child{
+    grid-area:widget-copy!important;
+    min-width:0!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head h2{
+    display:block!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+    -webkit-line-clamp:unset!important;
+    white-space:normal!important;
+    text-overflow:clip!important;
+    overflow-wrap:anywhere!important;
+    font-size:14px!important;
+    line-height:1.2!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head small{
+    display:block!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+    -webkit-line-clamp:unset!important;
+    white-space:normal!important;
+    text-overflow:clip!important;
+    overflow-wrap:anywhere!important;
+    font-size:10.5px!important;
+    line-height:1.3!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.dash-tools-v372{
+    grid-area:widget-tools!important;
+    position:static!important;
+    inset:auto!important;
+    align-self:start!important;
+    justify-self:end!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:3px!important;
+    width:auto!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:2px!important;
+    overflow:visible!important;
+    border-radius:9px!important;
+    box-shadow:none!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.dash-tools-v372 button{
+    flex:0 0 23px!important;
+    display:grid!important;
+    place-items:center!important;
+    width:23px!important;
+    min-width:23px!important;
+    height:23px!important;
+    min-height:23px!important;
+    padding:0!important;
+    border-radius:6px!important;
+    font:900 11px/1 sans-serif!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.dash-tools-v372 .dash-move-v372{font-size:14px!important}
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>a,
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.row-actions,
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.workflow-current-count-v16{
+    grid-area:widget-action!important;
+    align-self:start!important;
+    justify-self:start!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+    white-space:normal!important;
+  }
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>a,
+  .dashboard-freeboard-v372>.dashboard-widget-v63>.card-head>.row-actions .btn{
+    display:inline-flex!important;
+    width:auto!important;
+    min-height:24px!important;
+    padding:3px 7px!important;
+    border:1px solid var(--border,#dbe5f2)!important;
+    border-radius:7px!important;
+    background:var(--card,#fff)!important;
+    font-size:10.5px!important;
+    font-weight:850!important;
+    line-height:1.2!important;
+  }
+}
+
+@media(max-width:1000px){
+  .dashboard-stack-v372>.dashboard-widget-v63>.card-head>.dash-tools-v372{display:none!important}
+}
+
+/* crmv1.15 — readable monetary hierarchy in quote screens. */
+.quote-total small{
+  font-size:12px!important;
+  font-weight:800!important;
+  line-height:1.25!important;
+}
+.quote-total b{
+  font-size:15.5px!important;
+  font-weight:900!important;
+  line-height:1.2!important;
+}
+.quote-total .grand small:first-child{font-size:13px!important}
+.quote-total .grand b,
+.quote-total .grand #grandTotal,
+.quote-total .grand #grandCurrency{
+  font-size:17px!important;
+  font-weight:950!important;
+}
+.totals-card div>span{
+  font-size:12.5px!important;
+  font-weight:800!important;
+}
+.totals-card div>b{
+  font-size:15px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+.totals-card .grand>span{font-size:13.5px!important;font-weight:900!important}
+.totals-card .grand>b{font-size:17px!important;font-weight:950!important}
+
+@media(max-width:620px){
+  .quote-total small{font-size:11.5px!important}
+  .quote-total b{font-size:15px!important}
+  .quote-total .grand b,
+  .quote-total .grand #grandTotal,
+  .quote-total .grand #grandCurrency{font-size:16.5px!important}
+}

@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=file=>fs.readFileSync(new URL(`../${file}`,import.meta.url),'utf8');
+const build=JSON.parse(read('BUILD_INFO.json'));
+const sidebar=read('views/partials/sidebar.ejs'),themeService=read('src/services/theme.service.js'),themeView=read('views/settings/theme.ejs');
+const ui=read('public/css/crmv1.9.css'),js=read('public/js/crmv1.9.js'),products=read('src/routes/products.js'),dashboard=read('src/routes/dashboard.js'),preview=read('views/products/preview.ejs'),assets=read('scripts/build-assets.js'),layout=read('views/layout.ejs');
+assert.equal(build.package,'crmv1.45');assert.equal(build.build,'crmv1.45');assert.equal(build.release,'v3.8.57-crmv1.45-web-import-upsert-ui-document-fix');
+assert.doesNotMatch(sidebar,/data-sidebar-collapse-all|Tümünü daralt|Collapse all/);
+for(const key of ['minimal-white','glass-panel','red-line','paket-erp','sidebar-card','technical-panel','dark-executive','gradient-pro','classic-office','neumorph-drawer'])assert.match(themeService,new RegExp(`sidebar_key\\s*:\\s*"${key}"`));
+assert.match(themeView,/studioThemeKeys=\['minimal-air'/);assert.match(ui,/theme-card-toggle-v19|theme-collapsible-v19/);assert.match(js,/themeCardToggle/);
+assert.match(ui,/table-row-bg/);assert.match(ui,/company-column-v19/);assert.match(js,/müşteri\|customer\|firma/);
+assert.match(dashboard,/order_status/);assert.match(dashboard,/valid_until<\?/);assert.match(products,/LIMIT 250/);assert.doesNotMatch(products,/productSearchIndexRefreshed/);
+assert.match(preview,/\.product-preview-studio-v20\{width:100%!important/);assert.match(preview,/Ürün görseli ekle/);assert.match(js,/media-fallback-v19/);assert.match(js,/Tüm kayıtlar hazırlanıyor/);
+assert.match(layout,/theme-color" content="<%=ui\.page_bg/);assert.match(assets,/crmv1\.10\.css/);assert.match(assets,/crmv1\.10\.js/);
+console.log('CRMV1_9_CONTRACTS=OK');

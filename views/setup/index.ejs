@@ -1,0 +1,81 @@
+<% layout('layout') -%>
+<header class="page-head setup-page-head-v375"><div><span class="eyebrow">🧭 SİSTEM DEVİR MERKEZİ</span><h1>İlk Kurulum Sihirbazı</h1><p>Firma bilgilerini, yönetici erişimini, alan adını ve teklif varsayılanlarını tek ekranda hazırlayın. Bölümler sürekli açık kalır; hiçbir bilgi kapalı panel içinde gizlenmez.</p></div><span class="tag <%=completed?'tag--success':'tag--warning'%>"><%=completed?'Kurulum hazır':'Kurulum bekliyor'%></span></header>
+
+<div class="setup-wizard-v375">
+ <aside class="setup-wizard-nav-v375 card">
+  <div class="setup-progress-v375" data-setup-progress data-csp-style="--setup-progress:0%"><span></span><b>0%</b><small>Zorunlu alan tamamlama</small></div>
+  <nav aria-label="Kurulum bölümleri">
+   <a href="#setup-company"><i>1</i><span>Firma ve alan adı<small>Kurumsal kimlik ve sunucu adresi</small></span></a>
+   <a href="#setup-admin"><i>2</i><span>Yönetici erişimi<small>Kullanıcı adı, e-posta ve parola</small></span></a>
+   <a href="#setup-legal"><i>3</i><span>Vergi, adres ve banka<small>Resmî ve finansal bilgiler</small></span></a>
+   <a href="#setup-rules"><i>4</i><span>Onay ve teklif kuralları<small>Risk sınırları ve varsayılanlar</small></span></a>
+   <a href="#setup-delivery"><i>5</i><span>Kurulum ve teslim<small>Canlı komutlar ve devir belgesi</small></span></a>
+  </nav>
+  <div class="setup-security-note-v375"><b>🔒 Veri güvenliği</b><p>Parola indirilen devir belgesine yazılmaz. Mevcut müşteri, ürün ve proforma kayıtları bu sihirbaz tarafından silinmez.</p></div>
+ </aside>
+
+ <form id="setupForm" class="setup-wizard-form-v375" method="post" action="/setup" data-setup-studio-v375><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+  <section id="setup-company" class="card setup-panel-v375">
+   <header><span class="setup-panel-no-v375">1</span><div><h2>Firma ve alan adı</h2><p>Panelde, proformalarda ve kurulum komutlarında kullanılacak temel bilgiler.</p></div><span class="setup-panel-state-v375">Açık</span></header>
+   <div class="form-grid setup-grid-v375">
+    <label>Firma adı <em>Zorunlu</em><input required data-setup-required name="company_name" value="<%=profile.company_name||''%>" placeholder="Örn. ARTEVA LABORATUVAR"></label>
+    <label>Kısa ad<input name="short_name" value="<%=profile.short_name||''%>" placeholder="Örn. ARTEVA LAB"></label>
+    <label>Kurulum slug <em>Zorunlu</em><input required data-setup-required name="company_slug" value="company" pattern="[a-zA-Z0-9_-]+" placeholder="firma-kodu"></label>
+    <label>Alan adı <em>Zorunlu</em><input required data-setup-required name="domain" value="<%=setup.domain||''%>" placeholder="crm.firma.com"></label>
+    <label>Uygulama portu<input type="number" min="1024" max="65535" name="port" value="<%=setup.port||3120%>"></label>
+    <label>Yetkili kişi<input name="authorized_person" value="<%=profile.authorized_person||''%>"></label>
+    <label>Telefon<input name="phone" value="<%=profile.phone||''%>"></label>
+    <label>Cep telefonu<input name="mobile" value="<%=profile.mobile||''%>"></label>
+    <label>E-posta <em>Zorunlu</em><input required data-setup-required type="email" name="email" value="<%=profile.email||''%>"></label>
+    <label>Web sitesi<input name="website" value="<%=profile.website||''%>" placeholder="https://firma.com"></label>
+   </div>
+  </section>
+
+  <section id="setup-admin" class="card setup-panel-v375">
+   <header><span class="setup-panel-no-v375">2</span><div><h2>Yönetici erişimi</h2><p>Sistemi devralacak ana yönetici hesabını güvenli şekilde hazırlayın.</p></div><span class="setup-panel-state-v375">Açık</span></header>
+   <div class="form-grid setup-grid-v375">
+    <label>Yönetici kullanıcı adı <em>Zorunlu</em><input required data-setup-required name="admin_username" value="<%=user?.username||''%>" autocomplete="off"></label>
+    <label>Yönetici e-posta <em>Zorunlu</em><input required data-setup-required type="email" name="admin_email" value="<%=user?.email||''%>"></label>
+    <label>Yeni parola<input type="password" name="admin_password" minlength="10" autocomplete="new-password" placeholder="Değişmeyecekse boş bırakın"><small>En az 10 karakter. Boş bırakılırsa mevcut parola korunur.</small></label>
+   </div>
+   <div class="setup-inline-alert-v375">Parola hiçbir rapora veya indirilen kurulum belgesine eklenmez.</div>
+  </section>
+
+  <section id="setup-legal" class="card setup-panel-v375">
+   <header><span class="setup-panel-no-v375">3</span><div><h2>Vergi, adres ve banka</h2><p>Proforma başlığı, footer ve ödeme alanlarında kullanılacak bilgiler.</p></div><span class="setup-panel-state-v375">Açık</span></header>
+   <div class="form-grid setup-grid-v375">
+    <label>Vergi dairesi<input name="tax_office" value="<%=profile.tax_office||''%>"></label>
+    <label>Vergi numarası<input name="tax_no" value="<%=profile.tax_no||''%>"></label>
+    <label>Şehir<input name="city" value="<%=profile.city||''%>"></label>
+    <label>Ülke<input name="country" value="<%=profile.country||'Türkiye'%>"></label>
+    <label class="wide">Açık adres<textarea name="address" rows="3"><%=profile.address||''%></textarea></label>
+    <label>Banka adı<input name="bank_name" value="<%=profile.bank_name||''%>"></label>
+    <label>TRY IBAN<input name="iban_try" value="<%=profile.iban_try||''%>"></label>
+    <label>EUR IBAN<input name="iban_eur" value="<%=profile.iban_eur||''%>"></label>
+    <label>USD IBAN<input name="iban_usd" value="<%=profile.iban_usd||''%>"></label>
+   </div>
+  </section>
+
+  <section id="setup-rules" class="card setup-panel-v375">
+   <header><span class="setup-panel-no-v375">4</span><div><h2>Onay ve teklif kuralları</h2><p>Yüksek tutar veya iskonto durumlarında yönetici kontrolünü devreye alın.</p></div><span class="setup-panel-state-v375">Açık</span></header>
+   <div class="form-grid setup-grid-v375">
+    <label>Tutar üstü yönetici onayı<input type="number" min="0" step="0.01" name="approval_amount_limit" value="<%=setup.approval_amount_limit||0%>"><small>0 girilirse tutar limiti kapalıdır.</small></label>
+    <label>İskonto yüzdesi üstü onay<input type="number" min="0" max="100" step="0.01" name="approval_discount_limit" value="<%=setup.approval_discount_limit||0%>"><small>0 girilirse iskonto limiti kapalıdır.</small></label>
+   </div>
+  </section>
+
+  <section id="setup-delivery" class="card setup-panel-v375 setup-panel-delivery-v375">
+   <header><span class="setup-panel-no-v375">5</span><div><h2>Kurulum ve teslim</h2><p>Canlıya alma komutunu kontrol edin, bilgileri kaydedin ve A–Z devir kılavuzunu indirin.</p></div><span class="setup-panel-state-v375">Açık</span></header>
+   <div class="setup-command-grid-v375">
+    <article><div><b>Canlı güncelleme komutu</b><button type="button" class="btn btn--sm" data-copy-setup-command="#setupInstallCommand">Kopyala</button></div><code id="setupInstallCommand" data-setup-command></code></article>
+    <article><div><b>Sağlık kontrolü</b><button type="button" class="btn btn--sm" data-copy-setup-command="#setupHealthCommand">Kopyala</button></div><code id="setupHealthCommand" data-setup-health-command></code></article>
+   </div>
+   <div class="setup-final-actions-v375"><button class="btn btn--primary" type="submit">💾 Sistemi Hazırla ve Kaydet</button><button class="btn btn--soft" type="submit" formaction="/setup/guide">⬇ A–Z Kurulum ve Devir Kılavuzunu İndir</button></div>
+  </section>
+ </form>
+
+ <aside class="setup-checklist-v375 card">
+  <header><h2>Canlıya alma kontrolü</h2><p>Devirden önce tamamlanması önerilen kontroller.</p></header>
+  <ol><li><span>1</span>Firma profili ve yönetici hesabı</li><li><span>2</span>Alan adı, Nginx ve SSL</li><li><span>3</span>SMTP test e-postası</li><li><span>4</span>Proforma ön izleme ve PDF</li><li><span>5</span>WhatsApp ayrı pencere testi</li><li><span>6</span>JSON yedek ve geri yükleme tatbikatı</li><li><span>7</span>Günlük yedekleme cron'u</li><li><span>8</span>Yetki ve kullanıcı erişim testi</li></ol>
+ </aside>
+</div>

@@ -1,0 +1,25 @@
+CRM / ERP EFSANA36 v3.5.1 LOGIN STUDIO RENDER FIX PRO
+
+STATIC_CHECKS=17/17 OK
+JAVASCRIPT_SYNTAX=OK
+BASH_SYNTAX=OK
+EJS_DELIMITER_CHECK=OK
+EJS_RENDER_TESTS=2/2 OK
+AUTH_LOGIN_FORM_COUNT=1
+AUTH_LOGIN_CARD_AND_FIELDS=OK
+SETTINGS_STUDIO_FORM_COUNT=1
+NESTED_FORM_COUNT=0
+STUDIO_CONTROLS_INSIDE_MAIN_FORM=OK
+DEDICATED_LOGIN_CSS=public/css/login-studio-v351.css
+DEDICATED_LOGIN_JS=public/js/login-page-v351.js
+DEDICATED_STUDIO_JS=public/js/login-studio-v351.js
+CSS_PARSE_RULES=106
+CSS_PARSE_ERRORS=0
+MIGRATION_TESTS=2/2 OK
+SCHEMA_VERSION=30
+SQLITE_INTEGRITY=OK
+FOREIGN_KEY_ERRORS=0
+NEW_DATABASE_MIGRATION=NO
+CORE_DATA_DELETE_CHANGE=NO
+
+Not: Bu çalışma ortamında registry erişimi olmadığı için gerçek Express sunucusu bağımlılıkları yeniden indirilerek başlatılamadı. EJS sayfaları gerçek include yapısıyla render edilip form/DOM yapısı doğrulandı; hedef sunucuda update-live.sh npm ci, statik kontrol, migration, seed, release health ve rollback adımlarını çalıştırır.

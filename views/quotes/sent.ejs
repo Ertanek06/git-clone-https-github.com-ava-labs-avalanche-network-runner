@@ -1,0 +1,76 @@
+<% layout('layout') -%>
+<%
+ const lang=String(locale||'tr').toLowerCase()==='en'?'en':'tr';
+ const L={tr:{eyebrow:'GÖNDERİLEN PROFORMALAR',title:'Canlı Proforma Takibi',desc:'Gönderilen tekliflerin okunma durumunu, açılma sayısını ve revizyon bildirimlerini canlı takip edin.',all:'Tümü',read:'Okundu',unread:'Okunmadı',failed:'Başarısız',revision:'Revizyon',search:'Alıcı, teklif no veya müşteri ara',filter:'Filtrele',total:'Toplam gönderim',sent:'Gönderildi',readCount:'Okunan',unreadCount:'Okunmayan',failedCount:'Başarısız',quote:'Proforma',customer:'Müşteri',recipient:'Alıcı',sentAt:'Gönderim zamanı',viewed:'Okunma',notViewed:'Okunmadı',viewCount:'Açılma sayısı',firstView:'İlk görüntülenme',lastView:'Son ziyaret',viewHistory:'Müşterinin açılma zamanları',verified:'Doğrulanmış',status:'Durum',edit:'Düzenle',emailPage:'E-posta ekranı',revisionMail:'Revizyon bildir',remove:'Listeden kaldır',removeConfirm:'Bu gönderim kaydı takip listesinden kaldırılsın mı? Ana proforma, müşteri ve ürün kayıtları silinmez.',revConfirm:'Revizyon bildirimi müşteriye gönderilsin mi?',empty:'Henüz gönderilen proforma kaydı bulunamadı.',auto:'30 sn otomatik yenilenir.',revHint:'İsteğiniz üzerine revize edilmiştir metni ile müşteriye tekrar gönderir.',sentStatus:'Gönderildi',failedStatus:'Başarısız',pendingStatus:'Bekliyor',unknown:'Bilinmiyor'},en:{eyebrow:'SENT PROFORMAS',title:'Live Proforma Tracking',desc:'Track sent offers, read status, view count and revision notices live.',all:'All',read:'Read',unread:'Unread',failed:'Failed',revision:'Revision',search:'Search recipient, quote no or customer',filter:'Filter',total:'Total sends',sent:'Sent',readCount:'Read',unreadCount:'Unread',failedCount:'Failed',quote:'Quote',customer:'Customer',recipient:'Recipient',sentAt:'Sent time',viewed:'Read status',notViewed:'Unread',viewCount:'View count',firstView:'First view',lastView:'Last visit',viewHistory:'Customer opening times',verified:'Verified',status:'Status',edit:'Edit',emailPage:'Email page',revisionMail:'Revision notice',remove:'Remove',removeConfirm:'Remove this sending log from tracking? Main quote, customer and product records will not be deleted.',revConfirm:'Send revision notice to the customer?',empty:'No sent proforma records yet.',auto:'Auto-refreshes every 30 sec.',revHint:'Sends the customer a revised-offer notice.',sentStatus:'Sent',failedStatus:'Failed',pendingStatus:'Pending',unknown:'Unknown'}}[lang];
+ const fmtDate=v=>v?new Date(Number(v||0)).toLocaleString(lang==='tr'?'tr-TR':'en-US'):'—';
+ const shortDate=v=>v?new Date(Number(v||0)).toLocaleString(lang==='tr'?'tr-TR':'en-US',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+ const customerSnapshot=row=>{try{return JSON.parse(row.customer_snapshot_json||'{}')||{}}catch{return {}}};
+ const customerName=row=>customerSnapshot(row).company_name||L.unknown;
+ const statusText=s=>({SENT:L.sentStatus,FAILED:L.failedStatus,PENDING:L.pendingStatus})[String(s||'').toUpperCase()]||String(s||'-');
+ const stat=n=>Number(n||0);
+ const filterUrl=f=>`/quotes/sent?filter=${encodeURIComponent(f)}${q?`&q=${encodeURIComponent(q)}`:''}`;
+%>
+<meta http-equiv="refresh" content="30">
+<header class="page-head sent-page-head pro-headline">
+ <div>
+  <span class="eyebrow">📨 <%=L.eyebrow%></span>
+  <h1><%=L.title%></h1>
+  <p><%=L.desc%> <small class="muted">⏱️ <%=L.auto%></small></p>
+ </div>
+ <div class="row-actions"><a class="btn btn--soft btn--sm js-back" href="/quotes">‹ <%= lang==='tr'?'Proforma Listesi':'Quote List'%></a></div>
+</header>
+
+<section class="sent-stats sent-stats--clickable">
+ <a class="sent-stat <%=filter==='all'?'is-active':''%>" href="<%=filterUrl('all')%>" title="<%=L.total%>"><span>📬</span><small><%=L.total%></small><b><%=stat(stats.total)%></b></a>
+ <a class="sent-stat sent-stat--sent <%=filter==='sent'?'is-active':''%>" href="<%=filterUrl('all')%>" title="<%=L.sent%>"><span>✅</span><small><%=L.sent%></small><b><%=stat(stats.sent)%></b></a>
+ <a class="sent-stat sent-stat--read <%=filter==='read'?'is-active':''%>" href="<%=filterUrl('read')%>" title="<%=L.readCount%>"><span>🟢</span><small><%=L.readCount%></small><b><%=stat(stats.read_count)%></b></a>
+ <a class="sent-stat sent-stat--unread <%=filter==='unread'?'is-active':''%>" href="<%=filterUrl('unread')%>" title="<%=L.unreadCount%>"><span>🔴</span><small><%=L.unreadCount%></small><b><%=stat(stats.unread_count)%></b></a>
+ <a class="sent-stat sent-stat--failed <%=filter==='failed'?'is-active':''%>" href="<%=filterUrl('failed')%>" title="<%=L.failedCount%>"><span>⚠️</span><small><%=L.failedCount%></small><b><%=stat(stats.failed)%></b></a>
+</section>
+
+<form class="filterbar sent-filter" method="get" action="/quotes/sent">
+ <input name="q" value="<%=q||''%>" placeholder="<%=L.search%>">
+ <select name="filter">
+  <option value="all" <%=filter==='all'?'selected':''%>><%=L.all%></option>
+  <option value="read" <%=filter==='read'?'selected':''%>><%=L.read%></option>
+  <option value="unread" <%=filter==='unread'?'selected':''%>><%=L.unread%></option>
+  <option value="failed" <%=filter==='failed'?'selected':''%>><%=L.failed%></option>
+  <option value="revision" <%=filter==='revision'?'selected':''%>><%=L.revision%></option>
+ </select>
+ <button class="btn btn--primary btn--sm">🔎 <%=L.filter%></button>
+</form>
+
+<section class="sent-track-list sent-track-list--compact">
+ <% if(!rows.length){ %>
+  <div class="empty card">📭 <%=L.empty%></div>
+ <% } %>
+ <% rows.forEach(row=>{ const viewEvents=Array.isArray(row.view_events)?row.view_events:[]; const views=Number(row.verified_view_count||viewEvents.length||0); const opened=views>0; const failed=String(row.status||'').toUpperCase()==='FAILED'; const pending=String(row.status||'').toUpperCase()==='PENDING'; const isWhatsapp=String(row.mail_type||'').toUpperCase()==='WHATSAPP'; const customer=customerSnapshot(row); const hasWhatsappMobile=String(customer.mobile||customer.phone||'').replace(/\D/g,'').length>=10; const rev=!isWhatsapp&&(String(row.mail_type||'').toUpperCase()==='REVISION'||String(row.quote_status||'').toUpperCase()==='REVISION_REQUESTED'||Number(row.revision_no||0)>0); %>
+  <article class="sent-track-card sent-track-card--compact <%=opened?'is-read':'is-unread'%> <%=failed?'is-failed':''%>">
+   <div class="sent-track-main sent-track-main--compact">
+    <button type="button" class="sent-track-code sent-track-preview" title="<%=L.quote%>: <%=quoteDisplayNo(row)%> — <%=lang==='tr'?'Ön izlemek için tıklayın':'Click to preview'%>" data-preview-title="<%=quoteDisplayNo(row)%>" data-preview-url="/quotes/<%=row.quote_id%>/preview" data-preview-open="/quotes/<%=row.quote_id%>/print" data-preview-email="/quotes/<%=row.quote_id%>/email" <% if(hasWhatsappMobile&&can('quotes','export')){ %>data-preview-whatsapp="/quotes/<%=row.quote_id%>/whatsapp"<% } %> data-preview-edit="/quotes/<%=row.quote_id%>/edit"><span><%=opened?'🟢':'🔴'%></span><div><small><%=L.quote%></small><b><%=quoteDisplayNo(row)%></b></div></button>
+    <button type="button" class="sent-track-info sent-track-preview" title="<%=L.customer%>: <%=customerName(row)%> — <%=lang==='tr'?'Kimlik kartını aç':'Open identity card'%>" data-preview-title="<%=lang==='tr'?'Müşteri Kimlik Kartı':'Customer Identity Card'%>" data-preview-url="<%=row.customer_id?('/customers/'+row.customer_id+'/preview'):('/quotes/'+row.quote_id+'/preview')%>" <% if(row.customer_id&&can('customers','edit')){ %>data-preview-edit="/customers/<%=row.customer_id%>/edit"<% } %>><small><%=L.customer%></small><b><%=customerName(row)%></b><em><%=row.subject||'-'%></em></button>
+    <div class="sent-mini-metrics" aria-label="<%=L.status%>">
+      <span class="sent-icon-chip <%=opened?'ok':'bad'%>" title="<%=L.viewed%>: <%=opened?L.read:L.notViewed%>"><i>👁️</i><b><%=opened?L.read:L.notViewed%></b></span>
+      <span class="sent-icon-chip" title="<%=L.viewCount%>: <%=views%>"><i>🔢</i><b><%=views%></b></span>
+      <span class="sent-icon-chip" title="<%=L.sentAt%>: <%=fmtDate(row.sent_at||row.created_at)%>"><i>🕒</i><b><%=shortDate(row.sent_at||row.created_at)%></b></span>
+      <span class="sent-icon-chip recipient" title="<%=L.recipient%>: <%=row.recipient_email%><%=row.cc_email?` · ${lang==='tr'?'Bilgi':'Cc'}: ${row.cc_email}`:''%>"><i>👤</i><b><%=row.recipient_email%><% if(row.cc_email){ %><br><small><%=lang==='tr'?'Bilgi':'Cc'%>: <%=row.cc_email%></small><% } %></b></span>
+    </div>
+   </div>
+   <div class="sent-track-sub">
+    <span class="mini-status <%=failed?'mini-status--failed':pending?'mini-status--pending':'mini-status--sent'%>" title="<%=L.status%>"><%=failed?'⚠️':pending?'⏳':'✅'%> <%=statusText(row.status)%></span>
+    <% if(rev){ %><span class="mini-status mini-status--revision" title="<%=L.revision%>">🔁 <%=L.revision%></span><% } %>
+    <span class="mini-muted sent-last-visit-v133" title="<%=L.lastView%>">🕒 <b><%=lang==='tr'?'Son ziyaret':'Last visit'%>:</b> <%=opened?fmtDate(row.verified_last_viewed_at):L.notViewed%></span>
+    <% if(row.error_message){ %><span class="mini-error">⚠️ <%=row.error_message%></span><% } %>
+   </div>
+   <% if(viewEvents.length){ %><details class="sent-view-history-v128"><summary>🕒 <%=L.viewHistory%> · <b><%=viewEvents.length%></b> <%=L.verified%></summary><ol><% viewEvents.forEach((ts,n)=>{ %><li><span><%=n+1%>.</span><time datetime="<%=new Date(Number(ts)).toISOString()%>"><%=fmtDate(ts)%></time></li><% }) %></ol></details><% } %>
+   <div class="sent-track-actions">
+    <a class="btn btn--soft btn--sm" href="/quotes/<%=row.quote_id%>/edit">✏️ <%=L.edit%></a>
+    <a class="btn btn--sm" href="/quotes/<%=row.quote_id%>/email">✉️ <%=L.emailPage%></a>
+    <% if(!isWhatsapp){ %><form method="post" action="/quotes/sent/<%=row.id%>/revision-mail" title="<%=L.revHint%>" data-confirm="<%=L.revConfirm%>"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--success btn--sm">🔁 <%=L.revisionMail%></button></form><% } %>
+    <% if(hasWhatsappMobile&&can('quotes','export')){ %><form method="post" action="/quotes/<%=row.quote_id%>/whatsapp" data-whatsapp-share><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--whatsapp btn--sm"><%- include('../partials/whatsapp-icon') %><span>WhatsApp</span></button></form><% } %>
+    <form method="post" action="/quotes/sent/<%=row.id%>/archive" data-confirm="<%=L.removeConfirm%>"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--danger btn--sm">🗑️ <%=L.remove%></button></form>
+   </div>
+  </article>
+ <% }) %>
+</section>
+<%- include('../partials/pager',{total,page,limit,showAll,q,filter}) %>

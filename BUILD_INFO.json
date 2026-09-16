@@ -1,0 +1,10 @@
+{
+  "package": "crmv1.45",
+  "app_version": "3.8.57",
+  "release": "v3.8.57-crmv1.45-web-import-upsert-ui-document-fix",
+  "build": "crmv1.45",
+  "built_at": "2026-08-15T00:30:00+03:00",
+  "cache_strategy": "content-hashed gzip-precompressed core/page/print bundles plus per-user versioned theme CSS",
+  "active_release_verification": true,
+  "version": "3.8.57"
+}

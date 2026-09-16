@@ -1,0 +1,5 @@
+CRM / ERP EFSANA 36 v3.0.2 MIGRATION DOĞRULAMA
+- Migration 1-7 boş SQLite veritabanı üzerinde sıralı uygulandı: BAŞARILI
+- user_ui_settings.locale alanı: BAŞARILI
+- profiles.quote_prefix alanı: BAŞARILI
+- Firma profili INSERT sorgusu quote_prefix alanıyla doğrulandı: BAŞARILI

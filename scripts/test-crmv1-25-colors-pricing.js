@@ -1,0 +1,38 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const read = (file) => fs.readFileSync(file, "utf8");
+const pkg = JSON.parse(read("package.json"));
+const build = JSON.parse(read("BUILD_INFO.json"));
+const view = read("views/templates/index.ejs");
+const modal = read("public/js/template-modal.js");
+const route = read("src/routes/templates.js");
+const render = read("src/services/quote-render.service.js");
+const print = read("views/quotes/print.ejs");
+const css = read("public/css/print.css");
+const paginator = read("public/js/print-paginator.js");
+
+assert.equal(pkg.version, "3.8.57");
+assert.equal(build.build, "crmv1.45");
+assert.equal(build.release, "v3.8.57-crmv1.45-web-import-upsert-ui-document-fix");
+assert.match(view, /Gelişmiş Renk Yönetimi · Tüm Alanlar Ayrı Ayrı/);
+assert.match(view, /table_header_bg_color/);
+assert.match(view, /grand_total_bg_color/);
+assert.match(view, /terms_header_bg_color/);
+assert.match(view, /bank_header_bg_color/);
+assert.match(view, /signature_bg_color/);
+assert.match(view, /footer_bg_color/);
+assert.match(modal, /data-template-section-color/);
+assert.match(modal, /paletteEnabled\.checked = true/);
+assert.match(route, /custom_palette_enabled/);
+assert.match(route, /grand_total_text_color/);
+assert.match(render, /templatePalette: palette/);
+assert.match(print, /--pf-table-head-bg/);
+assert.match(print, /design-custom-palette/);
+assert.match(css, /body\.print-layout\.design-custom-palette \.print-items th/);
+assert.match(css, /price-final-page-block--atomic/);
+assert.match(paginator, /tryPlaceTotalsUnderProducts/);
+assert.match(paginator, /appendPriceAndFinalAtomic/);
+assert.match(paginator, /totals--moved-with-final/);
+assert.match(paginator, /manual-price-final-block--atomic/);
+console.log("crmv1.45 color + price pagination contracts: ok");

@@ -1,0 +1,591 @@
+/*
+ * crmV20 v3.8.14 — shared UI consistency layer
+ * Keeps page geometry, controls, tables and row actions predictable without
+ * changing feature-specific layouts or the active user theme.
+ */
+
+.app-main,
+.app-main .page-wrap {
+  min-width: 0;
+}
+
+.app-main .page-wrap {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.app-main .page-wrap > * {
+  min-width: 0;
+}
+
+.app-main .page-wrap :where(input, select, textarea, button) {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.app-main .page-wrap :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]), select) {
+  min-height: var(--content-control-height, 36px);
+}
+
+.app-main .page-wrap textarea {
+  min-height: 80px;
+  max-width: 100%;
+}
+
+.app-main .page-wrap :where(input, select, textarea):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #245ba7) 52%, transparent);
+  outline-offset: 1px;
+}
+
+.app-main .page-wrap .card,
+.app-main .page-wrap .filterbar,
+.app-main .page-wrap .bulk-toolbar {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.app-main .page-wrap .form-grid {
+  align-items: start;
+}
+
+.app-main .page-wrap .form-grid > *,
+.app-main .page-wrap .form-grid label {
+  min-width: 0;
+}
+
+.app-main .page-wrap .table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-main .page-wrap :where(.pro-table, .lined) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.app-main .page-wrap :where(.pro-table, .lined) > thead > tr > th {
+  min-height: 42px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.app-main .page-wrap :where(.pro-table, .lined) > tbody > tr > td {
+  min-height: 46px;
+  vertical-align: middle;
+}
+
+.app-main .page-wrap :where(.pro-table, .lined) :where(th, td) {
+  box-sizing: border-box;
+}
+
+.app-main .page-wrap :where(.pro-table, .lined) td :where(b, span, small, a) {
+  overflow-wrap: anywhere;
+}
+
+/* One action language across every list: 32 px icon, semantic color, tooltip. */
+.app-main .page-wrap .table-action-list,
+.app-main .page-wrap .table-action-list--dense {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+.app-main .page-wrap .table-action-list > form,
+.app-main .page-wrap .table-action-list--dense > form {
+  display: flex;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* Older page-specific grid rules changed icon size and wrapping. */
+.app-main .page-wrap .quotes-table.pro-table--quote .table-action-list--dense,
+.app-main .page-wrap .workflow-table.pro-table--workflow .table-action-list--dense,
+.app-main .page-wrap .archive-table .table-action-list--dense {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid var(--border, #d7e0ec) !important;
+  border-radius: 9px !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote .table-action-list--dense .table-action,
+.app-main .page-wrap .workflow-table.pro-table--workflow .table-action-list--dense .table-action,
+.app-main .page-wrap .archive-table .table-action-list--dense .table-action {
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0 !important;
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action > :where(span, svg),
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action > :where(span, svg) {
+  display: block !important;
+  width: auto !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+.app-main .page-wrap .table-action > .table-action__icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  height: 18px !important;
+  color: inherit !important;
+  transform: none !important;
+}
+
+.app-main .page-wrap .table-action > .table-action__icon > svg {
+  display: block !important;
+  width: 18px !important;
+  height: 18px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  pointer-events: none;
+}
+
+.app-main .page-wrap .table-action:hover > .table-action__icon {
+  transform: none !important;
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action:hover,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.02);
+  box-shadow: 0 5px 12px rgba(15, 23, 42, .12);
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action:focus-visible,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action:focus-visible {
+  outline: 2px solid color-mix(in srgb, currentColor 50%, transparent) !important;
+  outline-offset: 2px !important;
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action::after,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action::after {
+  content: attr(data-label);
+  position: absolute;
+  z-index: 10000;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translate(-50%, 4px);
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #14233d;
+  color: #fff;
+  font-size: 11px !important;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease, transform .12s ease;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, .2);
+}
+
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action:hover::after,
+.app-main .page-wrap :where(td, .table-action-list, .table-action-list--dense) > .table-action:focus-visible::after,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action:hover::after,
+.app-main .page-wrap :where(.table-action-list, .table-action-list--dense) .table-action:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.app-main .page-wrap .table-action.is-preview {
+  color: #1d5ca7 !important;
+  background: #eef5ff !important;
+  border-color: #bfdbfe !important;
+}
+
+.app-main .page-wrap .table-action.is-edit {
+  color: #344054 !important;
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+.app-main .page-wrap .table-action.is-open,
+.app-main .page-wrap .table-action.is-success {
+  color: #047857 !important;
+  background: #ecfdf3 !important;
+  border-color: #a7f3d0 !important;
+}
+
+.app-main .page-wrap .table-action.is-print {
+  color: #6941c6 !important;
+  background: #f4f3ff !important;
+  border-color: #d9d6fe !important;
+}
+
+.app-main .page-wrap .table-action.is-whatsapp {
+  color: #15803d !important;
+  background: #ecfdf3 !important;
+  border-color: #86efac !important;
+}
+
+.app-main .page-wrap .table-action.is-warning {
+  color: #9a6700 !important;
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+
+.app-main .page-wrap .table-action.is-delete,
+.app-main .page-wrap .table-action.is-danger {
+  color: #b42318 !important;
+  background: #fff1f2 !important;
+  border-color: #fecaca !important;
+}
+
+.app-main .page-wrap .actions-col {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+  text-align: center;
+}
+
+.app-main .page-wrap .actions-col--1 {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+}
+
+.app-main .page-wrap .actions-col--2 {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+}
+
+.app-main .page-wrap .actions-col--3 {
+  width: 121px !important;
+  min-width: 121px !important;
+  max-width: 121px !important;
+}
+
+.app-main .page-wrap .actions-col--4 {
+  width: 158px !important;
+  min-width: 158px !important;
+  max-width: 158px !important;
+}
+
+.app-main .page-wrap .actions-col--5 {
+  width: 196px !important;
+  min-width: 196px !important;
+  max-width: 196px !important;
+}
+
+.app-main .page-wrap .actions-col--6,
+.app-main .page-wrap .actions-col--wide {
+  width: 232px !important;
+  min-width: 232px !important;
+  max-width: 232px !important;
+}
+
+.app-main .page-wrap .actions-cell--1 {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+}
+
+.app-main .page-wrap .actions-cell--2 {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+}
+
+.app-main .page-wrap .actions-cell--3 {
+  width: 121px !important;
+  min-width: 121px !important;
+  max-width: 121px !important;
+}
+
+.app-main .page-wrap .actions-cell--4 {
+  width: 158px !important;
+  min-width: 158px !important;
+  max-width: 158px !important;
+}
+
+.app-main .page-wrap .actions-cell--5 {
+  width: 196px !important;
+  min-width: 196px !important;
+  max-width: 196px !important;
+}
+
+.app-main .page-wrap .actions-cell--6 {
+  width: 232px !important;
+  min-width: 232px !important;
+  max-width: 232px !important;
+}
+
+/* Keep the declared action count authoritative for every permission variant. */
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--1,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--1,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--1,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--1,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--1,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--1 {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--2,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--2,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--2,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--2,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--2,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--2 {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--3,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--3,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--3,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--3,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--3,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--3 {
+  width: 121px !important;
+  min-width: 121px !important;
+  max-width: 121px !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--4,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--4,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--4,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--4,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--4,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--4 {
+  width: 158px !important;
+  min-width: 158px !important;
+  max-width: 158px !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--5,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--5,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--5,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--5,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--5,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--5 {
+  width: 196px !important;
+  min-width: 196px !important;
+  max-width: 196px !important;
+}
+
+.app-main .page-wrap .quotes-table.pro-table--quote col.actions-col--6,
+.app-main .page-wrap .workflow-table.pro-table--workflow col.actions-col--6,
+.app-main .page-wrap .quotes-table.pro-table--quote th.actions-col--6,
+.app-main .page-wrap .quotes-table.pro-table--quote td.actions-cell--6,
+.app-main .page-wrap .workflow-table.pro-table--workflow th.actions-col--6,
+.app-main .page-wrap .workflow-table.pro-table--workflow td.actions-cell--6 {
+  width: 232px !important;
+  min-width: 232px !important;
+  max-width: 232px !important;
+}
+
+.app-main .page-wrap .customer-table .col-actions.actions-col--1,
+.app-main .page-wrap .product-table .col-actions.actions-col--1,
+.app-main .page-wrap .customer-table th.actions-col--1,
+.app-main .page-wrap .customer-table td.actions-cell--1,
+.app-main .page-wrap .product-table th.actions-col--1,
+.app-main .page-wrap .product-table td.actions-cell--1 {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+}
+
+.app-main .page-wrap .customer-table .col-actions.actions-col--2,
+.app-main .page-wrap .product-table .col-actions.actions-col--2,
+.app-main .page-wrap .customer-table th.actions-col--2,
+.app-main .page-wrap .customer-table td.actions-cell--2,
+.app-main .page-wrap .product-table th.actions-col--2,
+.app-main .page-wrap .product-table td.actions-cell--2 {
+  width: 84px !important;
+  min-width: 84px !important;
+  max-width: 84px !important;
+}
+
+.app-main .page-wrap .customer-record-table th:first-child,
+.app-main .page-wrap .customer-record-table td:first-child {
+  width: 196px !important;
+  min-width: 196px !important;
+  max-width: 196px !important;
+}
+
+.app-main .page-wrap .customer-record-table td:first-child {
+  overflow: visible !important;
+}
+
+/* Customer detail is a standalone page outside the application shell. */
+.customer-preview-page .customer-record-table th:first-child,
+.customer-preview-page .customer-record-table td:first-child {
+  width: 196px !important;
+  min-width: 196px !important;
+  max-width: 196px !important;
+  overflow: visible !important;
+}
+
+.customer-preview-page .table-action-list--dense {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+.customer-preview-page .table-action-list--dense > form {
+  display: flex;
+  margin: 0;
+}
+
+.customer-preview-page .table-action-list--dense .table-action {
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 9px !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+}
+
+.customer-preview-page .table-action-list--dense .table-action__icon,
+.customer-preview-page .table-action-list--dense .table-action__icon > svg {
+  display: block !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.customer-preview-page .table-action-list--dense .table-action__icon {
+  min-width: 18px !important;
+  max-width: 18px !important;
+  color: inherit !important;
+  transform: none !important;
+}
+
+.customer-preview-page .table-action-list--dense .table-action__icon > svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.app-main .page-wrap td.actions-cell {
+  overflow: visible !important;
+}
+
+.app-main .page-wrap td.actions-cell .table-action-list {
+  margin-inline: auto;
+}
+
+/* Dashboard workflow controls are labelled commands, not table icon cells. */
+.app-main .page-wrap .workflow-task__actions .table-action {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  flex: 0 1 auto !important;
+  padding: 0 9px !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  overflow: hidden !important;
+}
+
+.app-main .page-wrap .workflow-task__actions .table-action::after {
+  display: none;
+}
+
+.quote-line-image-tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.quote-line-alternative-toggle.is-active {
+  color: #3b2200 !important;
+  background: #f59e0b !important;
+  border-color: #d97706 !important;
+}
+
+@media (max-width: 760px) {
+  .app-main .page-wrap {
+    padding-inline: 10px;
+  }
+
+  .app-main .page-wrap .page-head {
+    align-items: stretch;
+  }
+
+  .app-main .page-wrap .page-head__actions,
+  .app-main .page-wrap .row-actions,
+  .app-main .page-wrap .form-actions {
+    max-width: 100%;
+  }
+
+  .app-main .page-wrap .form-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .app-main .page-wrap .form-grid > .wide,
+  .app-main .page-wrap .form-grid > .span-2 {
+    grid-column: 1 !important;
+  }
+}

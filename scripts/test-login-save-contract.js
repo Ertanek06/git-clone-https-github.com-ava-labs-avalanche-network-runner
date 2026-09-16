@@ -1,0 +1,14 @@
+import fs from "fs";
+const service = fs.readFileSync(new URL("../src/services/login-studio.service.js", import.meta.url), "utf8");
+const settings = fs.readFileSync(new URL("../views/settings/login.ejs", import.meta.url), "utf8");
+const studioJs = fs.readFileSync(new URL("../public/js/login-studio-v356.js", import.meta.url), "utf8");
+const auth = fs.readFileSync(new URL("../views/auth/login.ejs", import.meta.url), "utf8");
+const pageJs = fs.readFileSync(new URL("../public/js/login-page-v356.js", import.meta.url), "utf8");
+const assetBuild = fs.readFileSync(new URL("../scripts/build-assets.js", import.meta.url), "utf8");
+for (const token of ["selected_media_id", "studio_payload"]) if (!settings.includes(token)) throw new Error(`Eksik güvenilir form alanı: ${token}`);
+for (const token of ["syncPayload", "selectedMediaInput.value", "payload.media_id", "card_style", "logo_height", "login_label_text", "note_text"]) if (!studioJs.includes(token)) throw new Error(`Eksik istemci kayıt davranışı: ${token}`);
+for (const token of ["resolveLoginTenantId", "submitted.selected_media_id", "ORDER BY updated_at DESC", "verified.media_id !== studio.media_id", "login_studio_public_active", "markPublicLoginTenant", "cleanCardStyle", "logo_height"]) if (!service.includes(token)) throw new Error(`Eksik sunucu kayıt güvencesi: ${token}`);
+if (!auth.includes("assetBundle?.styles") || !assetBuild.includes("login-studio-v356.css")) throw new Error("Yeni login CSS birleşik pakete bağlı değil");
+if (!pageJs.includes("Math.max(width / DESIGN_WIDTH, height / DESIGN_HEIGHT)")) throw new Error("Tam ekran cover ölçeklemesi bağlı değil");
+if (!pageJs.includes("clampVisibleText")) throw new Error("Gerçek login görünür alan sınırı bağlı değil");
+console.log("LOGIN_SAVE_CONTRACT_TESTS=10/10 OK");

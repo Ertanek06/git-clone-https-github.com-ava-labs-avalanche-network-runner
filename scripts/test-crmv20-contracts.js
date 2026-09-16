@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const read=p=>fs.readFileSync(new URL(`../${p}`,import.meta.url),"utf8");
+const pkg=JSON.parse(read("package.json"));
+assert.equal(pkg.version,"3.8.57");
+assert.match(read("src/config.js"),/v3.8.57-crmv1.45-web-import-upsert-ui-document-fix/);
+assert.match(read("src/db/migrate.js"),/form_instance_id/);
+assert.match(read("src/db/migrate.js"),/idx_quotes_form_instance/);
+assert.match(read("views/quotes/form.ejs"),/data-no-confirm/);
+assert.match(read("views/quotes/form.ejs"),/original_quote_id/);
+assert.match(read("public/js/quote-form.js"),/saveInFlight/);
+assert.match(read("public/js/quote-form.js"),/identityFields/);
+assert.match(read("views/products/preview.ejs"),/crmv133-product-preview-inline-edit/);
+assert.match(read("public/css/app.css"),/crmV20 — idempotent quote save/);
+assert.match(read("public/css/print.css"),/crisp high-definition proforma rendering/);
+assert.match(read("public/js/app.js"),/'smart-workflow':\{x:left\+gap,y:0/);
+console.log("crmV20 contracts 12/12 OK");

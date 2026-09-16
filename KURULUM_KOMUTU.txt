@@ -1,0 +1,17 @@
+cd /home/arteva
+
+rm -rf /home/arteva/crmv1.45
+unzip -o crmv1.45.zip
+cd /home/arteva/crmv1.45
+
+BASE=/home/arteva/arteva-crm-erp-efsana36 \
+PORT=3120 \
+DOMAIN=crm.artevapp.com.tr \
+bash scripts/update-live.sh
+
+BASE=/home/arteva/arteva-crm-erp-efsana36 \
+PORT=3120 \
+EXPECTED_VERSION=3.8.57 \
+EXPECTED_RELEASE=v3.8.57-crmv1.45-web-import-upsert-ui-document-fix \
+EXPECTED_BUILD=crmv1.45 \
+bash scripts/health-check.sh

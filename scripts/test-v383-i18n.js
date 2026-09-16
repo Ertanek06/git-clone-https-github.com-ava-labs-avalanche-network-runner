@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {translateRenderedHtml} from '../src/services/locale.service.js';
+const sample='<html><body><h1>Müşteri Listesi</h1><button title="Ara">Ara</button><div>Kullanıcı Yönetimi</div><span>Toplam 32</span><script>const label="Müşteriler"</script></body></html>';
+const out=translateRenderedHtml(sample,'en');
+assert.match(out,/Customer List/);
+assert.match(out,/title="Search">Search/);
+assert.match(out,/User Management/);
+assert.match(out,/Total 32/);
+assert.match(out,/const label="Müşteriler"/);
+const context=fs.readFileSync(new URL('../src/middleware/context.js',import.meta.url),'utf8');
+assert.match(context,/translateRenderedHtml/);
+assert.match(context,/__serverI18nWrapped/);
+const runtime=fs.readFileSync(new URL('../public/js/i18n-runtime.js',import.meta.url),'utf8');
+assert.doesNotMatch(runtime,/translateTree\(document\.body\)/);
+console.log('V383_SERVER_I18N_TESTS=8/8 OK');

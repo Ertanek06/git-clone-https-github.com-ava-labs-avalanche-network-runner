@@ -1,0 +1,206 @@
+<style nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">
+.login-studio-pro{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:14px}.login-studio-main{display:grid;gap:14px;min-width:0}.login-studio-viewport{position:relative;overflow:hidden}.login-media-grid{display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:10px;overflow-x:auto}.login-media-card img,.login-media-card video{width:100%;height:84px;object-fit:cover}.login-studio-controls{position:sticky;top:76px;height:calc(100vh - 96px);overflow:hidden}@media(max-width:1050px){.login-studio-pro{grid-template-columns:1fr}.login-studio-controls{position:relative;top:auto;height:auto}}
+</style>
+<% layout('layout') -%>
+<header class="page-head login-studio-head">
+  <div>
+    <h1>Login Sayfası Tasarımı</h1>
+    <p>Aynı tuval, aynı kırpma ve aynı koordinatlar kullanılır. Canlı ön izlemede gördüğünüz konum gerçek giriş ekranında korunur.</p>
+  </div>
+  <div class="login-studio-head-actions">
+    <button class="btn btn--soft" type="button" data-open-live-preview>⛶ Tam Ekran Canlı Ön İzleme</button>
+    <a class="btn" href="/settings"><%=t('back')%></a>
+  </div>
+</header>
+
+<form id="loginStudioForm" class="login-studio-pro" method="post" action="/settings/login?_csrf=<%=encodeURIComponent(csrfToken)%>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+  <input type="hidden" name="selected_media_id" value="<%=studio.media_id%>" data-selected-media-id>
+  <input type="hidden" name="studio_payload" value="" data-studio-payload>
+  <input type="hidden" name="left_title_x" value="<%=studio.left_title_x%>" data-position-input="left_title_x">
+  <input type="hidden" name="left_title_y" value="<%=studio.left_title_y%>" data-position-input="left_title_y">
+  <input type="hidden" name="left_text_x" value="<%=studio.left_text_x%>" data-position-input="left_text_x">
+  <input type="hidden" name="left_text_y" value="<%=studio.left_text_y%>" data-position-input="left_text_y">
+
+  <section class="login-studio-main">
+    <article class="card login-studio-preview-card">
+      <div class="login-studio-preview-head">
+        <div><h2>Canlı Ön İzleme</h2><small>Tarayıcı ekran oranınızla aynı kırpma · değişiklikler anında uygulanır</small></div>
+        <div class="login-studio-preview-actions">
+          <button class="btn btn--soft btn--sm" type="button" data-open-live-preview>⛶ Büyüt</button>
+          <div class="login-studio-live"><span></span> CANLI</div>
+        </div>
+      </div>
+      <div class="login-studio-viewport" id="loginStudioViewport">
+        <%- include('../partials/login-canvas',{preview:true,studio,legacy,selectedMedia,branding:legacy,error:null,csrfToken,next:'/'}) %>
+      </div>
+      <div class="login-studio-help">Başlık ve açıklamayı sürükleyin. Sistem, metin kutusunu görünür alanın dışına çıkarmadan sınırlar. Fare tekerleği yazı boyutunu değiştirir.</div>
+    </article>
+
+    <article class="card login-media-library">
+      <div class="login-media-library-head">
+        <div><h2>Animasyon Seçimi</h2><small>Seçim canlı ön izlemeye hemen uygulanır; kaydettiğinizde gerçek giriş sayfasında aktif olur.</small></div>
+        <span class="login-media-count"><%=library.length%> animasyon</span>
+      </div>
+      <div class="login-media-grid" id="loginMediaGrid">
+        <label class="login-media-card<%=studio.media_id==='none'?' is-selected':''%>" data-media-card="none" data-media-kind="none" data-media-url="">
+          <input type="radio" name="media_id" value="none" <%=studio.media_id==='none'?'checked':''%>>
+          <span class="login-media-none">∅</span><b>Animasyonsuz</b><small>Kurumsal zemin</small>
+        </label>
+        <% if(legacy.left_image_url){ %>
+          <label class="login-media-card<%=studio.media_id==='image'?' is-selected':''%>" data-media-card="image" data-media-kind="image" data-media-url="<%=legacy.left_image_url%>">
+            <input type="radio" name="media_id" value="image" <%=studio.media_id==='image'?'checked':''%>>
+            <img src="<%=legacy.left_image_url%>" alt="Sabit görsel"><b>Sabit Görsel</b><small>Yüklenen duvar görseli</small>
+          </label>
+        <% } %>
+        <% for(const item of library){ %>
+          <label class="login-media-card<%=studio.media_id===item.id?' is-selected':''%>" data-media-card="<%=item.id%>" data-media-kind="video" data-media-url="<%=item.url%>" data-media-poster="<%=item.thumbnail_url||''%>">
+            <input type="radio" name="media_id" value="<%=item.id%>" <%=studio.media_id===item.id?'checked':''%>>
+            <% if(item.thumbnail_url){ %><img loading="lazy" decoding="async" src="<%=item.thumbnail_url%>" alt=""><% }else{ %><span class="login-media-video-placeholder" aria-hidden="true">▶</span><% } %>
+            <b title="<%=item.name%>"><%=item.name%></b><small><%=item.kind==='builtin'?'Hazır animasyon':'Yüklenen animasyon'%></small>
+            <button type="button" class="login-media-delete" data-delete-media="<%=item.id%>" data-delete-name="<%=item.name%>" aria-label="Animasyonu sil">Sil</button>
+          </label>
+        <% } %>
+      </div>
+    </article>
+  </section>
+
+  <aside class="card login-studio-controls">
+    <div class="login-studio-controls-head">
+      <div><h2>Tasarım Ayarları</h2><small>Tüm değişiklikler canlı uygulanır.</small></div>
+      <button class="btn btn--primary" type="submit">Kaydet</button>
+    </div>
+    <div class="login-studio-controls-scroll">
+      <details open>
+        <summary>Kart Modeli</summary>
+        <div class="login-card-model-grid">
+          <% for(const model of cardStyles){ %>
+            <label class="login-card-model login-card-model--<%=model.id%><%=studio.card_style===model.id?' is-selected':''%>" data-card-model="<%=model.id%>">
+              <input type="radio" name="card_style" value="<%=model.id%>" <%=studio.card_style===model.id?'checked':''%>>
+              <span class="login-card-model-preview"><i></i><b></b><em></em></span>
+              <strong><%=model.name%></strong><small><%=model.description%></small>
+            </label>
+          <% } %>
+        </div>
+        <div class="login-studio-control-grid">
+          <label>Kart genişliği<input name="card_width" type="number" min="440" max="620" value="<%=studio.card_width%>" data-studio-css="card-width" data-unit="px"></label>
+          <label>Köşe yuvarlaklığı<input name="card_radius" type="number" min="0" max="48" value="<%=studio.card_radius%>" data-studio-css="card-radius" data-unit="px"></label>
+          <label>Kart rengi<input name="card_bg" type="color" value="<%=studio.card_bg%>" data-studio-css="card-bg"></label>
+          <label>Çerçeve rengi<input name="card_border" type="color" value="<%=studio.card_border%>" data-studio-css="card-border"></label>
+          <label class="wide">Logo yüksekliği
+            <input name="logo_height" type="range" min="58" max="160" step="1" value="<%=studio.logo_height%>" data-studio-css="logo-height" data-unit="px">
+            <small><span data-logo-height-value><%=studio.logo_height%></span> px</small>
+          </label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Medya ve Logo Dosyaları</summary>
+        <div class="login-studio-control-grid">
+          <label class="wide">Logo<input name="logo" type="file" accept="image/jpeg,image/png,image/webp" data-login-file="logo"><small>JPG, PNG veya WEBP</small></label>
+          <label class="wide">Sabit duvar görseli<input name="left_image" type="file" accept="image/jpeg,image/png,image/webp" data-login-file="left_image"><small>Yüklendiğinde “Sabit Görsel” otomatik seçilir.</small></label>
+          <label class="wide">Yeni animasyon yükle<input name="login_media" type="file" accept="video/mp4,video/webm" data-login-file="login_media"><small>MP4 veya WEBM · en fazla 50 MB</small></label>
+          <label class="wide">Medya koyuluk oranı<input name="overlay_opacity" type="range" min="0" max="0.9" step="0.01" value="<%=studio.overlay_opacity%>" data-studio-range="overlay"><small><span data-overlay-value><%=Math.round(studio.overlay_opacity*100)%></span>%</small></label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Sol Alan Yazıları</summary>
+        <div class="login-studio-text-box">
+          <label class="wide">Sol büyük başlık<input name="left_title_text" value="<%=studio.left_title_text%>" data-studio-text="left_title"></label>
+          <label>Boyut<input name="left_title_size" type="number" min="16" max="84" value="<%=studio.left_title_size%>" data-studio-size="left_title"></label>
+          <label>Renk<input name="left_title_color" type="color" value="<%=studio.left_title_color%>" data-studio-color="left_title"></label>
+          <label class="wide">Yazı tipi<select name="left_title_font" data-studio-font="left_title"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.left_title_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+          <button type="button" class="btn btn--soft wide" data-reset-position="left_title">Başlık konumunu sıfırla</button>
+        </div>
+        <div class="login-studio-text-box">
+          <label class="wide">Sol açıklama<textarea name="left_text_text" rows="3" data-studio-text="left_text"><%=studio.left_text_text%></textarea></label>
+          <label>Boyut<input name="left_text_size" type="number" min="10" max="42" value="<%=studio.left_text_size%>" data-studio-size="left_text"></label>
+          <label>Renk<input name="left_text_color" type="color" value="<%=studio.left_text_color%>" data-studio-color="left_text"></label>
+          <label class="wide">Yazı tipi<select name="left_text_font" data-studio-font="left_text"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.left_text_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+          <button type="button" class="btn btn--soft wide" data-reset-position="left_text">Açıklama konumunu sıfırla</button>
+        </div>
+      </details>
+
+      <details>
+        <summary>Kart Başlıkları</summary>
+        <% const titleGroups=[
+          ['eyebrow','Üst başlık',studio.eyebrow_text,studio.eyebrow_size,studio.eyebrow_color,studio.eyebrow_font,10,28],
+          ['title','Giriş başlığı',studio.title_text,studio.title_size,studio.title_color,studio.title_font,20,64],
+          ['subtitle','Giriş açıklaması',studio.subtitle_text,studio.subtitle_size,studio.subtitle_color,studio.subtitle_font,11,30]
+        ]; %>
+        <% for(const g of titleGroups){ %>
+          <div class="login-studio-text-box">
+            <label class="wide"><%=g[1]%><% if(g[0]==='subtitle'){ %><textarea name="<%=g[0]%>_text" rows="2" data-studio-text="<%=g[0]%>"><%=g[2]%></textarea><% }else{ %><input name="<%=g[0]%>_text" value="<%=g[2]%>" data-studio-text="<%=g[0]%>"><% } %></label>
+            <label>Boyut<input name="<%=g[0]%>_size" type="number" min="<%=g[6]%>" max="<%=g[7]%>" value="<%=g[3]%>" data-studio-size="<%=g[0]%>"></label>
+            <label>Renk<input name="<%=g[0]%>_color" type="color" value="<%=g[4]%>" data-studio-color="<%=g[0]%>"></label>
+            <label class="wide">Yazı tipi<select name="<%=g[0]%>_font" data-studio-font="<%=g[0]%>"><% for(const f of fonts){ %><option value="<%=f%>" <%=g[5]===f?'selected':''%>><%=f%></option><% } %></select></label>
+          </div>
+        <% } %>
+      </details>
+
+      <details>
+        <summary>Alan Adları ve Yer Tutucular</summary>
+        <div class="login-studio-text-box">
+          <label class="wide">Kullanıcı alanı başlığı<input name="login_label_text" value="<%=studio.login_label_text%>" data-studio-text="login_label"></label>
+          <label class="wide">Kullanıcı alanı iç yazısı<input name="login_placeholder_text" value="<%=studio.login_placeholder_text%>" data-studio-placeholder="login_placeholder"></label>
+          <label class="wide">Şifre alanı başlığı<input name="password_label_text" value="<%=studio.password_label_text%>" data-studio-text="password_label"></label>
+          <label class="wide">Şifre alanı iç yazısı<input name="password_placeholder_text" value="<%=studio.password_placeholder_text%>" data-studio-placeholder="password_placeholder"></label>
+          <label>Göster metni<input name="password_toggle_text" value="<%=studio.password_toggle_text%>" data-studio-text="password_toggle"></label>
+          <label>Gizle metni<input name="password_hide_text" value="<%=studio.password_hide_text%>"></label>
+          <label class="wide">Beni hatırla metni<input name="remember_text" value="<%=studio.remember_text%>" data-studio-text="remember"></label>
+          <label class="wide">Alt güvenlik bilgisi<textarea name="note_text" rows="2" data-studio-text="note"><%=studio.note_text%></textarea></label>
+        </div>
+      </details>
+
+      <details>
+        <summary>Alan Yazı ve Renk Ayarları</summary>
+        <div class="login-studio-text-box">
+          <label>Başlık boyutu<input name="field_label_size" type="number" min="10" max="24" value="<%=studio.field_label_size%>" data-studio-css="field-label-size" data-unit="px"></label>
+          <label>Başlık rengi<input name="field_label_color" type="color" value="<%=studio.field_label_color%>" data-studio-css="field-label-color"></label>
+          <label class="wide">Başlık yazı tipi<select name="field_label_font" data-studio-css="field-label-font"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.field_label_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+        </div>
+        <div class="login-studio-text-box">
+          <label>Alan yazı boyutu<input name="input_text_size" type="number" min="11" max="24" value="<%=studio.input_text_size%>" data-studio-css="input-text-size" data-unit="px"></label>
+          <label>Alan yazı rengi<input name="input_text_color" type="color" value="<%=studio.input_text_color%>" data-studio-css="input-text-color"></label>
+          <label>Alan zemini<input name="input_bg" type="color" value="<%=studio.input_bg%>" data-studio-css="input-bg"></label>
+          <label>Alan çerçevesi<input name="input_border" type="color" value="<%=studio.input_border%>" data-studio-css="input-border"></label>
+          <label>Köşe yuvarlaklığı<input name="input_radius" type="number" min="0" max="28" value="<%=studio.input_radius%>" data-studio-css="input-radius" data-unit="px"></label>
+          <label class="wide">Alan yazı tipi<select name="input_text_font" data-studio-css="input-text-font"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.input_text_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+        </div>
+        <div class="login-studio-text-box">
+          <label>Beni hatırla boyutu<input name="remember_size" type="number" min="10" max="22" value="<%=studio.remember_size%>" data-studio-css="remember-size" data-unit="px"></label>
+          <label>Beni hatırla rengi<input name="remember_color" type="color" value="<%=studio.remember_color%>" data-studio-css="remember-color"></label>
+          <label class="wide">Beni hatırla yazı tipi<select name="remember_font" data-studio-css="remember-font"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.remember_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+          <label>Alt bilgi boyutu<input name="note_size" type="number" min="9" max="20" value="<%=studio.note_size%>" data-studio-css="note-size" data-unit="px"></label>
+          <label>Alt bilgi rengi<input name="note_color" type="color" value="<%=studio.note_color%>" data-studio-css="note-color"></label>
+          <label class="wide">Alt bilgi yazı tipi<select name="note_font" data-studio-css="note-font"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.note_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Giriş Butonu</summary>
+        <div class="login-studio-text-box">
+          <label class="wide">Buton metni<input name="button_text" value="<%=studio.button_text%>" data-studio-text="button"></label>
+          <label>Boyut<input name="button_size" type="number" min="11" max="24" value="<%=studio.button_size%>" data-studio-size="button"></label>
+          <label>Yazı rengi<input name="button_color" type="color" value="<%=studio.button_color%>" data-studio-color="button"></label>
+          <label>Buton rengi<input name="button_bg" type="color" value="<%=studio.button_bg%>" data-studio-color="button_bg"></label>
+          <label>Köşe yuvarlaklığı<input name="button_radius" type="number" min="0" max="30" value="<%=studio.button_radius%>" data-studio-css="button-radius" data-unit="px"></label>
+          <label class="wide">Yazı tipi<select name="button_font" data-studio-font="button"><% for(const f of fonts){ %><option value="<%=f%>" <%=studio.button_font===f?'selected':''%>><%=f%></option><% } %></select></label>
+          <small class="wide">Buton gölgesi kapalıdır; giriş sayfasında ek gölge oluşturulmaz.</small>
+        </div>
+      </details>
+    </div>
+    <div class="login-studio-savebar"><button class="btn btn--primary btn--block" type="submit">Login Tasarımını Kaydet</button></div>
+  </aside>
+</form>
+
+<div class="login-live-modal" data-live-preview-modal hidden>
+  <div class="login-live-modal-bar">
+    <div><strong>Tam Ekran Canlı Ön İzleme</strong><small>Kaydetmeden önceki mevcut tasarım gösterilir.</small></div>
+    <div class="login-live-modal-actions"><a class="btn btn--soft" href="/login?preview=356" target="_blank" rel="noopener">Kaydedilmiş /login sayfasını aç</a><button class="btn" type="button" data-close-live-preview>Kapat</button></div>
+  </div>
+  <div class="login-live-modal-stage" data-live-preview-stage></div>
+</div>
+
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">window.LOGIN_STUDIO_CSRF=<%-JSON.stringify(csrfToken)%>;</script>

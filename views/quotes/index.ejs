@@ -1,0 +1,60 @@
+<% layout('layout') -%>
+<% const canCreate=can('quotes','create'),canWrite=can('quotes','edit'),canArchive=can('quotes','archive'),canExport=can('quotes','export'); const showMoney=canSeeFinancials!==false; const quoteActionCount=1+(canExport?3:0)+(canWrite?1:0)+(canArchive?1:0); const en=locale==='en'; const L=en?{tools:'Proforma list tools',searchTitle:'Search proformas',searchPlaceholder:'Search: Offer no, customer or subject',filter:'Filter',clear:'Clear',clearTitle:'Clear search and filters',status:'Status',sort:'Sort',recent:'Recently added',customerSort:'Customer A–Z',quoteSort:'Offer No',total:'Total',selectAll:'Select all',selected:'Selected',archiveSelected:'Archive selected',archiveConfirm:'Archive selected proformas?',selectAria:'Select all proformas',empty:'No proforma matched the search criteria.',preview:'Preview',previewTitle:'Click the row to preview the proforma',share:'Share via WhatsApp',edit:'Edit',open:'Open',archive:'Archive',archiveConfirmOne:'Archive this proforma?'}:{tools:'Proforma listesi araçları',searchTitle:'Proforma ara',searchPlaceholder:'Ara: Teklif no, müşteri veya konu',filter:'Filtrele',clear:'Temizle',clearTitle:'Arama ve filtreleri temizle',status:'Durum',sort:'Sıralama',recent:'Son Eklenen',customerSort:'Müşteri A–Z',quoteSort:'Teklif No',total:'Toplam',selectAll:'Tümünü Seç',selected:'Seçili',archiveSelected:'Seçilileri Arşivle',archiveConfirm:'Seçili proformalar arşivlensin mi?',selectAria:'Tüm proformaları seç',empty:'Arama ölçütlerine uygun proforma bulunamadı.',preview:'Ön İzle',previewTitle:'Satıra tıklayarak proforma ön izlemesini aç',share:'WhatsApp ile paylaş',edit:'Düzenle',open:'Aç',archive:'Arşivle',archiveConfirmOne:'Bu proforma arşivlensin mi?'}; %>
+<% const snap=raw=>{try{return JSON.parse(raw||'{}')}catch{return {}}}; %>
+<header class="page-head list-page-head"><div><h1><%=t('quote_and_offers')%></h1></div><% if(canCreate){ %><a class="btn btn--primary page-head__primary-action btn--alive" href="/quotes/new"><span class="btn__icon btn__icon--live" aria-hidden="true">＋</span> <%=t('quote_new')%></a><% } %></header>
+<section class="card workspace-toolbar workspace-toolbar--quotes" aria-label="<%=L.tools%>">
+ <div class="workspace-toolbar__row workspace-toolbar__row--main">
+  <form class="toolbar-search-form" method="get">
+   <span class="toolbar-search-pair"><label class="toolbar-input toolbar-input--search" title="<%=L.searchTitle%>"><span class="toolbar-input__icon list-live-icon" aria-hidden="true">⌕</span><input name="q" value="<%=q%>" aria-label="<%=L.searchTitle%>" placeholder="<%=L.searchPlaceholder%>"></label><button class="btn btn--primary toolbar-btn toolbar-btn--search" type="submit" title="<%=L.filter%>"><%=L.filter%></button></span>
+   <a class="btn toolbar-btn btn--ghost" href="/quotes" title="<%=L.clearTitle%>"><span aria-hidden="true">×</span> <%=L.clear%></a>
+   <label class="toolbar-input toolbar-input--status" title="<%=L.status%>"><span class="toolbar-input__icon" aria-hidden="true">◉</span><select name="status" aria-label="<%=L.status%>" data-list-sort-autosubmit><option value=""><%=t('all_statuses')%></option><% ['DRAFT','PREPARING','SENT','WAITING_CUSTOMER','REVISION_REQUESTED','APPROVED','REJECTED','EXPIRED','ORDERED','DELIVERED','ARCHIVED'].forEach(x=>{ %><option value="<%=x%>" <%=status===x?'selected':''%>><%=statusLabel(x)%></option><% }) %></select></label>
+   <label class="toolbar-input toolbar-input--sort" title="<%=L.sort%>"><span class="toolbar-input__icon list-live-icon" aria-hidden="true">⇅</span><select name="sort" aria-label="<%=L.sort%>" data-list-sort-autosubmit><option value="recent" <%=sort==='recent'?'selected':''%>><%=L.recent%></option><option value="customer-alpha" <%=sort==='customer-alpha'?'selected':''%>><%=L.customerSort%></option><option value="quote-desc" <%=sort==='quote-desc'?'selected':''%>><%=L.quoteSort%></option></select></label>
+  </form>
+  <span class="toolbar-total" title="<%=L.total%>"><%=L.total%> <b><%=total%></b></span>
+ </div>
+ <div class="workspace-toolbar__row workspace-toolbar__row--secondary">
+  <div class="toolbar-bulk-group">
+   <label class="toolbar-select-all"><input type="checkbox" data-check-all data-target-form="quoteBulkForm"><span><%=L.selectAll%></span></label>
+   <span class="toolbar-selected"><%=L.selected%>: <b data-selection-count="quoteBulkForm">0</b></span>
+   <% if(canArchive){ %><button class="btn btn--danger toolbar-btn toolbar-btn--compact" type="submit" form="quoteBulkForm" formaction="/quotes/bulk-delete" data-requires-selection="quoteBulkForm" data-confirm='<%=L.archiveConfirm%>'><span aria-hidden="true">🗑</span> <%=L.archiveSelected%></button><% } %>
+  </div>
+ </div>
+</section>
+<form id="quoteBulkForm" method="post">
+ <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+ <section class="card table-scroll list-table-card list-table-card--quote">
+  <table class="lined quotes-table pro-table pro-table--quote" data-mobile-cards>
+   <colgroup>
+    <col data-csp-style="width:38px"><col data-csp-style="width:125px"><col data-csp-style="width:52px"><col><col data-csp-style="width:94px"><col data-csp-style="width:100px"><col data-csp-style="width:94px">
+    <% if(showMoney){ %><col data-csp-style="width:94px"><col data-csp-style="width:108px"><% } %>
+    <col class="actions-col--<%=quoteActionCount%>">
+   </colgroup>
+   <thead><tr><th><input type="checkbox" data-check-all data-target-form="quoteBulkForm" aria-label="<%=L.selectAria%>"></th><th>No</th><th>Rev.</th><th><%=t('customers')%></th><th title="<%=t('quote_date')%>"><%=t('quote_date')%></th><th title="<%=t('valid_until')%>"><%=t('valid_until')%></th><th><%=t('status')%></th><% if(showMoney){ %><th><%=t('payment')%></th><th><%=t('total')%></th><% } %><th class="actions-col actions-col--<%=quoteActionCount%>"><%=t('actions')%></th></tr></thead>
+   <tbody>
+    <% if(!rows.length){ %><tr><td colspan="<%=showMoney?10:8%>" class="empty"><%=L.empty%></td></tr><% } %>
+    <% rows.forEach(qt=>{const c=snap(qt.customer_snapshot_json),p=snap(qt.profile_snapshot_json),d=quoteDisplayNo(qt,p),hasWhatsappMobile=String(c.mobile||c.phone||'').replace(/\D/g,'').length>=10; %>
+     <tr class="previewable-list-row" tabindex="0" role="button" aria-label="<%=d%> — <%=L.preview%>" title="<%=L.previewTitle%>" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=qt.id%>/preview" data-preview-open="/quotes/<%=qt.id%>/print" data-preview-email="/quotes/<%=qt.id%>/email" <% if(hasWhatsappMobile&&canExport){ %>data-preview-whatsapp="/quotes/<%=qt.id%>/whatsapp"<% } %><% if(canWrite){ %> data-preview-edit="/quotes/<%=qt.id%>/edit"<% } %><% if(canArchive){ %> data-preview-archive="/quotes/<%=qt.id%>/delete"<% } %>>
+      <td><input type="checkbox" name="ids" value="<%=qt.id%>"></td>
+      <td><button type="button" class="link-btn" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=qt.id%>/preview" data-preview-open="/quotes/<%=qt.id%>/print" data-preview-email="/quotes/<%=qt.id%>/email" <% if(hasWhatsappMobile&&canExport){ %>data-preview-whatsapp="/quotes/<%=qt.id%>/whatsapp"<% } %><% if(canWrite){ %> data-preview-edit="/quotes/<%=qt.id%>/edit"<% } %><% if(canArchive){ %> data-preview-archive="/quotes/<%=qt.id%>/delete"<% } %>><b><%=d%></b></button></td>
+      <td><%=qt.revision_no%></td>
+      <td class="quote-customer-column-v110" title="<%=c.company_name||'-'%>"><% if(qt.customer_id){ %><button type="button" class="link-btn cell-ellipsis quote-customer-fit quote-customer-preview-v16" data-preview-title="Müşteri Kimlik Kartı" data-preview-url="/customers/<%=qt.customer_id%>/preview" <% if(can('customers','edit')){ %>data-preview-edit="/customers/<%=qt.customer_id%>/edit"<% } %>><%=String(c.company_name||'-').trim().split(/\s+/).slice(0,3).join(' ')%><%=String(c.company_name||'').trim().split(/\s+/).length>3?'…':''%></button><% }else{ %><span class="cell-ellipsis quote-customer-fit"><%=String(c.company_name||'-').trim().split(/\s+/).slice(0,3).join(' ')%><%=String(c.company_name||'').trim().split(/\s+/).length>3?'…':''%></span><% } %></td>
+      <td><%=qt.quote_date%></td><td><%=qt.valid_until||'-'%></td>
+      <td><span class="tag <%=statusClass(qt.status)%>"><%=statusLabel(qt.status)%></span></td>
+      <% if(showMoney){ %><td><span class="tag <%=statusClass(qt.payment_status)%>"><%=statusLabel(qt.payment_status)%></span></td><td><b><%=Number(qt.grand_total||0).toFixed(2)%> <%=qt.currency%></b></td><% } %>
+      <td class="actions-cell actions-cell--<%=quoteActionCount%>"><div class="table-action-list table-action-list--dense">
+       <% if(canExport){ %>
+        <button class="table-action is-preview" data-label="<%=L.preview%>" type="button" title="<%=L.preview%>" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=qt.id%>/preview" data-preview-open="/quotes/<%=qt.id%>/print" data-preview-email="/quotes/<%=qt.id%>/email" <% if(hasWhatsappMobile){ %>data-preview-whatsapp="/quotes/<%=qt.id%>/whatsapp"<% } %><% if(canWrite){ %> data-preview-edit="/quotes/<%=qt.id%>/edit"<% } %><% if(canArchive){ %> data-preview-archive="/quotes/<%=qt.id%>/delete"<% } %> aria-label="<%=L.preview%>"><%- include('../partials/table-action-icon',{iconName:'preview'}) %></button>
+        <% if(hasWhatsappMobile){ %><button class="table-action is-whatsapp" data-label="WhatsApp" title="<%=L.share%>" type="button" data-whatsapp-action="/quotes/<%=qt.id%>/whatsapp" data-whatsapp-return="/quotes" data-no-row-preview aria-label="<%=L.share%>"><%- include('../partials/table-action-icon',{iconName:'whatsapp'}) %></button><% } %>
+       <% } %>
+       <% if(canWrite){ %><a class="table-action is-edit" data-label="<%=L.edit%>" title="<%=L.edit%>" href="/quotes/<%=qt.id%>/edit" aria-label="<%=L.edit%>"><%- include('../partials/table-action-icon',{iconName:'edit'}) %></a><% } %>
+       <a class="table-action is-open" data-label="<%=L.open%>" title="<%=L.open%>" href="/quotes/<%=qt.id%>" aria-label="<%=L.open%>"><%- include('../partials/table-action-icon',{iconName:'open'}) %></a>
+       <% if(canExport){ %><a class="table-action is-print" data-label="PDF" title="PDF" href="/quotes/<%=qt.id%>/print?auto=1" aria-label="PDF"><%- include('../partials/table-action-icon',{iconName:'print'}) %></a><% } %>
+       <% if(canArchive){ %><button class="table-action is-mobile-delete mobile-list-only" data-label="<%=en?'Delete':'Sil'%>" title="<%=en?'Delete (archive)':'Sil (arşivle)'%>" type="submit" formaction="/quotes/<%=qt.id%>/delete" formmethod="post" data-no-row-preview data-confirm='<%=L.archiveConfirmOne%>' aria-label="<%=en?'Delete':'Sil'%>"><%- include('../partials/table-action-icon',{iconName:'delete'}) %></button><button class="table-action is-delete" data-label="<%=L.archive%>" title="<%=L.archive%>" type="submit" formaction="/quotes/<%=qt.id%>/delete" formmethod="post" data-confirm='<%=L.archiveConfirmOne%>' aria-label="<%=L.archive%>"><%- include('../partials/table-action-icon',{iconName:'archive'}) %></button><% } %>
+      </div></td>
+     </tr>
+    <% }) %>
+   </tbody>
+  </table>
+ </section>
+</form>
+<%- include('../partials/pager',{q:typeof q==='undefined'?'':q,page:typeof page==='undefined'?1:page,limit:typeof limit==='undefined'?30:limit,total:typeof total==='undefined'?rows.length:total,sort:typeof sort==='undefined'?'':sort,status:typeof status==='undefined'?'':status,showAll:typeof showAll!=='undefined'&&showAll}) %>

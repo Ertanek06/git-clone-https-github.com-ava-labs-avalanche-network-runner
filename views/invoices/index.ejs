@@ -1,0 +1,18 @@
+<% layout('layout') -%>
+<header class="page-head pro-headline"><div><span class="eyebrow">🧾 TEKLİF → FATURA</span><h1>Fatura / E-Fatura Taslakları</h1><p>Proforma üzerinden oluşan fatura taslaklarını ve e-fatura aktarım hazırlığını takip edin.</p></div><div class="row-actions"><% if(can('quotes','view')){ %><a class="btn btn--soft btn--sm js-back" href="/quotes">‹ Geri</a><% } %><% if(can('integrations','admin')){ %><a class="btn btn--sm" href="/integrations">🔌 Entegrasyon Ayarları</a><% } %></div></header>
+<details class="card collapse-card pro-module-card invoice-card" open>
+ <summary><span>🧾 Fatura / E-Fatura Entegrasyonu</span><small>Fatura taslakları, durum güncelleme ve JSON dışa aktarım.</small></summary>
+ <div class="invoice-mini-list">
+ <% if(!rows.length){ %><div class="empty">Henüz fatura taslağı yok. Bir proforma detayından “Fatura Taslağı Oluştur” kullanın.</div><% } %>
+ <% rows.forEach(i=>{ %>
+  <article class="invoice-mini-row">
+   <div><small>Fatura No</small><b>🧾 <%=i.invoice_no%></b></div>
+   <div><small>Proforma</small><b>📄 <%=quoteDisplayNo(i)%></b></div>
+   <div><small>Tip</small><b><%=i.invoice_type%></b></div>
+   <div><small>Durum</small><span class="tag"><%=i.status%></span></div>
+   <% if(can('financials','view')){ %><div><small>Tutar</small><b><%=Number(i.grand_total||0).toFixed(2)%> <%=i.currency%></b></div><% } %>
+   <div class="invoice-mini-actions"><% if(can('invoices','export')){ %><form method="post" action="/invoices/<%=i.id%>/export.json" class="inline-form"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="btn btn--soft btn--sm" type="submit">⬇️ JSON</button></form><% } %><% if(can('invoices','edit')){ %><form method="post" action="/invoices/<%=i.id%>/status" class="inline-form" data-confirm="Fatura durumu güncellensin mi?"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><select name="status"><% ['DRAFT','READY','EXPORTED','SENT','CANCELLED'].forEach(x=>{ %><option value="<%=x%>" <%=i.status===x?'selected':''%>><%=x%></option><% }) %></select><button class="btn btn--sm" type="submit">Kaydet</button></form><% } %></div>
+  </article>
+ <% }) %>
+ </div>
+</details>

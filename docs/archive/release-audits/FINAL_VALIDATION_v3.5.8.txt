@@ -1,0 +1,41 @@
+ARTEVA CRM ERP EFSANA36 v3.5.8 FINAL VALIDATION
+
+STATIC / CONTRACT
+- npm run check: PASS
+- JavaScript syntax: PASS
+- Bash syntax: PASS
+- EJS compile: 50/50 PASS
+- V358 contracts: 18/18 PASS
+
+UNIT / REGRESSION
+- AUTH_CSRF_TESTS: 5/5 PASS
+- MONEY_CALC_TESTS: 4/4 PASS
+- PERMISSION_DEFAULT_TESTS: 4/4 PASS
+- EMAIL_LIST_TESTS: 6/6 PASS
+- LOGIN_STUDIO_RENDER_TESTS: 3/3 PASS
+- LOGIN_SAVE_CONTRACT_TESTS: 10/10 PASS
+- LOGIN_PUBLIC_TENANT_CONTRACT: 6/6 PASS
+
+DATABASE
+- MIGRATION_TESTS: 3/3 PASS
+- SCHEMA_VERSION: 34
+- DUPLICATE_HASH_REPAIR: PASS
+- SQLITE_INTEGRITY: OK
+- FOREIGN_KEYS: 0
+
+FEATURE CONTRACTS
+- WhatsApp URL-encoded CSRF request: PASS
+- Fresh CSRF token + X-CSRF-Token header: PASS
+- Same-tab validated wa.me redirect: PASS
+- Email/WhatsApp log failure isolation: PASS
+- 218px quote action column and six compact actions: PASS
+- Product import menu and themed landing page: PASS
+- PDF/Excel scan, OCR fallback and editable preview: PASS
+- Selected-row transaction and code upsert: PASS
+- Verified JSON restore and named Excel worksheets: PASS
+- Backup permission and audit failure isolation: PASS
+
+PACKAGE NOTE
+- npm test completed successfully after dependencies were temporarily available in the build environment.
+- A later clean npm ci attempt was blocked by the build environment's internal package mirror returning HTTP 404 for mimic-response; package-lock.json itself points to registry.npmjs.org and contains no internal registry URL.
+- node_modules is not included in the final ZIP. Target update-live.sh performs npm ci on the server before activation.

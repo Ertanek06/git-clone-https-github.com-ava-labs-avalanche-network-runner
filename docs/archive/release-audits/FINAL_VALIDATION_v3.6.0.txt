@@ -1,0 +1,14 @@
+ARTEVA CRM/ERP v3.6.0 FINAL VALIDATION
+Version: 3.6.0
+Release: v3.6.0-pdf-import-100mb-full-theme-components
+Schema: 35
+
+Completed validations:
+- JavaScript syntax checks
+- EJS compile: 50/50
+- v3.6.0 contracts: 33/33
+- Excel parser: 8/8
+- PDF product parser: 6/6
+- Migration tests: 3/3, schema 35, integrity OK, foreign keys 0
+- Static package checks
+- ZIP integrity and SHA-256 are generated after packaging

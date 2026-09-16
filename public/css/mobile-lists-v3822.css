@@ -1,0 +1,874 @@
+/* v3.8.22 — mobile-only repair for customer, product and proforma lists.
+   Desktop/tablet geometry is intentionally untouched. */
+@media (max-width: 760px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  .app-main .page-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 10px calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: hidden !important;
+  }
+
+  /* List page heading */
+  .app-main .page-wrap > .page-head.list-page-head {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 9px !important;
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 15px !important;
+  }
+
+  .app-main .page-wrap > .page-head.list-page-head h1 {
+    min-width: 0 !important;
+    margin: 0 !important;
+    font-size: clamp(21px, 6.2vw, 27px) !important;
+    line-height: 1.12 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .app-main .page-wrap > .page-head.list-page-head .page-head__primary-action {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 43px !important;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Mobile list toolbar: no horizontal rail, no clipped controls. */
+  .app-main .page-wrap .workspace-toolbar--customers,
+  .app-main .page-wrap .workspace-toolbar--products,
+  .app-main .page-wrap .workspace-toolbar--quotes {
+    display: grid !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 11px !important;
+    margin-bottom: 10px !important;
+    overflow: visible !important;
+    border-radius: 16px !important;
+  }
+
+  .workspace-toolbar--customers .workspace-toolbar__row,
+  .workspace-toolbar--products .workspace-toolbar__row,
+  .workspace-toolbar--quotes .workspace-toolbar__row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    gap: 9px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .workspace-toolbar--customers .workspace-toolbar__row--secondary,
+  .workspace-toolbar--products .workspace-toolbar__row--secondary,
+  .workspace-toolbar--quotes .workspace-toolbar__row--secondary {
+    padding-top: 10px !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-search-form,
+  .workspace-toolbar--products .toolbar-search-form,
+  .workspace-toolbar--quotes .toolbar-search-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.28fr) 72px !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-search-pair,
+  .workspace-toolbar--products .toolbar-search-pair,
+  .workspace-toolbar--quotes .toolbar-search-pair {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 82px !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-input,
+  .workspace-toolbar--products .toolbar-input,
+  .workspace-toolbar--quotes .toolbar-input,
+  .workspace-toolbar--customers .toolbar-btn,
+  .workspace-toolbar--products .toolbar-btn,
+  .workspace-toolbar--quotes .toolbar-btn,
+  .workspace-toolbar--customers .toolbar-total,
+  .workspace-toolbar--products .toolbar-total,
+  .workspace-toolbar--quotes .toolbar-total {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 43px !important;
+    min-height: 43px !important;
+    padding: 0 10px !important;
+    border-radius: 11px !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-input--search,
+  .workspace-toolbar--products .toolbar-input--search,
+  .workspace-toolbar--quotes .toolbar-input--search {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-input input,
+  .workspace-toolbar--products .toolbar-input input,
+  .workspace-toolbar--quotes .toolbar-input input,
+  .workspace-toolbar--customers .toolbar-input select,
+  .workspace-toolbar--products .toolbar-input select,
+  .workspace-toolbar--quotes .toolbar-input select {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 35px !important;
+    min-height: 35px !important;
+    padding: 0 4px !important;
+    font-size: 12px !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-search-form > .btn--ghost,
+  .workspace-toolbar--products .toolbar-search-form > .btn--ghost,
+  .workspace-toolbar--quotes .toolbar-search-form > .btn--ghost {
+    grid-column: 1 !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-input--sort,
+  .workspace-toolbar--products .toolbar-input--sort,
+  .workspace-toolbar--quotes .toolbar-input--status {
+    grid-column: 2 !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-input--limit,
+  .workspace-toolbar--products .toolbar-input--limit,
+  .workspace-toolbar--quotes .toolbar-input--sort {
+    grid-column: 3 !important;
+  }
+
+  .workspace-toolbar--quotes .toolbar-input--sort,
+  .workspace-toolbar--quotes .toolbar-input--status,
+  .workspace-toolbar--customers .toolbar-input--sort,
+  .workspace-toolbar--products .toolbar-input--sort,
+  .workspace-toolbar--customers .toolbar-input--limit,
+  .workspace-toolbar--products .toolbar-input--limit {
+    width: 100% !important;
+    flex-basis: auto !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-total,
+  .workspace-toolbar--products .toolbar-total,
+  .workspace-toolbar--quotes .toolbar-total {
+    justify-self: end !important;
+    width: auto !important;
+    min-width: 110px !important;
+    padding-inline: 13px !important;
+    font-size: 13px !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-bulk-group,
+  .workspace-toolbar--products .toolbar-bulk-group,
+  .workspace-toolbar--quotes .toolbar-bulk-group {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    gap: 7px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    order: 1 !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-select-all,
+  .workspace-toolbar--products .toolbar-select-all,
+  .workspace-toolbar--quotes .toolbar-select-all,
+  .workspace-toolbar--customers .toolbar-selected,
+  .workspace-toolbar--products .toolbar-selected,
+  .workspace-toolbar--quotes .toolbar-selected {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 43px !important;
+    min-height: 43px !important;
+    padding: 0 8px !important;
+    border-radius: 11px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-select-all input,
+  .workspace-toolbar--products .toolbar-select-all input,
+  .workspace-toolbar--quotes .toolbar-select-all input {
+    flex: 0 0 21px !important;
+    width: 21px !important;
+    height: 21px !important;
+    min-height: 21px !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-bulk-group > .toolbar-btn,
+  .workspace-toolbar--products .toolbar-bulk-group > .toolbar-btn,
+  .workspace-toolbar--quotes .toolbar-bulk-group > .toolbar-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-inline: 7px !important;
+    font-size: 10.5px !important;
+    white-space: normal !important;
+  }
+
+  /* Customer Excel controls */
+  .workspace-toolbar--customers .excel-action-cluster {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    order: 2 !important;
+  }
+
+  .workspace-toolbar--customers .excel-action-cluster > :last-child:nth-child(odd) {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Product price and import/export controls */
+  .workspace-toolbar--products .toolbar-price {
+    display: grid !important;
+    grid-template-columns: auto 28px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 43px !important;
+    padding: 5px 6px 5px 10px !important;
+    order: 2 !important;
+  }
+
+  .workspace-toolbar--products .toolbar-price > b {
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .workspace-toolbar--products .toolbar-price input {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 34px !important;
+    font-size: 12px !important;
+  }
+
+  .workspace-toolbar--products .toolbar-price .toolbar-btn {
+    width: auto !important;
+    min-width: 86px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+  }
+
+  .workspace-toolbar--products .proforma-import-direct-action {
+    width: 100% !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    order: 3 !important;
+  }
+
+  .workspace-toolbar--products .excel-action-cluster {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    order: 4 !important;
+  }
+
+  .workspace-toolbar--products .excel-action-stack {
+    display: contents !important;
+  }
+
+  .workspace-toolbar--products .excel-template-action {
+    grid-column: 1 / -1 !important;
+  }
+
+  .workspace-toolbar--customers .excel-action-cluster .btn,
+  .workspace-toolbar--products .excel-action-cluster .btn,
+  .workspace-toolbar--customers .excel-action-cluster summary,
+  .workspace-toolbar--products .excel-action-cluster summary {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-inline: 6px !important;
+    font-size: 10.5px !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  .workspace-toolbar--customers .import-pop,
+  .workspace-toolbar--products .import-pop {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .workspace-toolbar--customers .import-pop__body,
+  .workspace-toolbar--products .import-pop__body {
+    position: fixed !important;
+    z-index: 9999 !important;
+    left: 10px !important;
+    right: 10px !important;
+    top: auto !important;
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 55dvh !important;
+    overflow: auto !important;
+  }
+
+  /* Column chooser has no value in stacked mobile cards and caused extra clutter. */
+  .products-list-form + .pager,
+  #customerBulkForm + .pager,
+  #quoteBulkForm + .pager {
+    max-width: 100% !important;
+  }
+
+  .table-preference-bar-v3817 {
+    display: none !important;
+  }
+
+  /* Stacked cards: explicitly cancel every fixed desktop row/table dimension. */
+  .app-main .page-wrap .list-table-card,
+  .app-main .page-wrap .products-table-card,
+  .app-main .page-wrap .list-table-card--quote {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    table-layout: auto !important;
+    border: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] colgroup,
+  .app-main .page-wrap table[data-mobile-cards] thead {
+    display: none !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 11px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody tr {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 44px 12px 11px !important;
+    border: 1px solid var(--table-border, var(--border, #dbe5f2)) !important;
+    border-radius: 15px !important;
+    background: var(--table-row-bg, var(--card, #fff)) !important;
+    box-shadow: 0 7px 20px rgba(15, 35, 68, .06) !important;
+    overflow: hidden !important;
+    contain: none !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody tr:has(> td.empty) {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td,
+  .app-main .page-wrap table[data-mobile-cards] tbody td.is-column-hidden-v3817 {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(82px, 29%) minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 9px !important;
+    order: 20;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 7px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px dashed color-mix(in srgb, var(--table-border, var(--border, #dbe5f2)) 78%, transparent) !important;
+    background: transparent !important;
+    color: var(--text, #14233d) !important;
+    font-size: 12.5px !important;
+    line-height: 1.38 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td::before {
+    content: attr(data-column-label) !important;
+    display: block !important;
+    min-width: 0 !important;
+    color: var(--muted, #65758b) !important;
+    font-size: 10.5px !important;
+    font-weight: 850 !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td:first-child {
+    position: absolute !important;
+    z-index: 3 !important;
+    top: 10px !important;
+    right: 11px !important;
+    display: block !important;
+    width: 25px !important;
+    min-width: 25px !important;
+    max-width: 25px !important;
+    height: 25px !important;
+    min-height: 25px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td:first-child::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td:first-child input[type="checkbox"] {
+    display: block !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    margin: 0 !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td.empty {
+    display: block !important;
+    width: 100% !important;
+    padding: 25px 12px !important;
+    border: 0 !important;
+    text-align: center !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td.empty::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] :where(.cell-ellipsis, .clamp, td > b, td > span, td > a, td > button) {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .link-btn,
+  .app-main .page-wrap table[data-mobile-cards] .customer-name-link {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .actions-cell {
+    display: grid !important;
+    grid-template-columns: minmax(82px, 29%) minmax(0, 1fr) !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .table-action-list,
+  .app-main .page-wrap table[data-mobile-cards] .table-action-list--dense {
+    display: flex !important;
+    flex-flow: row wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .table-action {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    padding: 0 !important;
+    border-radius: 11px !important;
+    font-size: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .table-action svg,
+  .app-main .page-wrap table[data-mobile-cards] .table-action span {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 15px !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] .table-action::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Product cards */
+  .app-main .page-wrap .product-table tbody td:nth-child(4) { order: 1; }
+  .app-main .page-wrap .product-table tbody td:nth-child(2) { order: 2; }
+  .app-main .page-wrap .product-table tbody td:nth-child(3) { order: 3; }
+  .app-main .page-wrap .product-table tbody td:nth-child(5) { order: 4; }
+  .app-main .page-wrap .product-table tbody td:nth-child(6) { order: 5; }
+  .app-main .page-wrap .product-table tbody td:nth-child(7) { order: 6; }
+  .app-main .page-wrap .product-table tbody td:nth-child(8) { order: 7; }
+  .app-main .page-wrap .product-table tbody td:nth-child(9) { order: 8; }
+  .app-main .page-wrap .product-table tbody td:last-child { order: 30; }
+
+  .app-main .page-wrap .product-table tbody td:nth-child(4),
+  .app-main .page-wrap .customer-table tbody td:nth-child(3),
+  .app-main .page-wrap .quotes-table tbody td:nth-child(2) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 3px !important;
+    margin: -34px 36px 5px 0 !important;
+    padding: 0 0 10px !important;
+    border-bottom-style: solid !important;
+  }
+
+  .app-main .page-wrap .product-table tbody td:nth-child(4)::before,
+  .app-main .page-wrap .customer-table tbody td:nth-child(3)::before,
+  .app-main .page-wrap .quotes-table tbody td:nth-child(2)::before {
+    color: var(--primary, #245ba7) !important;
+    font-size: 10px !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+  }
+
+  .app-main .page-wrap .product-table tbody td:nth-child(4) b,
+  .app-main .page-wrap .customer-table tbody td:nth-child(3) b,
+  .app-main .page-wrap .quotes-table tbody td:nth-child(2) b {
+    display: block !important;
+    color: var(--text, #14233d) !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+  }
+
+  .app-main .page-wrap .product-table tbody td:nth-child(2) {
+    align-items: center !important;
+  }
+
+  .app-main .page-wrap .product-table .thumb {
+    display: grid !important;
+    place-items: center !important;
+    width: 94px !important;
+    min-width: 94px !important;
+    max-width: 94px !important;
+    height: 94px !important;
+    min-height: 94px !important;
+    max-height: 94px !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .app-main .page-wrap .product-table .thumb img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .app-main .page-wrap .product-table .clamp {
+    display: block !important;
+    max-height: none !important;
+    -webkit-line-clamp: unset !important;
+  }
+
+  /* Customer cards */
+  .app-main .page-wrap .customer-table tbody td:nth-child(3) { order: 1; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(2) { order: 2; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(4) { order: 3; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(5) { order: 4; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(6) { order: 5; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(7) { order: 6; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(8) { order: 7; }
+  .app-main .page-wrap .customer-table tbody td:nth-child(9) { order: 8; }
+  .app-main .page-wrap .customer-table tbody td:last-child { order: 30; }
+
+  .app-main .page-wrap .customer-table .quote-count-badge {
+    justify-self: start !important;
+    min-width: 78px !important;
+  }
+
+  /* Proforma cards */
+  .app-main .page-wrap .quotes-table tbody td:nth-child(2) { order: 1; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(4) { order: 2; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(3) { order: 3; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(5) { order: 4; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(6) { order: 5; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(7) { order: 6; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(8) { order: 7; }
+  .app-main .page-wrap .quotes-table tbody td:nth-child(9) { order: 8; }
+  .app-main .page-wrap .quotes-table tbody td:last-child { order: 30; }
+
+  .app-main .page-wrap .quotes-table .tag {
+    width: max-content !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+  }
+
+  /* Pager */
+  .app-main .page-wrap .pager {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 10px 0 0 !important;
+  }
+
+  .app-main .page-wrap .pager > div {
+    min-width: 0 !important;
+  }
+
+  .app-main .page-wrap .pager .btn {
+    min-width: 0 !important;
+    padding-inline: 9px !important;
+    font-size: 11px !important;
+  }
+
+  /* Product add/edit: the first screenshot was caused by a two-column span
+     surviving inside a one-column mobile grid. */
+  .app-main .page-wrap .product-form-modern {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .form-section,
+  .app-main .page-wrap .product-form-modern .form-section--compact {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 11px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .form-grid,
+  .app-main .page-wrap .product-form-modern .compact-field-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .form-grid > *,
+  .app-main .page-wrap .product-form-modern .compact-field-grid > *,
+  .app-main .page-wrap .product-form-modern .asset-upload,
+  .app-main .page-wrap .product-form-modern .wide {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .app-main .page-wrap .product-form-modern label {
+    display: grid !important;
+    align-content: start !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .app-main .page-wrap .product-form-modern :where(input, select, textarea) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .app-main .page-wrap .product-form-modern input[type="file"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    padding: 7px !important;
+    overflow: hidden !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .app-main .page-wrap .product-form-modern input[type="file"]::file-selector-button {
+    min-height: 34px !important;
+    margin-right: 7px !important;
+    padding: 6px 10px !important;
+    border: 1px solid color-mix(in srgb, var(--primary, #245ba7) 35%, var(--border, #dbe5f2)) !important;
+    border-radius: 9px !important;
+    background: color-mix(in srgb, var(--primary, #245ba7) 8%, #fff) !important;
+    color: var(--primary, #245ba7) !important;
+    font-weight: 850 !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .asset-preview {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 190px !important;
+    max-height: none !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .asset-preview img {
+    display: block !important;
+    width: 100% !important;
+    height: 170px !important;
+    max-width: 100% !important;
+    max-height: 170px !important;
+    padding: 0 !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .form-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .app-main .page-wrap .product-form-modern .form-actions .btn {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-main .page-wrap > .page-head.list-page-head {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .app-main .page-wrap > .page-head.list-page-head .page-head__primary-action {
+    width: 100% !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-search-form,
+  .workspace-toolbar--products .toolbar-search-form,
+  .workspace-toolbar--quotes .toolbar-search-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) 66px !important;
+    gap: 6px !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-search-pair,
+  .workspace-toolbar--products .toolbar-search-pair,
+  .workspace-toolbar--quotes .toolbar-search-pair {
+    grid-template-columns: minmax(0, 1fr) 74px !important;
+    gap: 6px !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-bulk-group,
+  .workspace-toolbar--products .toolbar-bulk-group,
+  .workspace-toolbar--quotes .toolbar-bulk-group {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
+  .workspace-toolbar--customers .toolbar-bulk-group > .toolbar-btn,
+  .workspace-toolbar--products .toolbar-bulk-group > .toolbar-btn,
+  .workspace-toolbar--quotes .toolbar-bulk-group > .toolbar-btn {
+    grid-column: 1 / -1 !important;
+  }
+
+  .app-main .page-wrap table[data-mobile-cards] tbody td,
+  .app-main .page-wrap table[data-mobile-cards] tbody td.is-column-hidden-v3817,
+  .app-main .page-wrap table[data-mobile-cards] .actions-cell {
+    grid-template-columns: minmax(76px, 28%) minmax(0, 1fr) !important;
+    gap: 7px !important;
+  }
+}

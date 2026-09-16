@@ -1,0 +1,104 @@
+<% layout('layout') -%>
+<header class="page-head"><div><span class="eyebrow">CANLI DESTEK</span><h1>⚙️ Canlı Destek Ayarları</h1><p class="page-subtitle">Bu ayarlar otomatik olarak aktif firma profiline bağlı canlı destek widget’ında uygulanır. Kod üretimi sadece Firma Profili içindedir.</p></div><a class="btn btn--primary" href="/live">Canlı Akışa Git</a></header>
+<section class="live-stats-grid"><article><small>Online</small><b><%=stats.online%></b></article><article><small>Bekleyen</small><b><%=stats.waiting%></b></article><article><small>Açık Sohbet</small><b><%=stats.open%></b></article><article><small>Aktif Site</small><b><%=stats.sites%></b></article></section>
+<section class="card live-settings-card"><div class="card-head"><div><h2>Aktif Firma Widget Görünümü</h2><small><b><%=activeProfile?.short_name||activeProfile?.company_name||'Aktif firma yok'%></b> için sohbet penceresi, renk, konum ve bildirim ayarları.</small></div><a class="btn btn--sm" href="<%=activeProfile?('/profiles/'+activeProfile.id+'/edit'):'/profiles'%>">Kod / Firma Profiline Git</a></div>
+<% if(!activeProfile){ %><p class="empty">Canlı destek ayarı için önce aktif firma profili oluşturun.</p><% } else { %>
+<div class="live-widget-preview-card live-widget-preview-card--inline"><div class="card-head"><div><h2>Canlı Ön İzleme</h2><small>Sohbet kapalı ve açık görünümünü aynı anda gösterir.</small></div></div><div class="live-widget-preview-grid"><div class="live-widget-preview is-closed-preview" id="liveWidgetPreviewClosed"><div class="lwp-head"><span class="lwp-avatar"><% if(site?.operator_avatar_url||activeProfile?.logo_url){ %><img src="<%=site?.operator_avatar_url||activeProfile.logo_url%>" alt=""><% } else { %>💬<% } %></span><div><b><%=site?.widget_bubble_text||'Bize yazabilirsiniz, çevrimiçiyiz!'%></b><small>Kapalı görünüm</small></div></div></div><div class="live-widget-preview" id="liveWidgetPreview"><div class="lwp-head"><span class="lwp-avatar"><% if(site?.operator_avatar_url||activeProfile?.logo_url){ %><img src="<%=site?.operator_avatar_url||activeProfile.logo_url%>" alt=""><% } else { %>💬<% } %></span><div><b><%=site?.widget_title||'Canlı Destek'%></b><small><%=site?.operator_title||'Satış Temsilcisi çevrimiçi'%></small></div></div><div class="lwp-body"><p><%=site?.welcome_message||'Merhaba, size nasıl yardımcı olabiliriz?'%></p><button type="button">Merhaba!</button><button type="button">Merhaba, bilgi alabilir miyim?</button></div><div class="lwp-form"><span>☺</span><span>📎</span><em>Buraya yazın</em><b>↑</b></div></div></div><div class="live-preview-caption"><span>Model</span><span>Konum</span><span>Yazı</span></div><div class="color-presets" data-color-presets><button type="button" data-csp-style="--c:#245ba7"></button><button type="button" data-csp-style="--c:#16a34a"></button><button type="button" data-csp-style="--c:#dc2626"></button><button type="button" data-csp-style="--c:#7c3aed"></button><button type="button" data-csp-style="--c:#0f766e"></button><button type="button" data-csp-style="--c:#111827"></button><button type="button" data-csp-style="--c:#f59e0b"></button><button type="button" data-csp-style="--c:#0ea5e9"></button></div></div>
+
+<form class="form-grid compact-field-grid live-settings-form" method="post" action="/live/sites/save?_csrf=<%=encodeURIComponent(csrfToken)%>" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+<label>Site adı<input name="site_name" value="<%=site?.site_name||activeProfile.short_name||activeProfile.company_name||''%>"></label>
+<label>Web site adresi<input name="site_url" value="<%=site?.site_url||activeProfile.website||''%>" placeholder="https://www.siteadiniz.com" required></label>
+<label>Aktiflik<select name="is_active"><option value="1" <%=!site||site.is_active?'selected':''%>>Aktif</option><option value="" <%=site&&!site.is_active?'selected':''%>>Pasif</option></select></label>
+<label>Widget başlığı<input name="widget_title" value="<%=site?.widget_title||'Canlı Destek'%>"></label>
+<label>Balon yazısı<input name="widget_bubble_text" value="<%=site?.widget_bubble_text||'Bize yazabilirsiniz, çevrimiçiyiz!'%>"></label>
+<label>Temsilci adı / Nick<input name="operator_name" value="<%=site?.operator_name||activeProfile.authorized_person||'Satış Temsilcisi'%>"></label>
+<label class="asset-upload">Temsilci resmi<input type="file" accept="image/*" name="operator_avatar" data-preview-file="operatorAvatarPreview"><span class="asset-preview"><% if(site?.operator_avatar_url||activeProfile.logo_url){ %><img id="operatorAvatarPreview" src="<%=site?.operator_avatar_url||activeProfile.logo_url%>" alt="Temsilci"><% } else { %><img id="operatorAvatarPreview" alt="Temsilci" hidden><em>Resim yükleyin</em><% } %></span><small>Resim otomatik ölçeklenir; boşsa firma logosu kullanılır.</small></label>
+<label>Widget rengi<input type="color" name="widget_color" value="<%=site?.widget_color||'#245ba7'%>"></label>
+<label>Konum<select name="widget_position"><% const pos=(site?.widget_position==='RIGHT'?'RIGHT_BOTTOM':site?.widget_position==='LEFT'?'LEFT_BOTTOM':site?.widget_position)||'RIGHT_BOTTOM'; [['RIGHT_BOTTOM','Sağ alt'],['LEFT_BOTTOM','Sol alt'],['RIGHT_CENTER','Sağ orta'],['LEFT_CENTER','Sol orta'],['BOTTOM_CENTER','Alt orta']].forEach(p=>{ %><option value="<%=p[0]%>" <%=pos===p[0]?'selected':''%>><%=p[1]%></option><% }) %></select></label>
+<label>Tasarım<select name="widget_design"><% const des=site?.widget_design||'PRO_GRADIENT'; [['PRO_GRADIENT','Pro gradyan'],['SOFT','Yumuşak beyaz'],['CLASSIC','Klasik renkli'],['MINIMAL','Minimal ikon'],['SIDE_TAB','Yan sekme'],['DARK_CARD','Koyu kart'],['RED_LINE','Kırmızı çizgi'],['GLASS','Cam efekt'],['CORPORATE_BLUE','Kurumsal mavi'],['COMPACT_BAR','Kompakt bar']].forEach(d=>{ %><option value="<%=d[0]%>" <%=des===d[0]?'selected':''%>><%=d[1]%></option><% }) %></select></label>
+<label>Yazı tipi<select name="widget_font_family"><% const ff=site?.widget_font_family||'Inter'; ['Inter','Arial','Helvetica','Poppins','Roboto','System'].forEach(f=>{ %><option value="<%=f%>" <%=ff===f?'selected':''%>><%=f%></option><% }) %></select></label>
+<label>Yazı boyutu<input type="number" min="12" max="20" name="widget_font_size" value="<%=site?.widget_font_size||14%>"></label>
+<label>Yazı kalınlığı<select name="widget_font_weight"><% const fw=Number(site?.widget_font_weight||700); [300,400,500,600,700,800,900].forEach(w=>{ %><option value="<%=w%>" <%=fw===w?'selected':''%>><%=w%></option><% }) %></select></label>
+<label>Üst başlık yüksekliği<input type="number" min="72" max="130" name="widget_header_height" value="<%=site?.widget_header_height||92%>"></label>
+<label>Başlık deseni<select name="widget_header_pattern"><% const hp=site?.widget_header_pattern||'LAB_DARK'; [['LAB_DARK','Laboratuvar koyu'],['SOFT_DOTS','Yumuşak noktalar'],['PLAIN','Düz renk']].forEach(h=>{ %><option value="<%=h[0]%>" <%=hp===h[0]?'selected':''%>><%=h[1]%></option><% }) %></select></label>
+<label>Temsilci alt yazısı<input name="operator_title" value="<%=site?.operator_title||'Satış Temsilcisi çevrimiçi'%>"></label>
+<label>Karşılama tekrar süresi<input type="number" min="1" max="168" name="welcome_repeat_hours" value="<%=site?.welcome_repeat_hours||24%>"><small>Aynı ziyaretçiye karşılama mesajı kaç saat sonra tekrar görünsün.</small></label>
+<label>Anasayfa panel görünürlük süresi<input type="number" min="1" max="168" name="dashboard_chat_window_hours" value="<%=site?.dashboard_chat_window_hours||24%>"><small>Anasayfadaki "Canlı Destek" kutusunda bir sohbetin listede kalma süresi (saat). Bu süre dolunca sohbet anasayfa listesinden kalkar; ziyaretçi tekrar yazarsa aynı geçmişiyle listeye geri döner. Sohbet kaydı ve mesaj geçmişi hiçbir zaman silinmez, sadece anasayfa listesi süzülür.</small></label>
+<label>Panel köşe yuvarlaklığı<input type="number" min="10" max="32" name="widget_radius" value="<%=site?.widget_radius||22%>"></label>
+<label>Bildirim sesi<select name="notification_sound" id="liveSoundSelect"><% (soundOptions||['bell-soft','msn','ding','chime','digital','pulse','office','pop','alert','wa-pop','wa-chime','wa-soft','none']).forEach(s=>{ %><option value="<%=s%>" <%=(site?.notification_sound||'bell-soft')===s?'selected':''%>><%=s==='none'?'Sessiz':s%></option><% }) %></select><button class="btn btn--sm" type="button" data-live-sound-preview>Dinle</button></label>
+<label>WhatsApp yönlendirme URL<input name="whatsapp_url" value="<%=site?.whatsapp_url||''%>" placeholder="https://wa.me/905... veya https://api.whatsapp.com/..."></label>
+<label>İletişim formu<select name="contact_form_enabled"><option value="1" <%=!site||site.contact_form_enabled?'selected':''%>>Aktif</option><option value="" <%=site&&!site.contact_form_enabled?'selected':''%>>Pasif</option></select></label>
+<label>Form zamanı<select name="contact_form_mode"><% const cm=site?.contact_form_mode||'AFTER_FIRST_MESSAGE'; %><option value="AFTER_FIRST_MESSAGE" <%=cm==='AFTER_FIRST_MESSAGE'?'selected':''%>>İlk mesajdan sonra isteğe bağlı</option><option value="ON_OPEN" <%=cm==='ON_OPEN'?'selected':''%>>Sohbet açılınca</option></select></label>
+<label>Form kaçıncı mesajda açılsın<input type="number" min="1" max="10" name="contact_form_after_messages" value="<%=site?.contact_form_after_messages||3%>"><small>Örn: 3 yazılırsa ziyaretçi 3. mesajdan sonra isteğe bağlı form görür.</small></label>
+<label>Açık onay zorunluluğu<select name="consent_required"><option value="1" <%=site&&site.consent_required?'selected':''%>>Zorunlu</option><option value="" <%=!site||!site.consent_required?'selected':''%>>Bilgilendirme yeterli</option></select><small>Zorunlu seçilirse ziyaretçi onay vermeden mesaj, iletişim bilgisi veya dosya gönderemez.</small></label>
+<label>Saklama süresi (gün)<input type="number" min="30" max="3650" name="retention_days" value="<%=site?.retention_days||365%>"><small>Kapalı sohbetler bu süre sonunda kayıt kimliği korunarak anonimleştirilebilir.</small></label>
+<label class="wide">KVKK / gizlilik bilgilendirmesi<textarea data-auto-grow name="privacy_notice" maxlength="1000"><%=site?.privacy_notice||'Kişisel verileriniz talebinizi yanıtlamak amacıyla işlenir.'%></textarea></label>
+
+<details class="wide live-settings-subbox"><summary>Mesai / Online Durumu</summary><div class="form-grid compact-field-grid"><label>Manuel online<select name="manual_online"><option value="1" <%=!site||site.manual_online?'selected':''%>>Açık — widget çevrimiçi görünsün</option><option value="" <%=site&&!site.manual_online?'selected':''%>>Kapalı — mesai saatine göre</option></select></label><label>Mesai saatleri<select name="business_hours_enabled"><option value="1" <%=site&&site.business_hours_enabled?'selected':''%>>Aktif</option><option value="" <%=!site||!site.business_hours_enabled?'selected':''%>>Pasif</option></select></label><label>Günler<input name="business_days" value="<%=site?.business_days||'1,2,3,4,5'%>"><small>1=Pazartesi, 7=Pazar. Örn: 1,2,3,4,5</small></label><label>Başlangıç<input type="time" name="business_start" value="<%=site?.business_start||'09:00'%>"></label><label>Bitiş<input type="time" name="business_end" value="<%=site?.business_end||'18:00'%>"></label></div></details>
+<label class="wide">Karşılama mesajı<textarea data-auto-grow name="welcome_message"><%=site?.welcome_message||'Merhaba, size nasıl yardımcı olabiliriz?'%></textarea></label>
+<label class="wide">Offline mesajı<textarea data-auto-grow name="offline_message"><%=site?.offline_message||'Şu anda çevrimdışıyız. Mesajınızı bırakın, size dönüş yapalım.'%></textarea></label>
+<details class="wide live-settings-subbox" open><summary>Sohbet öncesi hazır mesaj butonları</summary><div class="form-grid compact-field-grid"><label>Hazır butonlar<select name="quick_replies_enabled"><option value="1" <%=!site||site.quick_replies_enabled?'selected':''%>>Aktif</option><option value="" <%=site&&!site.quick_replies_enabled?'selected':''%>>Pasif</option></select></label><label>1. buton<input name="quick_reply_1" value="<%=site?.quick_reply_1||'Merhaba!'%>"></label><label>2. buton<input name="quick_reply_2" value="<%=site?.quick_reply_2||'Merhaba, yardıma ihtiyacım var.'%>"></label><label>3. buton<input name="quick_reply_3" value="<%=site?.quick_reply_3||'Merhaba, bilgi alabilir miyim?'%>"></label></div></details>
+<div class="form-actions wide"><button class="btn btn--primary">Ayarları Kaydet</button><a class="btn" href="<%=activeProfile?('/profiles/'+activeProfile.id+'/edit'):'/profiles'%>">Kurulum Kodunu Firma Profilinde Göster</a></div></form>
+<% } %></section>
+
+<section class="card help-card"><h2>Not</h2><p>Bu ekrandaki değişiklikler kodu değiştirmez. Siteye eklenen kod sabit kalır; renk, temsilci resmi, hazır mesajlar, konum ve bildirim ayarları panelden güncellenir.</p></section>
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">
+(()=>{function play(k){if(k==='none')return;const a=new (window.AudioContext||window.webkitAudioContext)();const patterns={"bell-soft":[660,880,660,880,990,740,660,880],msn:[988,1318,1568,1318,988,1318,1568,1174],ding:[1046,784,1046,784,659],chime:[523,659,784,1046,784],digital:[800,600,900,700,1000,760],pulse:[480,480,480,480,480,480],office:[740,880,740,880,980],pop:[600,900,600,900,600,900,700],alert:[520,520,520,720,720,720],"wa-pop":[740,980,740,980,880],"wa-chime":[660,880,1320,880,660],"wa-soft":[523,659,784,659,523]};(patterns[k]||patterns['bell-soft']).forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type=i%2?'triangle':'sine';o.frequency.value=f;g.gain.setValueAtTime(.065,a.currentTime+i*.28);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+i*.28+.22);o.connect(g);g.connect(a.destination);o.start(a.currentTime+i*.28);o.stop(a.currentTime+i*.28+.24)});setTimeout(()=>a.close(),3300)}
+const form=document.querySelector('.live-settings-form'),prev=document.getElementById('liveWidgetPreview'),prevClosed=document.getElementById('liveWidgetPreviewClosed');function updatePreview(){if(!form||!prev)return;const fd=new FormData(form),c=fd.get('widget_color')||'#245ba7';prev.style.setProperty('--c',c);prev.style.fontFamily=fd.get('widget_font_family')||'Inter';prev.style.fontSize=(fd.get('widget_font_size')||14)+'px';prev.querySelector('.lwp-head').style.minHeight=(fd.get('widget_header_height')||92)+'px';prev.querySelector('.lwp-head b').textContent=fd.get('widget_title')||'Canlı Destek';prev.querySelector('.lwp-head small').textContent=fd.get('operator_title')||'Satış Temsilcisi çevrimiçi';prev.querySelector('.lwp-body p').textContent=fd.get('welcome_message')||'';prev.dataset.design=fd.get('widget_design')||'PRO_GRADIENT';if(prevClosed){prevClosed.style.setProperty('--c',c);prevClosed.style.fontFamily=fd.get('widget_font_family')||'Inter';prevClosed.querySelector('.lwp-head b').textContent=fd.get('widget_bubble_text')||'Bize yazabilirsiniz, çevrimiçiyiz!';prevClosed.dataset.design=fd.get('widget_design')||'PRO_GRADIENT';}}
+form?.addEventListener('input',updatePreview);form?.addEventListener('change',updatePreview);document.querySelector('[data-live-sound-preview]')?.addEventListener('click',()=>play(document.getElementById('liveSoundSelect')?.value||'bell-soft'));document.querySelector('[data-color-presets]')?.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const c=getComputedStyle(b).getPropertyValue('--c').trim();const inp=form?.querySelector('[name=widget_color]');if(inp){inp.value=c;updatePreview();}});updatePreview();})();
+</script>
+
+
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">
+// v3.3.39 — tüm tasarım/yazı/konum/desen ayarlarını küçük önizlemeye anlık uygular.
+(()=>{
+ const form=document.querySelector('.live-settings-form');
+ const open=document.getElementById('liveWidgetPreview');
+ const closed=document.getElementById('liveWidgetPreviewClosed');
+ if(!form||!open||!closed)return;
+ const pick=n=>form.querySelector(`[name="${n}"]`);
+ const get=n=>new FormData(form).get(n);
+ function clean(v){return String(v||'').trim()}
+ function applyOne(el,{closedMode=false}={}){
+   const color=clean(get('widget_color'))||'#245ba7';
+   const design=clean(get('widget_design'))||'PRO_GRADIENT';
+   const pattern=clean(get('widget_header_pattern'))||'LAB_DARK';
+   const fam=clean(get('widget_font_family'))||'Inter';
+   const fs=Math.max(10,Math.min(16,Number(get('widget_font_size')||14)*.82));
+   const fw=clean(get('widget_font_weight'))||700;
+   const rad=Math.max(8,Math.min(22,Number(get('widget_radius')||22)*.72));
+   const hh=Math.max(42,Math.min(78,Number(get('widget_header_height')||92)*.62));
+   el.dataset.design=design;
+   el.dataset.pattern=pattern;
+   el.dataset.position=clean(get('widget_position'))||'RIGHT_BOTTOM';
+   el.style.setProperty('--c',color);
+   el.style.setProperty('--pv-head',hh+'px');
+   el.style.borderRadius=rad+'px';
+   el.style.fontFamily=fam+', Arial, sans-serif';
+   el.style.fontSize=fs+'px';
+   el.style.fontWeight=fw;
+   el.querySelector('.lwp-head')?.style.setProperty('border-radius',closedMode?rad+'px '+rad+'px '+Math.max(4,rad/3)+'px '+rad+'px':'0');
+   const title=el.querySelector('.lwp-head b');
+   const sub=el.querySelector('.lwp-head small');
+   if(closedMode){ if(title)title.textContent=clean(get('widget_bubble_text'))||'Bize yazabilirsiniz, çevrimiçiyiz!'; if(sub)sub.textContent='Kapalı görünüm'; }
+   else { if(title)title.textContent=clean(get('widget_title'))||'Canlı Destek'; if(sub)sub.textContent=clean(get('operator_title'))||'Satış Temsilcisi çevrimiçi'; }
+ }
+ function apply(){
+   applyOne(open); applyOne(closed,{closedMode:true});
+   const welcome=open.querySelector('.lwp-body p'); if(welcome)welcome.textContent=clean(get('welcome_message'))||'Merhaba, size nasıl yardımcı olabiliriz?';
+   const btns=[...open.querySelectorAll('.lwp-body button')];
+   const quick=[clean(get('quick_reply_1'))||'Merhaba!', clean(get('quick_reply_2'))||'Merhaba, yardıma ihtiyacım var.', clean(get('quick_reply_3'))||'Merhaba, bilgi alabilir miyim?'];
+   btns.forEach((b,i)=>{b.textContent=quick[i]||quick[0]});
+   const cap=document.querySelector('.live-preview-caption');
+   if(cap)cap.innerHTML=`<span>${clean(get('widget_design'))||'PRO_GRADIENT'}</span><span>${clean(get('widget_position'))||'RIGHT_BOTTOM'}</span><span>${clean(get('widget_font_family'))||'Inter'} / ${clean(get('widget_font_weight'))||700}</span>`;
+ }
+ form.addEventListener('input',apply,true);
+ form.addEventListener('change',apply,true);
+ // dosya seçildiğinde önizlemedeki avatarı da anlık değiştir
+ form.querySelector('[name="operator_avatar"]')?.addEventListener('change',e=>{
+   const f=e.target.files?.[0]; if(!f)return; const url=URL.createObjectURL(f);
+   [open,closed].forEach(el=>{const img=el.querySelector('.lwp-avatar img'); if(img){img.src=url; img.hidden=false;}})
+ });
+ apply();
+})();
+</script>

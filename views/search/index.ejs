@@ -1,0 +1,10 @@
+<% layout('layout') -%>
+<header class="page-head"><div><h1>Genel Arama</h1><p>Müşteri, ürün, proforma, sipariş no, vergi no, telefon ve ürün kodu tek ekrandan aranır.</p></div></header>
+<form class="card search-hero" method="get" action="/search"><label>Aranacak kayıt<input autofocus name="q" value="<%=q||''%>" placeholder="Firma adı, müşteri no, ürün kodu, teklif no, telefon..."></label><button class="btn btn--primary">Ara</button></form>
+<% if(!q){ %><p class="empty-note">Arama yapmak için üstteki alana en az bir kelime yazın.</p><% } else { %>
+<div class="search-grid">
+<section class="card"><h2>Müşteriler <span class="tag"><%=customers.length%></span></h2><% if(!customers.length){ %><p>Kayıt yok.</p><% } %><div class="search-result-list"><% customers.forEach(c=>{ %><a href="/customers/<%=c.id%>/edit"><b><%=c.company_name%></b><small><%=[c.code,c.contact_name,c.phone||c.mobile,c.email,c.tax_no,c.city].filter(Boolean).join(' · ')%></small></a><% }) %></div></section>
+<section class="card"><h2>Ürünler <span class="tag"><%=products.length%></span></h2><% if(!products.length){ %><p>Kayıt yok.</p><% } %><div class="search-result-list"><% products.forEach(p=>{ %><a href="/products/<%=p.id%>/edit"><b><%=p.name%></b><small><%=[p.code,p.brand,p.model,p.category,(p.sale_price!=null?Number(p.sale_price).toFixed(2)+' '+p.currency:'')].filter(Boolean).join(' · ')%></small></a><% }) %></div></section>
+<section class="card"><h2>Proformalar / Siparişler <span class="tag"><%=quotes.length%></span></h2><% if(!quotes.length){ %><p>Kayıt yok.</p><% } %><div class="search-result-list"><% quotes.forEach(qt=>{ %><a href="/quotes/<%=qt.id%>"><b><%=qt.quote_no%> Rev.<%=qt.revision_no||0%></b><small><%=[qt.customer_snapshot?.company_name,qt.status,qt.grand_total!=null?Number(qt.grand_total).toFixed(2)+' '+qt.currency:''].filter(Boolean).join(' · ')%></small></a><% }) %></div></section>
+</div>
+<% } %>

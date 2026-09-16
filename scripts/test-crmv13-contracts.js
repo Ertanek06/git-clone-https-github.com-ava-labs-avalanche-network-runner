@@ -1,0 +1,15 @@
+import fs from 'fs';import assert from 'assert';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const pkg=JSON.parse(read('package.json'));
+assert.equal(pkg.version,'3.8.57');
+const service=read('src/services/theme.service.js');
+const studio=read('public/js/theme-studio.js');
+assert.match(service,/fullThemeBlueprints/);
+assert.match(service,/apple-glass/);
+assert.match(service,/neon-grid/);
+assert.match(service,/industrial-hazard/);
+assert.match(studio,/formSnapshot/);
+assert.match(studio,/restoreSnapshot/);
+assert.match(studio,/themeUpdates/);
+assert.match(studio,/Preview — click to select/);
+console.log('CRMV13_THEME_CONTRACTS=8/8 OK');

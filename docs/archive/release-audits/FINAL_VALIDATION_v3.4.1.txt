@@ -1,0 +1,6 @@
+CRM / ERP EFSANA36 v3.4.1 LOGIN BRANDING RESTORE FIX PRO
+- JavaScript syntax: PASS
+- Bash syntax: PASS
+- Login branding DB connection regression check: PASS
+- Database migration change: NONE
+- Existing shared database/uploads preservation: YES

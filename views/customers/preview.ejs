@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="<%=locale%>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title><%=row.company_name%> | Müşteri Kartı</title>
+  <link rel="stylesheet" href="<%=(typeof assetBundle!=='undefined'&&assetBundle?.styles)||'/public/css/app.css'%>">
+  <link rel="stylesheet" href="/settings/theme.css?v=<%=(typeof ui!=='undefined'&&ui?.updated_at)||'preview'%>&amp;b=crmv1.45">
+</head>
+<body class="customer-preview-page">
+<% const money=(v,cur=row.currency||'TRY')=>Number(v||0).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+cur; const dateFmt=v=>v?String(v).includes('-')?v:new Date(Number(v)).toLocaleString('tr-TR'):'-'; const remaining=q=>Math.max(0,Number(q.grand_total||0)-Number(q.paid_amount||0)); %>
+<main class="customer-preview-wrap customer-preview-wrap--pro">
+  <section class="customer-preview-hero customer-preview-hero--compact">
+    <div class="customer-preview-identity">
+      <% if(row.logo_url){ %><img class="customer-preview-logo" src="<%=row.logo_url%>" alt="<%=row.company_name%> logosu"><% } %>
+      <div>
+        <span class="customer-preview-kicker">MÜŞTERİ YÖNETİM KARTI</span>
+        <h1><%=row.company_name%></h1>
+        <p><%=row.short_name||row.code%> · <%=row.city||'-'%> · <%=row.contact_name||'Yetkili yok'%></p>
+      </div>
+    </div>
+    <div class="customer-action-strip">
+      <% if(capabilities.customerEdit){ %><button class="btn btn--sm btn--primary" type="button" data-customer-card-edit>✎ Müşteriyi Düzenle</button><% } %>
+      <% if(capabilities.quoteCreate){ %><a class="btn btn--sm" target="_top" href="/quotes/new?customer_id=<%=row.id%>">＋ Yeni Proforma</a><% } %>
+      <a class="btn btn--sm" target="_top" href="/customers?q=<%=encodeURIComponent(row.code||row.company_name||'')%>">↗ Listede Aç</a>
+    </div>
+  </section>
+
+  <% if(capabilities.customerEdit){ %><section class="customer-inline-editor-v16" data-customer-inline-editor hidden><header><div><span class="customer-preview-kicker">KART İÇİ DÜZENLEME</span><h2>Müşteri kimlik bilgilerini güncelle</h2></div><button class="btn btn--sm btn--soft" type="button" data-customer-card-cancel>Kapat</button></header><form data-customer-card-form><input type="hidden" name="_csrf" value="<%=csrfToken%>"><label class="span-2"><span>Firma unvanı</span><input name="company_name" required value="<%=row.company_name||''%>"></label><label><span>Kısa ad</span><input name="short_name" value="<%=row.short_name||''%>"></label><label><span>Yetkili</span><input name="contact_name" value="<%=row.contact_name||''%>"></label><label><span>Görevi</span><input name="contact_title" value="<%=row.contact_title||''%>"></label><label><span>Telefon</span><input name="phone" value="<%=row.phone||''%>"></label><label><span>Cep</span><input name="mobile" value="<%=row.mobile||''%>"></label><label><span>E-posta</span><input name="email" type="email" value="<%=row.email||''%>"></label><label><span>Web</span><input name="website" value="<%=row.website||''%>"></label><label><span>Vergi dairesi</span><input name="tax_office" value="<%=row.tax_office||''%>"></label><label><span>Vergi no</span><input name="tax_no" value="<%=row.tax_no||''%>"></label><label><span>İlçe</span><input name="district" value="<%=row.district||''%>"></label><label><span>Şehir</span><input name="city" value="<%=row.city||''%>"></label><label><span>Ülke</span><input name="country" value="<%=row.country||'TÜRKİYE'%>"></label><label><span>Sektör</span><input name="sector" value="<%=row.sector||''%>"></label><label><span>Para birimi</span><select name="currency"><% ['TRY','EUR','USD'].forEach(cur=>{ %><option <%=row.currency===cur?'selected':''%>><%=cur%></option><% }) %></select></label><label><span>Ödeme yöntemi</span><input name="payment_method" value="<%=row.payment_method||''%>"></label><label class="span-2"><span>Fatura adresi</span><textarea name="billing_address" rows="3"><%=row.billing_address||row.address1||''%></textarea></label><label class="span-2"><span>Teslimat adresi</span><textarea name="delivery_address" rows="3"><%=row.delivery_address||''%></textarea></label><label class="span-2"><span>Not</span><textarea name="note" rows="4"><%=row.note||''%></textarea></label><input type="hidden" name="status" value="<%=row.status||'ACTIVE'%>"><div class="span-2 customer-inline-editor-v16__actions"><span data-customer-card-status></span><a class="btn btn--soft" target="_top" href="/customers/<%=row.id%>/edit">Tam Düzenleme Ekranı</a><button class="btn btn--primary" type="submit">💾 Kartı Kaydet</button></div></form></section><% } %>
+
+  <section class="customer-kpi-grid" aria-label="Müşteri ticari özet">
+    <article class="customer-kpi-card"><small>Toplam Proforma</small><b><%=stats.count%></b><span>Kayıtlı teklif</span></article>
+    <article class="customer-kpi-card"><small>Siparişe Dönüşen</small><b><%=stats.ordered%></b><span>Açık/kapalı sipariş</span></article>
+    <article class="customer-kpi-card"><small>Teslim/Tamamlanan</small><b><%=stats.delivered%></b><span>Sevk veya tamamlandı</span></article>
+<% if(capabilities.financials){ %>
+    <article class="customer-kpi-card"><small>Toplam Teklif</small><b><%=money(stats.total,row.currency||'TRY')%></b><span>Proforma toplamı</span></article>
+    <article class="customer-kpi-card"><small>Ödenen</small><b><%=money(stats.paid,row.currency||'TRY')%></b><span>Tahsil edilen</span></article>
+    <article class="customer-kpi-card"><small>Kalan / Cari</small><b><%=money(stats.remaining,row.currency||'TRY')%></b><span>Bekleyen ödeme</span></article>
+    <% } %>
+    <article class="customer-kpi-card"><small>Onay Bekleyen</small><b><%=stats.pendingApproval%></b><span>Yönetici onayı</span></article>
+    <article class="customer-kpi-card"><small>Açık Sipariş</small><b><%=stats.openOrders%></b><span>Teslimat/proje bekliyor</span></article>
+    <article class="customer-kpi-card"><small>İptal Sipariş</small><b><%=stats.cancelledOrders%></b><span>Sipariş iptal edildi</span></article>
+    <article class="customer-kpi-card"><small>Reddedilen/Kapanan</small><b><%=stats.lost%></b><span>Kaybedilen süreç</span></article>
+<% if(capabilities.financials){ %>
+    <article class="customer-kpi-card"><small>Ödemesi Tamam</small><b><%=stats.paidCount%></b><span>Ödendi durumunda</span></article>
+    <% } %>
+    <article class="customer-kpi-card"><small>Son İşlem</small><b><%=dateFmt(stats.last)%></b><span>Son proforma tarihi</span></article>
+  </section>
+
+  <section class="customer-workspace-grid">
+    <aside class="customer-side-stack">
+      <article class="customer-preview-card customer-preview-card--tight"><h2>İletişim Bilgileri</h2><dl class="customer-preview-dl customer-preview-dl--tight"><dt>Yetkili</dt><dd><%=row.contact_name||'-'%></dd><dt>Görevi</dt><dd><%=row.contact_title||'-'%></dd><dt>Telefon</dt><dd><%=row.phone||'-'%></dd><dt>Cep</dt><dd><%=row.mobile||'-'%></dd><dt>E-posta</dt><dd><%=row.email||'-'%></dd><dt>Web</dt><dd><%=row.website||'-'%></dd></dl></article>
+      <article class="customer-preview-card customer-preview-card--tight"><h2>Vergi ve Adres</h2><dl class="customer-preview-dl customer-preview-dl--tight"><dt>Vergi</dt><dd><%=row.tax_office||'-'%> / <%=row.tax_no||'-'%></dd><dt>Konum</dt><dd><%=[row.country,row.city,row.district].filter(Boolean).join(' / ')||'-'%></dd><dt>Fatura</dt><dd><%=row.billing_address||[row.address1,row.address2].filter(Boolean).join(' ')||'-'%></dd><dt>Teslimat</dt><dd><%=row.delivery_address||'-'%></dd></dl></article>
+      <article class="customer-preview-card customer-preview-card--tight"><h2>Ticari Bilgiler</h2><dl class="customer-preview-dl customer-preview-dl--tight"><dt>Para</dt><dd><%=row.currency||'TRY'%></dd><dt>Ödeme</dt><dd><%=row.payment_method||'-'%></dd><dt>Sektör</dt><dd><%=row.sector||'-'%></dd><dt>Durum</dt><dd><span class="tag"><%=row.status||'ACTIVE'%></span></dd><dt>Not</dt><dd><%=row.note||'-'%></dd></dl></article>
+      <article class="customer-preview-card customer-preview-card--tight"><h2>Ek Yetkililer</h2><% if(!contacts.length){ %><p class="customer-mini-warning">Ek yetkili kişi yok. Düzenle ekranından satın alma, muhasebe veya teknik yetkili eklenebilir.</p><% } else { %><div class="customer-contacts-list"><% contacts.forEach(c=>{ %><div class="customer-contact-pill"><span class="tag"><%=c.role_key%></span><div><b><%=c.full_name%></b><small><%=[c.title,c.phone||c.mobile,c.email].filter(Boolean).join(' · ')||'-'%></small></div></div><% }) %></div><% } %></article>
+    </aside>
+
+    <section class="customer-main-stack">
+      <article class="customer-quotes-card customer-quotes-card--tight">
+        <header><div><span class="customer-preview-kicker">TEKLİF / SİPARİŞ / CARİ TAKİP</span><h2>Proformalar ve Sipariş Durumları</h2></div><span class="quote-count-pill"><%=quotes.length%> kayıt</span></header>
+        <% if(!quotes.length){ %>
+          <p class="customer-empty-note">Bu müşteriye ait kayıtlı proforma bulunmuyor.</p>
+        <% } else { %>
+          <div class="customer-quotes-table-wrap">
+            <table class="lined customer-record-table">
+              <thead><tr><th>İşlemler</th><th>No</th><th>Tarih</th><th>Durum</th><th>Sipariş</th><th>Üretim</th><% if(capabilities.financials){ %><th>Ödeme</th><th>Toplam</th><th>Ödenen</th><th>Kalan</th><% } %><th>Teslim</th></tr></thead>
+              <tbody>
+                <% quotes.forEach(q=>{let p={};try{p=JSON.parse(q.profile_snapshot_json||'{}')}catch{} const display=quoteDisplayNo(q,p); %>
+                  <tr>
+                    <td>
+                      <div class="table-action-list table-action-list--dense">
+                        <% if(capabilities.quoteExport){ %><button type="button" class="table-action is-preview js-inline-quote-preview" data-url="/quotes/<%=q.id%>/preview?customer_embed=1" data-label="Ön İzleme" title="Ön İzleme" aria-label="<%=display%> — ön izleme"><%- include('../partials/table-action-icon',{iconName:'preview'}) %></button><% } %>
+                        <a class="table-action is-open" target="_top" href="/quotes/<%=q.id%>" data-label="Aç" title="Aç" aria-label="<%=display%> — aç"><%- include('../partials/table-action-icon',{iconName:'open'}) %></a>
+                        <% if(capabilities.quoteEdit){ %><a class="table-action is-edit" target="_top" href="/quotes/<%=q.id%>/edit" data-label="Düzenle" title="Düzenle" aria-label="<%=display%> — düzenle"><%- include('../partials/table-action-icon',{iconName:'edit'}) %></a><% } %>
+                        <% if(capabilities.quoteExport){ %><a class="table-action is-print" target="_blank" rel="noopener" href="/quotes/<%=q.id%>/print?auto=1" data-label="PDF" title="PDF" aria-label="<%=display%> — PDF aç"><%- include('../partials/table-action-icon',{iconName:'print'}) %></a><% } %>
+                        <% if(capabilities.quoteArchive){ %><form method="post" target="_top" action="/quotes/<%=q.id%>/delete" data-confirm='Bu proforma arşivlensin mi?'><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="table-action is-danger" type="submit" data-label="Arşivle" title="Arşivle" aria-label="<%=display%> — arşivle"><%- include('../partials/table-action-icon',{iconName:'archive'}) %></button></form><% } %>
+                      </div>
+                    </td>
+                    <td><b><%=display%></b><small>Rev <%=q.revision_no||0%></small></td>
+                    <td><%=q.quote_date||'-'%></td>
+                    <td><span class="tag <%=statusClass(q.status)%>"><%=statusLabel(q.status)%></span></td>
+                    <td><span class="tag <%=statusClass(q.order_status)%>"><%=statusLabel(q.order_status||'NONE')%></span><small><%=q.order_no||''%></small></td>
+                    <td><span class="tag <%=statusClass(q.production_status)%>"><%=statusLabel(q.production_status||'NOT_STARTED')%></span></td>
+                    <% if(capabilities.financials){ %><td><span class="tag <%=statusClass(q.payment_status)%>"><%=statusLabel(q.payment_status||'UNPAID')%></span></td><td><b><%=money(q.grand_total,q.currency)%></b></td><td><%=money(q.paid_amount,q.currency)%></td><td><b><%=money(remaining(q),q.currency)%></b></td><% } %>
+                    <td><%=q.delivery_date||'-'%></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <section class="customer-inline-preview" id="customerInlinePreview" hidden><header><strong id="customerInlinePreviewTitle">Proforma Ön İzleme</strong><button type="button" class="icon-btn" id="customerInlinePreviewClose" aria-label="Kapat">×</button></header><iframe id="customerInlinePreviewFrame" title="Proforma Ön İzleme"></iframe></section>
+        <% } %>
+      </article>
+      <article class="customer-quotes-card customer-quotes-card--tight"><header><div><span class="customer-preview-kicker">İŞLEM GEÇMİŞİ</span><h2>Müşteriyle Yapılan Son İşlemler</h2></div><span class="quote-count-pill"><%=activities.length%> özet</span></header><% if(!activities.length){ %><p class="customer-empty-note">Bu müşteri için işlem kaydı bulunmuyor.</p><% } else { %><div class="customer-activity-list"><% activities.forEach(a=>{ %><div class="customer-activity-item"><b><%=a.title%></b><small><%=a.detail||'-'%> · <%=new Date(a.created_at).toLocaleString('tr-TR')%></small></div><% }) %></div><% } %></article>
+    </section>
+  </section>
+</main>
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">(()=>{try{if(window.parent!==window)window.parent.postMessage({type:'crm:preview-dom-ready-v132'},location.origin)}catch{}})();</script>
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">(()=>{const panel=document.getElementById('customerInlinePreview'),frame=document.getElementById('customerInlinePreviewFrame'),editor=document.querySelector('[data-customer-inline-editor]'),form=document.querySelector('[data-customer-card-form]');document.addEventListener('click',e=>{const b=e.target.closest('.js-inline-quote-preview');if(!b||!panel||!frame)return;const next=new URL(b.dataset.url,location.origin),current=frame.getAttribute('src');let currentUrl='';try{currentUrl=current?new URL(current,location.origin).href:''}catch{}if(currentUrl!==next.href)frame.src=next.pathname+next.search+next.hash;panel.hidden=false;panel.scrollIntoView({behavior:'auto',block:'start'})});document.getElementById('customerInlinePreviewClose')?.addEventListener('click',()=>{panel.hidden=true});document.querySelector('[data-customer-card-edit]')?.addEventListener('click',()=>{editor.hidden=false;editor.scrollIntoView({behavior:'smooth',block:'start'});window.CRM_AUTO_GROW?.refresh(editor)});document.querySelector('[data-customer-card-cancel]')?.addEventListener('click',()=>editor.hidden=true);form?.addEventListener('submit',async event=>{event.preventDefault();const status=form.querySelector('[data-customer-card-status]'),save=form.querySelector('[type="submit"]');save.disabled=true;if(status)status.textContent='Kaydediliyor…';try{const response=await fetch('/customers/<%=row.id%>/preview-update',{method:'POST',body:new FormData(form),headers:{Accept:'application/json','X-CSRF-Token':'<%=csrfToken%>'},credentials:'same-origin'}),data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.message||'Müşteri kartı güncellenemedi.');if(status)status.textContent=data.message||'Kaydedildi.';setTimeout(()=>location.reload(),450)}catch(error){save.disabled=false;if(status)status.textContent=error.message}})})();</script>
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>" src="<%=(typeof assetBundle!=='undefined'&&assetBundle?.js)||'/public/js/app.js'%>"></script>
+</body>
+</html>

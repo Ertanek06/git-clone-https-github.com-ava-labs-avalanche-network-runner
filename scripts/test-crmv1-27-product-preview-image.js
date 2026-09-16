@@ -1,0 +1,16 @@
+import fs from 'fs';
+import assert from 'assert';
+const read=(p)=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
+const view=read('views/products/preview.ejs');
+const routes=read('src/routes/products.js');
+const build=JSON.parse(read('BUILD_INFO.json'));
+assert.equal(build.app_version,'3.8.57');
+assert.equal(build.build,'crmv1.45');
+assert(view.includes('data-product-image-upload'),'quick image upload button missing');
+assert(view.includes('data-product-image-quick-input'),'quick image input missing');
+assert(view.includes("fetch('/products/<%=row.id%>/image'"),'quick image fetch missing');
+assert(view.includes('product-preview-image-upload-v27'),'image overlay styling missing');
+assert(routes.includes('"/:id/image"'),'product image endpoint missing');
+assert(routes.includes('productUpload.single("image")'),'single image upload middleware missing');
+assert(routes.includes('PRODUCT_IMAGE_UPDATE'),'image update audit missing');
+console.log('CRMV1.27_PRODUCT_PREVIEW_IMAGE_TESTS=OK');

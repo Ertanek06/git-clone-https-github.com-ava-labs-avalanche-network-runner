@@ -1,0 +1,53 @@
+<% layout('layout') -%>
+<%
+ const en=locale==='en';
+ const activeSources=(sources||[]).filter(x=>Number(x.is_active)!==0);
+ const statusLabel={QUEUED:'Sırada',RUNNING:'Taranıyor',SCANNING:'Taranıyor',IMPORTING:'CRM’e Aktarılıyor',READY:'Kontrole Hazır',IMPORTED:'CRM’e Aktarıldı',SAVED:'CRM’e Aktarıldı',AUTO_NEW_SYNC:'Otomatik yeni ürün',AUTO_PRICE_SYNC:'Otomatik fiyat',AUTO_ERROR:'Otomatik hata',ERROR:'Hata',CANCELLED:'Durduruldu'};
+%>
+<header class="page-head pro-headline">
+  <div>
+    <span class="eyebrow">🌐 <%=en?'WEBSITE CATALOG SCANNER':'WEB SİTESİ ÜRÜN TARAMA MERKEZİ'%></span>
+    <h1><%=en?'Scan a Complete Product Catalog':'Bir Sitenin Tüm Ürünlerini Tara'%></h1>
+    <p><%=en?'Paste the website homepage. The scanner discovers product pages, analyzes them in the background, then opens a review table before anything is saved.':'Ana sayfa adresini girin. Sistem ürün sayfalarını bulur, arka planda gerçek verileri analiz eder ve hiçbir kayıt oluşturmadan önce kontrol tablosunu hazırlar.'%></p>
+  </div>
+  <div class="row-actions"><a class="btn btn--sm" href="/products">← Ürün Listesi</a><a class="btn btn--sm btn--soft" href="/products/import-web/history">Tarama Geçmişi</a></div>
+</header>
+
+<section class="card web-scan-main">
+  <div class="web-scan-copy">
+    <span class="web-scan-icon">🌐</span>
+    <div><h2>Site adresini ver, ürün kataloğunu tarat</h2><p>Ürün görseli, ürün kodu, ürün adı, fiyat, kategori ve ürün açıklaması gerçek ürün sayfalarından alınır. Tarama tamamlandığında sonuçlar tablo halinde açılır; önce kontrol eder, sonra seçtiklerinizi CRM'e kaydedersiniz.</p></div>
+  </div>
+  <form method="post" action="/products/import-web/scan" class="web-scan-start">
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <label class="web-url-field"><span>Ana sayfa adresi</span><input name="base_url" type="url" placeholder="https://www.ornek-site.com/" <%=activeSources.length?'':'required'%>></label>
+    <% if(activeSources.length){ %>
+      <label><span>veya kayıtlı kaynak</span><select name="source_id"><option value="">Yeni site adresi kullan</option><% activeSources.forEach(src=>{ %><option value="<%=src.id%>"><%=src.name%> · <%=src.base_url%></option><% }) %></select></label>
+    <% } %>
+    <label><span>Kaynak adı <small>(isteğe bağlı)</small></span><input name="source_name" placeholder="Örn. Tedarikçi Ürün Kataloğu"></label>
+    <details class="web-advanced"><summary>Gelişmiş tarama ayarları</summary><div class="web-advanced-grid"><label>Sitemap adresi <small>(boş bırakılabilir)</small><input name="sitemap_url" type="url" placeholder="https://www.ornek-site.com/sitemap.xml"></label><label>Ürün URL kalıbı <small>(regex)</small><input name="product_path_pattern" value="/urun/|/product/|/products/"></label><label>Azami ürün sayısı<input name="max_products" type="number" min="100" max="20000" value="10000"></label></div><p class="web-advanced-note">Sitemap alanına ürün sayfası girilirse sistem bunu sitemap olarak kullanmaz; otomatik sitemap keşfine geçer. Ürün yolları farklıysa URL kalıbını değiştirebilirsiniz.</p></details>
+    <button class="btn btn--primary web-scan-button" type="submit">🔎 Sitedeki Tüm Ürünleri Tara</button>
+  </form>
+  <div class="web-scan-notes"><span>✓ Tarama arka planda çalışır; sayfadan çıkabilirsiniz.</span><span>✓ Tarama Geçmişi ekranından çalışan işe geri dönebilirsiniz.</span><span>✓ CRM'e kaydetme tarama sırasında yapılmaz.</span><span>✓ Görseller kayıt aşamasında kalıcı CRM alanına indirilir.</span></div>
+</section>
+
+<% if(activeSources.length){ %>
+<section class="card">
+  <div class="card-head"><div><h2>Kayıtlı Kaynak Siteler</h2><small>Daha önce kullandığınız siteleri tek tıkla yeniden tarayın.</small></div></div>
+  <div class="table-scroll"><table class="lined web-source-table"><thead><tr><th>Kaynak</th><th>Site</th><th>Sitemap</th><th>Ürün kalıbı</th><th>Otomasyon</th><th>İşlem</th></tr></thead><tbody>
+  <% activeSources.forEach(src=>{ %><tr><td><b><%=src.name%></b></td><td><%=src.base_url%></td><td><%=src.sitemap_valid?(src.sitemap_url||'Otomatik'):'Otomatik keşif'%><% if(src.sitemap_url&&!src.sitemap_valid){ %><small class="muted">Kayıtlı adres sitemap/XML olmadığı için kullanılmayacak.</small><% } %></td><td><code><%=src.product_path_pattern%></code></td><td><small><%=src.settings?.auto_new_scan!==false&&src.sitemap_valid?'✓ 15 günlük yeni ürün':'— yeni ürün kapalı'%></small><small><%=src.settings?.auto_price_sync!==false&&src.sitemap_valid?'✓ 24 saatlik fiyat':'— fiyat kapalı'%></small></td><td><form method="post" action="/products/import-web/scan"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><input type="hidden" name="source_id" value="<%=src.id%>"><button class="btn btn--sm btn--primary" type="submit">Tümünü Tara</button></form></td></tr><% }) %>
+  </tbody></table></div>
+</section>
+<% } %>
+
+<section class="card web-source-manager">
+  <details><summary>＋ Kaynak siteyi kayıtlı listeye ekle / güncelle</summary>
+    <form method="post" action="/products/import-web/source/save" class="form-grid web-source-form"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><label>Kaynak adı<input name="name" required placeholder="Örn. Laboratuvar Ürün Kataloğu"></label><label>Site adresi<input name="base_url" type="url" required placeholder="https://www.ornek-site.com/"></label><label>Sitemap <small>(isteğe bağlı)</small><input name="sitemap_url" type="url" placeholder="https://www.ornek-site.com/sitemap.xml"></label><label>Ürün URL kalıbı<input name="product_path_pattern" value="/urun/|/product/|/products/"></label><label>Tarama partisi <small>(uyumluluk)</small><select name="batch_size"><option>20</option><option>30</option></select></label><label class="check-line"><input type="checkbox" name="auto_new_scan" value="1" checked> Sitemap varsa 15 günde bir yeni ürünleri otomatik tara ve ekle</label><label class="check-line"><input type="checkbox" name="auto_price_sync" value="1" checked> Sitemap varsa 24 saatte bir kayıtlı ürün fiyatlarını güncelle</label><div class="form-actions"><button class="btn btn--primary" type="submit">Kaynak Siteyi Kaydet</button></div></form>
+  </details>
+</section>
+
+<% if((history||[]).length){ %><section class="card"><div class="card-head"><div><h2>Son Tarama / Aktarımlar</h2><small>Tarama ve CRM aktarım sonuçları kalıcı olarak burada tutulur.</small></div><a class="btn btn--sm btn--soft" href="/products/import-web/history">Tüm Geçmişi Aç</a></div><div class="table-scroll"><table class="lined web-home-history"><thead><tr><th>Tarih</th><th>Kaynak</th><th>Durum</th><th>İlerleme</th><th>Bulunan</th><th>Analiz</th><th>Uyarı</th><th>Aktarım Sonucu</th><th>İşlem</th></tr></thead><tbody><% history.forEach(h=>{ const running=['QUEUED','RUNNING','SCANNING','IMPORTING'].includes(h.live_status); const imported=['IMPORTED','SAVED'].includes(h.live_status); %><tr><td><%=new Date(h.created_at).toLocaleString('tr-TR')%></td><td><b><%=h.source_name||'Web sitesi'%></b><small class="muted"><%=h.base_url||''%></small></td><td><span class="web-home-status <%=running?'is-live':imported?'is-done':h.live_status==='ERROR'?'is-error':''%>"><%=statusLabel[h.live_status]||h.live_status||'-'%></span><small class="muted"><%=h.stage||''%></small></td><td><%=h.progress==null&&running?'Canlı keşif':`${Number(h.progress||0)}%`%></td><td><%=h.discovered_count%></td><td><%=h.analyzed_count%></td><td><%=h.warning_count%></td><td><% if(imported){ %><div class="web-home-result"><b class="is-new">＋ <%=Number(h.added_count||0)%> yeni</b><b class="is-update">↻ <%=Number(h.updated_count||0)%> güncellendi</b><small><%=Number(h.skipped_count||0)%> atlandı</small></div><% }else if(h.live_status==='READY'){ %><span class="web-home-result-pending">Kontrol hazır · CRM’e aktarım bekliyor</span><% }else if(running){ %><span class="web-home-result-pending is-live">İşlem devam ediyor</span><% }else{ %><span class="web-home-result-pending">Aktarım sonucu yok</span><% } %></td><td><% if(h.open_url){ %><a class="btn btn--sm <%=running?'btn--primary':'btn--soft'%>" href="<%=h.open_url%>"><%=running?'Canlı Durumu Aç':['READY','IMPORTED','SAVED'].includes(h.live_status)?'Sonuçları Aç':'Detayı Aç'%></a><% } else { %><span class="muted">Detay yok</span><% } %></td></tr><% }) %></tbody></table></div></section><% } %>
+
+<style nonce="<%=cspNonce%>">
+.web-scan-main{display:grid;gap:18px;padding:20px}.web-scan-copy{display:flex;align-items:flex-start;gap:14px}.web-scan-icon{width:50px;height:50px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:26px;flex:0 0 auto}.web-scan-copy h2{margin:0 0 5px}.web-scan-copy p{margin:0;max-width:980px;line-height:1.55;color:var(--muted)}.web-scan-start{display:grid;grid-template-columns:minmax(320px,2fr) minmax(240px,1fr) minmax(220px,1fr);gap:10px;align-items:end}.web-scan-start label{display:grid;gap:5px;font-weight:800}.web-url-field input{font-size:16px}.web-advanced{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.web-advanced summary,.web-source-manager summary{cursor:pointer;font-weight:800}.web-advanced-grid{display:grid;grid-template-columns:1.4fr 1.3fr .6fr;gap:10px;margin-top:10px}.web-advanced-note{margin:8px 0 0;color:var(--muted);font-size:11px}.web-scan-button{grid-column:1/-1;min-height:44px;font-size:15px}.web-scan-notes{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:12px}.web-source-table td{vertical-align:middle}.web-source-manager>details{padding:4px}.web-source-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.web-source-form .form-actions{grid-column:1/-1}.muted{display:block;color:var(--muted);margin-top:3px}.web-home-history{min-width:980px}.web-home-history td{vertical-align:middle}.web-home-status{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-weight:800;font-size:11px}.web-home-status.is-live{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}@media(max-width:900px){.web-scan-start,.web-advanced-grid,.web-source-form{grid-template-columns:1fr}.web-scan-start>*{grid-column:1}.web-advanced{grid-column:1}.web-source-form .form-actions{grid-column:1}}
+</style>

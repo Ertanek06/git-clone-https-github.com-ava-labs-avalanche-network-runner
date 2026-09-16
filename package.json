@@ -1,0 +1,57 @@
+{
+  "name": "crm-erp-efsana36",
+  "version": "3.8.57",
+  "private": true,
+  "type": "module",
+  "description": "ARTEVA CRM / ERP — tenant güvenliği, arşiv kurtarma, proforma, müşteri ve ürün yönetimi",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development node --watch src/server.js",
+    "build:assets": "node scripts/build-assets.js",
+    "format": "prettier --write \"src/**/*.js\" \"scripts/build-assets.js\" \"scripts/http-csp-smoke.js\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"scripts/build-assets.js\" \"scripts/http-csp-smoke.js\"",
+    "migrate": "node src/db/migrate.js",
+    "seed": "node src/db/seed.js",
+    "check": "npm run build:assets && npm run format:check && bash scripts/static-check.sh && npm run test:http",
+    "health": "bash scripts/health-check.sh",
+    "backup": "node scripts/online-backup.js",
+    "backup:inspect": "node scripts/inspect-full-backup.js",
+    "test": "npm run build:assets && bash scripts/test-suite.sh && npm run test:http",
+    "test:http": "node scripts/http-csp-smoke.js",
+    "privacy:check": "node scripts/privacy-maintenance.js",
+    "privacy:apply": "node scripts/privacy-maintenance.js --apply",
+    "uploads:orphans": "node scripts/orphan-upload-cleanup.js",
+    "uploads:cleanup": "node scripts/orphan-upload-cleanup.js --apply",
+    "integrity:check": "node scripts/data-integrity-check.js",
+    "followup:run": "node scripts/quote-followup-run.js"
+  },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "12.4.1",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
+    "esbuild": "0.25.9",
+    "express": "5.2.1",
+    "express-session": "^1.18.1",
+    "helmet": "8.3.0",
+    "multer": "2.2.0",
+    "nodemailer": "9.0.3",
+    "pdf-parse": "1.1.4",
+    "sanitize-html": "2.17.6",
+    "xlsx": "npm:@e965/xlsx@0.20.3"
+  },
+  "overrides": {
+    "body-parser": "2.3.0",
+    "brace-expansion": "2.1.4",
+    "bytes": "3.1.2"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

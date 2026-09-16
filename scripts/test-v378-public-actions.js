@@ -1,0 +1,15 @@
+import fs from 'fs';
+import assert from 'assert';
+const read=p=>fs.readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
+const pkg=JSON.parse(read('package.json'));
+const view=read('views/quotes/print.ejs');
+const config=read('src/config.js');
+assert.equal(pkg.version,'3.8.57');
+assert.match(config,/v3.8.57-crmv1.45-web-import-upsert-ui-document-fix/);
+assert.match(view,/public-print-action-v378/);
+assert.match(view,/public-whatsapp-action-v378/);
+assert.match(view,/web\.whatsapp\.com\/send\?text/);
+assert.match(view,/https:\/\/wa\.me\/\?text/);
+assert.match(view,/data-public-email-url/);
+assert.match(view,/window\.location\.href=url/);
+console.log('crmV06 public action contracts 8/8 OK');

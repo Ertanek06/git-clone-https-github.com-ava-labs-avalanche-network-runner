@@ -1,0 +1,48 @@
+<% layout('layout') -%>
+<header class="page-head pro-module-hero integrations-hub pro-headline">
+ <div><span class="eyebrow">🔌 SİSTEM ENTEGRASYONLARI</span><h1>E-posta / SMTP ve Fatura Entegrasyonu</h1><p>Proforma gönderimi, görüntülendi takibi ve harici muhasebe/e-fatura aktarımı için merkezi ayarlar.</p></div>
+ <div class="pro-module-hero__meta"><span class="pill <%=smtp.is_active?'tag--success':''%>">✉️ SMTP: <%=smtp.is_active?'Aktif':'Pasif'%></span><span class="pill <%=integration.is_active?'tag--success':''%>">🧾 Fatura: <%=integration.is_active?'Aktif':'Pasif'%></span></div>
+</header>
+<section class="pro-module-page integrations-hub">
+ <section class="grid two">
+  <details class="card collapse-card pro-module-card integration-card" open><summary><span>✉️ SMTP E-posta Ayarları</span><small>Teklif gönderim linkleri ve görüntülendi kayıtları için kullanılır.</small></summary>
+   <form method="post" action="/integrations/smtp" class="form-grid integration-form pro-compact-form"><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <label>🌐 SMTP Host<input name="host" value="<%=smtp.host||''%>" placeholder="smtp.firma.com"></label><label>🔢 Port<input name="port" type="number" value="<%=smtp.port||587%>"></label>
+    <label>🔒 Güvenlik<select name="secure"><option value="0" <%=!smtp.secure?'selected':''%>>STARTTLS / 587</option><option value="1" <%=smtp.secure?'selected':''%>>SSL / 465</option></select></label><label>🟢 Durum<select name="is_active"><option value="1" <%=smtp.is_active?'selected':''%>>Aktif</option><option value="0" <%=!smtp.is_active?'selected':''%>>Pasif</option></select></label>
+    <label>👤 Kullanıcı<input name="username" value="<%=smtp.username||''%>" placeholder="info@firma.com"></label><label>🔑 Şifre<input name="password" type="password" placeholder="Değiştirmeyecekseniz boş bırakın"></label>
+    <label>🏢 Gönderen Adı<input name="from_name" value="<%=smtp.from_name||''%>" placeholder="ARTEVA LABORATUVAR"></label><label>📧 Gönderen E-posta<input name="from_email" type="email" value="<%=smtp.from_email||''%>"></label>
+    <label class="wide">↩️ Yanıt Adresi<input name="reply_to" type="email" value="<%=smtp.reply_to||''%>"></label>
+    <div class="wide pro-module-actions"><button class="btn btn--primary btn--sm">💾 Kaydet</button><span class="pill"><%=smtp.host?'Tanımlı':'Eksik'%></span></div>
+   </form>
+   <form method="post" action="/integrations/smtp-test" class="excel-upload-strip compact-test-strip" data-confirm="Test e-postası gönderilsin mi?"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><input name="test_email" type="email" placeholder="test@firma.com" value="<%=user.email||''%>"><button class="btn btn--soft btn--sm">📨 Test E-postası Gönder</button></form>
+  </details>
+  <details class="card collapse-card pro-module-card integration-card" open><summary><span>🧾 Fatura / E-Fatura Entegrasyonu</span><small>Logo, Mikro, Paraşüt, Uyumsoft, EDM, İzibiz vb. için aktarım noktası.</small></summary>
+   <form method="post" action="/integrations/invoice" class="form-grid integration-form pro-compact-form"><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <label>🏷️ Sağlayıcı<select name="provider"><% ['MANUAL','LOGO','MIKRO','PARASUT','UYUMSOFT','EDM','IZIBIZ','OTHER'].forEach(x=>{ %><option value="<%=x%>" <%=integration.provider===x?'selected':''%>><%=x%></option><% }) %></select></label>
+    <label>🟢 Durum<select name="is_active"><option value="1" <%=integration.is_active?'selected':''%>>Aktif</option><option value="0" <%=!integration.is_active?'selected':''%>>Pasif</option></select></label>
+    <label>🌐 API URL<input name="api_url" value="<%=integration.api_url||''%>" placeholder="https://api.servis.com"></label><label>🏢 Firma Kodu<input name="company_code" value="<%=integration.company_code||''%>"></label>
+    <label>🔑 API Anahtarı<input name="api_key" type="password" placeholder="Değiştirmeyecekseniz boş bırakın"></label><label>📝 Not<input name="note" value="" placeholder="Kısa iç not"></label>
+    <div class="wide integration-note">ℹ️ Bu bölüm fatura taslağı / JSON aktarımı için hazırlık merkezidir. Gerçek servis bağlantısı seçilecek sağlayıcıya göre ayrıca bağlanır.</div>
+    <div class="wide pro-module-actions"><button class="btn btn--primary btn--sm">💾 Kaydet</button><span class="pill"><%=integration.provider||'MANUAL'%></span></div>
+   </form>
+  </details>
+ </section>
+ <details class="card collapse-card pro-module-card pro-module-table sent-mail-mini-card" open><summary><span>📨 Son E-posta Gönderimleri</span><small>Gönderim durumu, görüntülenme takibi ve liste temizliği.</small></summary>
+  <form id="integrationLogsForm" method="post" action="/quotes/email-logs/bulk-archive" data-confirm="Seçilen gönderim kayıtları listeden kaldırılsın mı? Ana proformalar silinmez."><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+   <div class="pro-module-actions sent-mail-mini-actions"><a class="btn btn--soft btn--sm" href="/quotes/sent">📨 Canlı Proforma Takibi</a><button class="btn btn--danger btn--sm" data-requires-selection="integrationLogsForm" disabled>🗑️ Seçilenleri Sil (<span data-selection-count="integrationLogsForm">0</span>)</button></div>
+   <div class="sent-mini-log-list">
+    <% if(!recentLogs.length){ %><div class="empty">Kayıt yok.</div><% } %>
+    <% recentLogs.forEach(l=>{ const viewed=Number(l.view_count||0)>0; %>
+     <article class="sent-mini-log <%=viewed?'is-read':'is-unread'%>">
+      <label class="select-mini"><input type="checkbox" name="ids" value="<%=l.id%>"><span></span></label>
+      <strong>📄 <%=quoteDisplayNo(l)%></strong>
+      <span title="Alıcı">👤 <%=l.recipient_email%></span>
+      <span class="tag <%=String(l.status).toUpperCase()==='SENT'?'tag--success':''%>"><%=String(l.status||'').toUpperCase()==='SENT'?'Gönderildi':String(l.status||'')%></span>
+      <span class="<%=viewed?'read-dot':'unread-dot'%>" title="Görüntülenme"><%=viewed?'🟢 Okundu':'🔴 Okunmadı'%> · <%=l.view_count||0%></span>
+      <button class="btn btn--danger btn--sm" formaction="/quotes/email-logs/<%=l.id%>/archive" formmethod="post" data-confirm="Bu gönderim kaydı listeden kaldırılsın mı? Ana proforma silinmez.">🗑️ Sil</button>
+     </article>
+    <% }) %>
+   </div>
+  </form>
+ </details>
+</section>

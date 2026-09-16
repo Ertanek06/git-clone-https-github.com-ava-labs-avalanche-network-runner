@@ -1,0 +1,84 @@
+<%
+const isPreview = Boolean(preview);
+const s = studio || {};
+const brand = legacy || branding || {};
+const media = selectedMedia || { id: 'none', kind: 'none', url: null, thumbnail_url: null };
+const mediaRenderKind = media.kind === 'image' ? 'image' : ((media.id && media.id !== 'none' && media.url) ? 'video' : 'none');
+const canvasId = typeof canvasIdOverride !== 'undefined' && canvasIdOverride ? canvasIdOverride : (isPreview ? 'loginStudioCanvas' : 'loginPageCanvas');
+const cardStyle = ['classic','glass','executive','minimal','embedded'].includes(String(s.card_style||'')) ? String(s.card_style) : 'classic';
+%>
+<div class="login-pro-canvas login-card-style--<%=cardStyle%>" id="<%=canvasId%>"
+  data-login-canvas data-card-style="<%=cardStyle%>"
+  data-csp-style='--overlay:<%=s.overlay_opacity%>;
+    --left-title-x:<%=s.left_title_x%>%;--left-title-y:<%=s.left_title_y%>%;--left-title-size:<%=s.left_title_size%>px;--left-title-color:<%=s.left_title_color%>;--left-title-font:<%-JSON.stringify(s.left_title_font)%>;
+    --left-text-x:<%=s.left_text_x%>%;--left-text-y:<%=s.left_text_y%>%;--left-text-size:<%=s.left_text_size%>px;--left-text-color:<%=s.left_text_color%>;--left-text-font:<%-JSON.stringify(s.left_text_font)%>;
+    --eyebrow-size:<%=s.eyebrow_size%>px;--eyebrow-color:<%=s.eyebrow_color%>;--eyebrow-font:<%-JSON.stringify(s.eyebrow_font)%>;
+    --title-size:<%=s.title_size%>px;--title-color:<%=s.title_color%>;--title-font:<%-JSON.stringify(s.title_font)%>;
+    --subtitle-size:<%=s.subtitle_size%>px;--subtitle-color:<%=s.subtitle_color%>;--subtitle-font:<%-JSON.stringify(s.subtitle_font)%>;
+    --button-size:<%=s.button_size%>px;--button-color:<%=s.button_color%>;--button-font:<%-JSON.stringify(s.button_font)%>;--button-bg:<%=s.button_bg%>;--button-radius:<%=s.button_radius%>px;
+    --card-width:<%=s.card_width%>px;--card-radius:<%=s.card_radius%>px;--card-bg:<%=s.card_bg%>;--card-border:<%=s.card_border%>;--logo-height:<%=s.logo_height%>px;
+    --field-label-size:<%=s.field_label_size%>px;--field-label-color:<%=s.field_label_color%>;--field-label-font:<%-JSON.stringify(s.field_label_font)%>;
+    --input-text-size:<%=s.input_text_size%>px;--input-text-color:<%=s.input_text_color%>;--input-text-font:<%-JSON.stringify(s.input_text_font)%>;--input-bg:<%=s.input_bg%>;--input-border:<%=s.input_border%>;--input-radius:<%=s.input_radius%>px;
+    --remember-size:<%=s.remember_size%>px;--remember-color:<%=s.remember_color%>;--remember-font:<%-JSON.stringify(s.remember_font)%>;
+    --note-size:<%=s.note_size%>px;--note-color:<%=s.note_color%>;--note-font:<%-JSON.stringify(s.note_font)%>;'>
+  <section class="login-pro-left" data-login-left-zone>
+    <div class="login-pro-media" data-preview-media-wrap data-media-id="<%=media.id%>" data-media-kind="<%=mediaRenderKind%>">
+      <video data-preview-media-video muted loop playsinline preload="none" disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen" <% if(mediaRenderKind!=='video'){ %>hidden<% } %> <% if(mediaRenderKind==='video'&&media.url){ %>data-src="<%=media.url%>"<% } %> <% if(media.thumbnail_url){ %>poster="<%=media.thumbnail_url%>"<% } %>></video>
+      <img data-preview-media-image alt="" <% if(mediaRenderKind!=='image'){ %>hidden<% } %> <% if(mediaRenderKind==='image'&&media.url){ %>src="<%=media.url%>"<% } %>>
+    </div>
+    <div class="login-pro-media-shade"></div>
+    <div class="login-pro-left-grid"></div>
+    <div class="login-pro-drag login-pro-drag--title<%=s.left_title_text?'':' is-empty'%>" data-preview-role="left_title" data-draggable="left_title" tabindex="<%=isPreview?'0':'-1'%>">
+      <h1><%=s.left_title_text%></h1>
+      <% if(isPreview){ %><span class="login-pro-drag-handle">Taşı · Tekerlekle boyutlandır</span><% } %>
+    </div>
+    <div class="login-pro-drag login-pro-drag--text<%=s.left_text_text?'':' is-empty'%>" data-preview-role="left_text" data-draggable="left_text" tabindex="<%=isPreview?'0':'-1'%>">
+      <p><%=s.left_text_text%></p>
+      <% if(isPreview){ %><span class="login-pro-drag-handle">Taşı · Tekerlekle boyutlandır</span><% } %>
+    </div>
+    <div class="login-pro-left-footer">CRM / ERP · KURUMSAL YÖNETİM PLATFORMU</div>
+  </section>
+
+  <div class="login-pro-divider" aria-hidden="true"></div>
+
+  <section class="login-pro-right">
+    <div class="login-pro-right-effect login-pro-right-effect--one"></div>
+    <div class="login-pro-right-effect login-pro-right-effect--two"></div>
+    <% if(isPreview){ %>
+      <div class="login-pro-card" data-preview-login-card>
+    <% }else{ %>
+      <form class="login-pro-card" method="post" action="/login" data-auth-session-form="login">
+    <% } %>
+      <% if(!isPreview){ %>
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+        <input type="hidden" name="next" value="<%=next%>">
+      <% } %>
+      <div class="login-pro-card-accent"></div>
+      <% if(brand.logo_url){ %>
+        <div class="login-pro-logo-wrap"><img data-preview-logo src="<%=brand.logo_url%>" alt="Firma logosu"></div>
+      <% }else{ %>
+        <div class="login-pro-logo-wrap login-pro-logo-wrap--empty" data-preview-logo-empty>CRM / ERP</div>
+      <% } %>
+      <span class="login-pro-eyebrow<%=s.eyebrow_text?'':' is-empty'%>" data-preview-role="eyebrow"><%=s.eyebrow_text%></span>
+      <h2 class="login-pro-title<%=s.title_text?'':' is-empty'%>" data-preview-role="title"><%=s.title_text%></h2>
+      <p class="login-pro-subtitle<%=s.subtitle_text?'':' is-empty'%>" data-preview-role="subtitle"><%=s.subtitle_text%></p>
+      <% if(!isPreview && typeof error !== 'undefined' && error){ %><div class="form-error"><%=error%></div><% } %>
+      <label class="login-pro-field"><span data-preview-role="login_label"><%=s.login_label_text%></span>
+        <input name="login" data-remember-login data-preview-placeholder="login_placeholder" <% if(isPreview){ %>disabled<% }else{ %>required autocomplete="username" value="<%=typeof loginValue!=='undefined'?loginValue:''%>"<% } %> placeholder="<%=s.login_placeholder_text%>">
+      </label>
+      <label class="login-pro-field"><span data-preview-role="password_label"><%=s.password_label_text%></span>
+        <span class="login-pro-password">
+          <input id="<%=isPreview?'previewPassword':'password'%>" name="password" type="password" data-preview-placeholder="password_placeholder" <% if(isPreview){ %>disabled<% }else{ %>required autocomplete="current-password"<% } %> placeholder="<%=s.password_placeholder_text%>">
+          <button type="button" data-password-toggle data-show-text="<%=s.password_toggle_text%>" data-hide-text="<%=s.password_hide_text%>" data-preview-role="password_toggle" <% if(isPreview){ %>disabled<% } %>><%=s.password_toggle_text%></button>
+        </span>
+      </label>
+      <label class="login-pro-check"><input type="checkbox" name="remember" value="1" data-remember-choice <% if(isPreview){ %>disabled<% }else if(typeof rememberRequested!=='undefined'&&rememberRequested){ %>checked<% } %>> <span data-preview-role="remember"><%=s.remember_text%></span></label>
+      <button class="login-pro-submit<%=s.button_text?'':' is-empty'%>" type="<%=isPreview?'button':'submit'%>" data-preview-role="button"><%=s.button_text%></button>
+      <div class="login-pro-note"><span class="login-pro-note-mark">◆</span> <span data-preview-role="note"><%=s.note_text%></span></div>
+    <% if(isPreview){ %>
+      </div>
+    <% }else{ %>
+      </form>
+    <% } %>
+  </section>
+</div>

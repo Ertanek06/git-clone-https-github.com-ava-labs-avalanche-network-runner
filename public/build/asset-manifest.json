@@ -1,0 +1,96 @@
+{
+  "schema": 3,
+  "generatedAt": "2026-09-16T19:28:15.542Z",
+  "stylesCss": "/public/build/crm-styles.1b616c4aa81912c0.css",
+  "printCss": "/public/build/crm-print.bed5f8eb01e4f0c9.css",
+  "appJs": "/public/build/crm-app.60eacc12ca59d630.js",
+  "printJs": "/public/build/crm-print.7160a153377569d5.js",
+  "pageJs": {
+    "dashboard": "/public/build/crm-dashboard.1c622c8f496fe125.js",
+    "quotes": "/public/build/crm-quotes.a669c7b6f8a4ccf6.js",
+    "templates": "/public/build/crm-templates.e8798855e030298b.js",
+    "theme": "/public/build/crm-theme.7777909f20d1c2f7.js",
+    "loginStudio": "/public/build/crm-loginstudio.4d2473d43c659ace.js",
+    "auth": "/public/build/crm-auth.57e963b80564e599.js"
+  },
+  "sources": {
+    "css": [
+      "fonts-v3817.css",
+      "app.css",
+      "ui-consistency-v3814.css",
+      "ui-consistency-v3815.css",
+      "ui-integrity-v3817.css",
+      "ui-integrity-v3818.css",
+      "product-media-v3820.css",
+      "product-media-v3821.css",
+      "mobile-lists-v3822.css",
+      "mobile-lists-v3823.css",
+      "crmv1-hotfix.css",
+      "crmv1.3.css",
+      "crmv1.4.css",
+      "crmv1.5.css",
+      "crmv1.6.css",
+      "crmv1.7.css",
+      "crmv1.8.css",
+      "crmv1.9.css",
+      "crmv1.10.css",
+      "crmv1.11.css",
+      "crmv1.12.css",
+      "crmv1.13.css",
+      "crmv1.15.css",
+      "crmv1.16.css",
+      "login-studio-v356.css"
+    ],
+    "print": [
+      "print.css"
+    ],
+    "js": [
+      "csp-style-runtime.js",
+      "product-media-v3821.js",
+      "csrf-session-v355.js",
+      "i18n-runtime.js",
+      "app.js",
+      "crmv1-mobile-v3.js",
+      "crmv1.3.js",
+      "address-helper.js",
+      "table-preferences-v3817.js",
+      "live-operator.js",
+      "crmv1.7.js",
+      "crmv1.9.js",
+      "crmv1.10.js",
+      "crmv1.11.js",
+      "crmv1.12.js",
+      "crmv1.13.js",
+      "crmv1.16.js"
+    ],
+    "printJs": [
+      "print-paginator.js",
+      "crmv1.13.js"
+    ],
+    "pageJs": {
+      "dashboard": [
+        "dashboard-proforma-visits-v16.js"
+      ],
+      "quotes": [
+        "quote-check-assistant.js",
+        "quote-email.js",
+        "quote-form.js",
+        "template-modal.js"
+      ],
+      "templates": [
+        "template-modal.js",
+        "template-studio.js"
+      ],
+      "theme": [
+        "theme-studio.js",
+        "theme-studio-v18.js"
+      ],
+      "loginStudio": [
+        "login-studio-v356.js"
+      ],
+      "auth": [
+        "login-page-v356.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,49 @@
+<% layout('layout') -%>
+<%
+const canCreate=Boolean(processCapabilities?.quoteCreate);
+const canEdit=Boolean(processCapabilities?.quoteEdit);
+const canExport=Boolean(processCapabilities?.quoteExport);
+const canFinancials=Boolean(processCapabilities?.financials);
+const canOrders=Boolean(processCapabilities?.orders);
+const canApprovals=Boolean(processCapabilities?.approvals);
+const processActionCount=1+(canEdit?1:0)+(canExport?2:0);
+const allowed=new Set(allowedFlows||['all']);
+const flowLabels={all:'Tüm Süreçler',pending:'Onay Bekleyen',approved:'Onaylanan',revision:'Revize İstenen',ordered:'Siparişe Dönüşen',production:'Üretim Süreci',delivered:'Teslim Edilen',rejected:'Reddedilen',payments:'Ödeme Bekleyen',approvals:'Yönetici Onayı',followups:'Takipte'};
+const cards=[['🕒','Onay Bekleyen',stats.pending,'pending','warning'],['✅','Onaylanan',stats.approved,'approved','success'],['✍️','Revize İstenen',stats.revision,'revision','warning'],['🛒','Siparişe Dönüşen',stats.ordered,'ordered','success'],['🏭','Üretim Süreci',stats.production,'production','info'],['🚚','Teslim Edilen',stats.delivered,'delivered','success'],['⛔','Reddedilen',stats.rejected,'rejected','danger'],['💳','Ödeme Bekleyen',stats.payments,'payments','danger'],['🛡','Yönetici Onayı',stats.approvals,'approvals','warning'],['📞','Takipte',stats.followups,'followups','info']].filter(x=>allowed.has(x[3]));
+%>
+<header class="page-head workflow-head"><div><span class="eyebrow">OPERASYON TAKİBİ</span><h1>Teklif ve Sipariş Süreçleri</h1></div><div class="page-head__actions"><a class="btn" href="/quotes"><span aria-hidden="true">←</span> Proforma Listesi</a><% if(canCreate){ %><a class="btn btn--primary page-head__primary-action btn--alive" href="/quotes/new"><span class="btn__icon btn__icon--live" aria-hidden="true">＋</span> Proforma Oluştur</a><% } %></div></header>
+<section class="metric-grid workflow-metrics"><% cards.forEach(m=>{ %><button type="button" class="metric metric--<%=m[4]%> <%=flow===m[3]?'is-selected':''%>" data-stat="<%=m[3]%>" data-stat-url="/quotes/processes/stat/<%=m[3]%>"><span class="metric__icon"><%=m[0]%></span><span class="metric__copy"><small><%=m[1]%></small><strong><%=m[2]%></strong></span></button><% }) %></section>
+<div class="workflow-toolbar"><div class="row-actions"><a class="btn <%=flow==='all'?'btn--primary':''%>" href="/quotes/processes">Tüm Süreçler</a><% Object.entries(flowLabels).filter(([k])=>k!=='all'&&allowed.has(k)).forEach(([k,v])=>{ %><a class="btn <%=flow===k?'btn--primary':''%>" href="/quotes/processes?flow=<%=k%>"><%=v%></a><% }) %></div><span class="pill"><%=total%> kayıt</span></div>
+<section class="card table-scroll list-table-card list-table-card--workflow" data-scroll-target="workflowTable">
+ <table class="lined workflow-table pro-table pro-table--workflow" data-table-preferences="workflow">
+  <colgroup>
+   <col data-csp-style="width:120px"><col><col data-csp-style="width:102px"><col data-csp-style="width:102px"><col data-csp-style="width:118px"><col data-csp-style="width:118px"><col data-csp-style="width:95px"><col data-csp-style="width:125px"><col data-csp-style="width:130px">
+   <% if(canFinancials){ %><col data-csp-style="width:120px"><% } %>
+   <col class="actions-col--<%=processActionCount%>">
+  </colgroup>
+  <thead><tr><th>No</th><th>Müşteri</th><th>Teklif Tarihi</th><th>Geçerlilik</th><th>Teklif Durumu</th><th>Sipariş Durumu</th><th>Üretim</th><th>Ödeme</th><th>Onay / Takip</th><% if(canFinancials){ %><th>Toplam</th><% } %><th class="actions-col actions-col--<%=processActionCount%>">İşlemler</th></tr></thead>
+  <tbody>
+   <% if(!rows.length){ %><tr><td colspan="<%=canFinancials?11:10%>" class="empty">Bu süreçte kayıt bulunamadı.</td></tr><% } %>
+   <% rows.forEach(q=>{const c=JSON.parse(q.customer_snapshot_json||'{}'),p=JSON.parse(q.profile_snapshot_json||'{}'),d=quoteDisplayNo(q,p); %>
+    <tr class="previewable-list-row" tabindex="0" role="button" aria-label="<%=d%> proformasını ön izle" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=q.id%>/preview" data-preview-open="/quotes/<%=q.id%>/print" <% if(canExport){ %>data-preview-email="/quotes/<%=q.id%>/email"<% } %> <% if(canEdit){ %>data-preview-edit="/quotes/<%=q.id%>/edit"<% } %>>
+     <td><button type="button" class="link-btn" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=q.id%>/preview" data-preview-open="/quotes/<%=q.id%>/print" <% if(canExport){ %>data-preview-email="/quotes/<%=q.id%>/email"<% } %> <% if(canEdit){ %>data-preview-edit="/quotes/<%=q.id%>/edit"<% } %>><b><%=d%></b></button><% if(q.order_no&&canOrders){ %><small class="block workflow-muted">Sipariş: <%=q.order_no%></small><% } %></td>
+     <td><% if(q.customer_id){ %><button type="button" class="link-btn quote-customer-preview-v16" data-preview-title="Müşteri Kimlik Kartı" data-preview-url="/customers/<%=q.customer_id%>/preview"><%=c.company_name||'-'%></button><% }else{ %><%=c.company_name||'-'%><% } %></td><td><%=q.quote_date||'-'%></td><td><%=q.valid_until||'-'%></td>
+     <td><span class="tag <%=statusClass(q.status)%>"><%=statusLabel(q.status)%></span></td>
+     <td><% if(canOrders){ %><span class="tag <%=statusClass(q.order_status)%>"><%=statusLabel(q.order_status)%></span><% }else{ %>—<% } %></td>
+     <td><% if(canOrders){ %><span class="tag <%=statusClass(q.production_status)%>"><%=statusLabel(q.production_status)%></span><% }else{ %>—<% } %></td>
+     <td><% if(canFinancials){ %><span class="tag <%=statusClass(q.payment_status)%>"><%=statusLabel(q.payment_status)%></span><% if(Number(q.paid_amount||0)>0){ %><small class="block workflow-muted">Ödenen: <%=Number(q.paid_amount).toFixed(2)%> <%=q.currency%></small><% } %><% }else{ %>—<% } %></td>
+     <td><% if(canApprovals){ %><span class="tag"><%=q.approval_status||'NOT_REQUIRED'%></span><% } %><% if(q.follow_up_date){ %><small class="block workflow-muted">Takip: <%=q.follow_up_date%></small><% } %><% if(!canApprovals&&!q.follow_up_date){ %>—<% } %></td>
+     <% if(canFinancials){ %><td><b><%=Number(q.grand_total||0).toFixed(2)%> <%=q.currency%></b></td><% } %>
+     <td class="actions-cell actions-cell--<%=processActionCount%>"><div class="table-action-list table-action-list--dense">
+      <% if(canExport){ %><button class="table-action is-preview" data-label="Ön İzle" title="Ön izleme" type="button" data-preview-title="<%=d%>" data-preview-url="/quotes/<%=q.id%>/preview" data-preview-open="/quotes/<%=q.id%>/print" data-preview-email="/quotes/<%=q.id%>/email" <% if(canEdit){ %>data-preview-edit="/quotes/<%=q.id%>/edit"<% } %> aria-label="Ön İzleme"><%- include('../partials/table-action-icon',{iconName:'preview'}) %></button><% } %>
+      <% if(canEdit){ %><a class="table-action is-edit" data-label="Düzenle" title="Düzenle" href="/quotes/<%=q.id%>/edit" aria-label="Düzenle"><%- include('../partials/table-action-icon',{iconName:'edit'}) %></a><% } %>
+      <a class="table-action is-open" data-label="Aç" title="Aç" href="/quotes/<%=q.id%>" aria-label="Aç"><%- include('../partials/table-action-icon',{iconName:'open'}) %></a>
+      <% if(canExport){ %><a class="table-action is-print" data-label="PDF" title="PDF" target="_blank" rel="noopener" href="/quotes/<%=q.id%>/print?auto=1" aria-label="PDF"><%- include('../partials/table-action-icon',{iconName:'print'}) %></a><% } %>
+     </div></td>
+    </tr>
+   <% }) %>
+  </tbody>
+ </table>
+</section>
+<%- include('../partials/pager',{total,page,limit,showAll,q:'',flow}) %>
+<div class="modal" id="statModal"><div class="modal-card stat-modal-card"><button type="button" class="modal-close" data-modal-close>×</button><h2 id="statTitle">Detaylar</h2><div id="statBody" class="stat-list"></div></div></div>

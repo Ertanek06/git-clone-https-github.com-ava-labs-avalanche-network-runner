@@ -1,0 +1,45 @@
+<% layout('layout') %>
+<section class="page-head recovery-head">
+  <div>
+    <span class="eyebrow">🛟 <%=locale==='en'?'DATA SAFETY':'VERİ GÜVENLİĞİ'%></span>
+    <h1><%=locale==='en'?'Archive & Recovery Center':'Arşiv ve Kurtarma Merkezi'%></h1>
+    <p><%=locale==='en'?'Review and restore archived business records without permanent deletion.':'Arşivlenen iş kayıtlarını tek merkezden inceleyin ve kalıcı silme olmadan geri alın.'%></p>
+  </div>
+  <span class="recovery-total"><small><%=locale==='en'?'Archived records':'Arşiv kaydı'%></small><strong><%=grandTotal%></strong></span>
+</section>
+
+<section class="card recovery-toolbar">
+  <form method="get" action="/recovery" class="toolbar-form">
+    <label class="toolbar-input toolbar-input--search"><span aria-hidden="true">⌕</span><input name="q" value="<%=q%>" placeholder="<%=locale==='en'?'Search archived records':'Arşivde kod, ad veya açıklama ara'%>"></label>
+    <label class="toolbar-input"><span><%=locale==='en'?'Record type':'Kayıt türü'%></span><select name="type"><option value="all" <%=selectedType==='all'?'selected':''%>><%=locale==='en'?'All records':'Tüm kayıtlar'%></option><% Object.entries(counts).forEach(([key,count])=>{const section=sections.find(x=>x.key===key);const labels={customers:'Müşteriler',products:'Ürün ve Hizmetler',quotes:'Proformalar',profiles:'Firma Profilleri',templates:'Proforma Şablonları'}; %><option value="<%=key%>" <%=selectedType===key?'selected':''%>><%=labels[key]%> (<%=count%>)</option><% }) %></select></label>
+    <button class="btn btn--primary" type="submit"><%=locale==='en'?'Filter':'Filtrele'%></button>
+    <% if(q||selectedType!=='all'){ %><a class="btn btn--soft" href="/recovery"><%=locale==='en'?'Clear':'Temizle'%></a><% } %>
+  </form>
+</section>
+
+<section class="recovery-summary-grid" aria-label="<%=locale==='en'?'Archive summary':'Arşiv özeti'%>">
+  <% const cards=[['customers','👥','Müşteri'],['products','📦','Ürün'],['quotes','📄','Proforma'],['profiles','🏢','Firma Profili'],['templates','🎨','Şablon']]; cards.forEach(([key,icon,label])=>{ %>
+    <a class="card recovery-summary-card <%=selectedType===key?'is-active':''%>" href="/recovery?type=<%=key%>"><span><%=icon%></span><div><small><%=label%></small><strong><%=counts[key]||0%></strong></div></a>
+  <% }) %>
+</section>
+
+<div class="recovery-sections">
+  <% if(!sections.some(section=>section.rows.length)){ %><section class="card empty recovery-empty"><span>✓</span><h2><%=locale==='en'?'No matching archive records':'Eşleşen arşiv kaydı yok'%></h2><p><%=locale==='en'?'There is currently nothing to restore for this filter.':'Bu filtre için geri alınması gereken bir kayıt bulunmuyor.'%></p></section><% } %>
+  <% sections.forEach(section=>{ if(!section.rows.length)return; %>
+    <section class="card recovery-section">
+      <div class="card-head"><div><h2><%=section.icon%> <%=section.label%></h2><p><%=section.total%> <%=locale==='en'?'archived records':'arşiv kaydı'%> · <%=locale==='en'?'latest 50 are shown':'son 50 kayıt gösteriliyor'%></p></div><span class="pill"><%=section.rows.length%></span></div>
+      <div class="table-scroll">
+        <table class="lined recovery-table">
+          <thead><tr><th><%=locale==='en'?'Code / No':'Kod / No'%></th><th><%=locale==='en'?'Record':'Kayıt'%></th><th><%=locale==='en'?'Detail':'Detay'%></th><th><%=locale==='en'?'Archived at':'Arşiv tarihi'%></th><th class="actions-col--1"><%=locale==='en'?'Action':'İşlem'%></th></tr></thead>
+          <tbody><% section.rows.forEach(row=>{ %><tr>
+            <td data-label="<%=locale==='en'?'Code / No':'Kod / No'%>"><b><%=row.code||'-'%></b></td>
+            <td data-label="<%=locale==='en'?'Record':'Kayıt'%>"><strong><%=row.title||'-'%></strong></td>
+            <td data-label="<%=locale==='en'?'Detail':'Detay'%>"><%=row.detail||'-'%></td>
+            <td data-label="<%=locale==='en'?'Archived at':'Arşiv tarihi'%>"><%=row.deleted_at?new Date(row.deleted_at).toLocaleString(locale==='en'?'en-GB':'tr-TR'):'-'%></td>
+            <td class="actions-cell actions-cell--1" data-label="<%=locale==='en'?'Action':'İşlem'%>"><form method="post" action="/recovery/<%=section.key%>/<%=row.id%>/restore" data-confirm="<%=locale==='en'?'Restore this record?':'Bu kayıt arşivden geri alınsın mı?'%>"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><button class="table-action is-success" type="submit" data-label="<%=locale==='en'?'Restore':'Geri Al'%>" title="<%=locale==='en'?'Restore':'Geri Al'%>" aria-label="<%=row.title||row.code%> — <%=locale==='en'?'restore':'geri al'%>">↺</button></form></td>
+          </tr><% }) %></tbody>
+        </table>
+      </div>
+    </section>
+  <% }) %>
+</div>

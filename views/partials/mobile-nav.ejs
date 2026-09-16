@@ -1,0 +1,7 @@
+<nav class="mobile-nav" aria-label="<%=locale==='en'?'Mobile navigation':'Mobil menü'%>">
+  <a class="<%=path==='/'?'is-active':''%>" href="/" <%=path==='/'?'aria-current="page"':''%>><%=t('home')%></a>
+  <% if(can('customers','view')){ %><a class="<%=path.startsWith('/customers')?'is-active':''%>" href="/customers" <%=path.startsWith('/customers')?'aria-current="page"':''%>><%=t('customers')%></a><% } %>
+  <% if(can('products','view')){ %><a class="<%=path.startsWith('/products')?'is-active':''%>" href="/products" <%=path.startsWith('/products')?'aria-current="page"':''%>><%=t('products')%></a><% } %>
+  <% if(can('quotes','create')){ %><a class="<%=path.startsWith('/quotes')?'is-active':''%>" href="/quotes/new" <%=path.startsWith('/quotes')?'aria-current="page"':''%>><%=t('proforma')%></a>
+  <% }else if(can('quotes','view')){ %><a class="<%=path.startsWith('/quotes')?'is-active':''%>" href="/quotes" <%=path.startsWith('/quotes')?'aria-current="page"':''%>><%=t('proforma')%></a><% } %>
+</nav>

@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const read=(f)=>fs.readFileSync(new URL(`../${f}`,import.meta.url),"utf8");
+const pkg=JSON.parse(read("package.json"));const build=JSON.parse(read("BUILD_INFO.json"));
+assert.equal(pkg.version,"3.8.57");assert.equal(build.build,"crmv1.45");assert.equal(build.release,"v3.8.57-crmv1.45-web-import-upsert-ui-document-fix");
+const svc=read("src/services/web-product-import.service.js"),routes=read("src/routes/products.js"),worker=read("src/workers/web-product-import.worker.js"),saveWorker=read("src/workers/web-product-import-save.worker.js"),preview=read("views/products/import-web-preview.ejs"),scan=read("views/products/import-web-scan.ejs"),history=read("views/products/import-web-history.ejs"),home=read("views/products/import-web.ejs"),js=read("public/js/web-import-v45.js"),cron=read("scripts/web-product-auto-sync.js"),install=read("scripts/install-web-product-sync-cron.sh");
+assert.match(svc,/isUrlLikeText/);assert.match(svc,/discarded: true/);assert.match(svc,/cleanProductDescription/);assert.match(svc,/lineIsDescriptionNoise/);assert.match(svc,/downloadProductPdf/);assert.match(svc,/brochure_url/);assert.match(svc,/manual_url/);assert.match(svc,/ce_certificate_url/);
+assert.match(svc,/WhatsApp|whatsapp/i);assert.match(svc,/Kapasite|normalizeMeasureLine/);assert.match(svc,/\$1 kg/);assert.match(svc,/\$1 L/);assert.match(svc,/isUrlLikeText/);
+assert.match(worker,/duplicate_match/);assert.match(worker,/existingNames/);assert.match(worker,/selected: !duplicate/);
+assert.match(routes,/key === "NEW"/);assert.match(routes,/key === "IMAGE"/);assert.match(routes,/key === "NO_IMAGE"/);assert.match(routes,/key === "DOCS"/);assert.match(routes,/web-product-import-save\.worker\.js/);assert.match(routes,/history\/:id\/delete/);assert.match(routes,/cleanupWebImportHistory/);
+assert.match(preview,/Görselli/);assert.match(preview,/Görselsiz/);assert.match(preview,/Aynı başlık başka kodla CRM’de mevcut/);assert.match(preview,/PDF Broşür/);assert.match(preview,/web-import-v45\.js/);
+assert.match(scan,/webLiveCurrent/);assert.match(scan,/web-progress-ready\[hidden\]/);assert.match(scan,/web-import-center-toast/);
+assert.match(js,/10 saniye/);assert.match(js,/IMPORTING/);assert.match(js,/centerToast/);assert.match(js,/Detay \/ Düzenle/);
+assert.match(history,/Geçici Dosyaları Temizle/);assert.match(history,/tarama geçmişi ve geçici sonuç dosyaları/i);
+assert.match(home,/15 günde bir yeni ürün/);assert.match(home,/24 saatte bir kayıtlı ürün fiyatlarını güncelle/);assert.match(home,/Aktarım Sonucu/);
+assert.match(cron,/15_DAY_NEW_PRODUCT_SCAN/);assert.match(cron,/24_HOUR_PRICE_SYNC/);assert.match(install,/20 3 \* \* \*/);
+assert.match(saveWorker,/saveWebImportRows/);assert.match(saveWorker,/status: "IMPORTED"/);
+console.log("CRMV1.41_WEB_IMPORT_RELIABILITY=48/48 OK");

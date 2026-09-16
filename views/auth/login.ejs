@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Giriş | CRM / ERP</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=<%=appVersion%>">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=<%=appVersion%>">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=<%=appVersion%>">
+  <link rel="manifest" href="/site.webmanifest?v=<%=appVersion%>">
+  <link rel="stylesheet" href="<%=(typeof assetBundle!=='undefined'&&assetBundle?.styles)||'/public/css/app.css'%>">
+  <style nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">
+    /* Giriş formunun CSS önbelleği/tema problemi yaşansa bile görünür kalması için kritik iskelet. */
+    .login-pro-stage{position:fixed;inset:0;overflow:hidden;background:#eef4fb}.login-pro-canvas{position:absolute;display:grid;grid-template-columns:850px 750px;width:1600px;height:900px;transform-origin:top left}.login-pro-left{position:relative;overflow:hidden;background:#0b2e68}.login-pro-right{position:relative;display:grid;place-items:center;background:#edf4fb}.login-pro-card{position:relative;z-index:5;display:grid;gap:15px;width:var(--card-width,520px);padding:38px 40px;border-radius:var(--card-radius,28px);background:var(--card-bg,#fff);border:1px solid var(--card-border,#c7d5e7);box-shadow:0 30px 75px rgba(13,43,84,.16)}
+  </style>
+</head>
+<body class="login-pro-page">
+  <main class="login-pro-stage" data-login-stage>
+    <%- include('../partials/login-canvas',{preview:false,studio,legacy,branding,selectedMedia,error:typeof error==='undefined'?null:error,csrfToken,next}) %>
+  </main>
+  <script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>" src="<%=(typeof assetBundle!=='undefined'&&assetBundle?.js)||'/public/js/app.js'%>"></script>
+  <% for(const pageScript of ((typeof assetBundle!=='undefined'&&assetBundle?.pageScripts)||[])){ %><script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>" src="<%=pageScript%>"></script><% } %>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<% layout('layout') -%>
+<header class="page-head"><h1><%=title%></h1><a class="btn" href="/users">← Liste</a></header>
+<form class="card form-grid" method="post" action="/users/save">
+  <input type="hidden" name="_csrf" value="<%=csrfToken%>"><input type="hidden" name="id" value="<%=row.id||''%>">
+  <label>Ad soyad<input name="full_name" value="<%=row.full_name||''%>"></label>
+  <label>Kullanıcı adı<input required name="username" value="<%=row.username||''%>"></label>
+  <label>E-posta<input name="email" type="email" value="<%=row.email||''%>"></label>
+  <label>Telefon<input name="phone" value="<%=row.phone||''%>"></label>
+  <label>Rol
+    <select name="role" id="roleSelect"><% const roleOptions=user?.role==='SUPER_ADMIN'?['SUPER_ADMIN','TENANT_ADMIN','STAFF','VIEWER']:['TENANT_ADMIN','STAFF','VIEWER']; roleOptions.forEach(x=>{ %><option value="<%=x%>" <%=row.role===x?'selected':''%>><%=roleLabel(x)%></option><% }) %></select>
+  </label>
+  <label>Durum<select name="is_active"><option value="1" <%=row.is_active?'selected':''%>>Aktif</option><option value="0" <%=!row.is_active?'selected':''%>>Pasif</option></select></label>
+  <section class="wide role-help-card" id="roleHelp" aria-live="polite"></section>
+  <label>Şifre <small>(değişmeyecekse boş bırak)</small><input name="password" type="password"></label>
+  <div class="wide form-actions"><button class="btn btn--primary">Kaydet</button></div>
+</form>
+<script nonce="<%=typeof cspNonce!=='undefined'?cspNonce:''%>">
+(()=>{const sel=document.getElementById('roleSelect'),box=document.getElementById('roleHelp');const map=<%-JSON.stringify(Object.fromEntries(roleOptions.map(x=>[x,{label:roleLabel(x),help:roleHelp(x)}]))).replace(/</g,'\\u003c')%>;function draw(){const x=map[sel.value]||{};box.innerHTML='<b>'+String(x.label||'')+'</b><span>'+String(x.help||'')+'</span>'}sel.addEventListener('change',draw);draw()})();
+</script>

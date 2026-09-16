@@ -1,0 +1,68 @@
+<% layout('layout') -%>
+<% const displayNo=quoteDisplayNo(row,row.profile_snapshot||{}), c=row.customer_snapshot||{}; %>
+<%
+ const lang=String(locale||'tr').toLowerCase()==='en'?'en':'tr';
+ const isRevision=String(mode||'').toLowerCase()==='revision'||String(row.status||'').toUpperCase()==='REVISION_REQUESTED'||Number(row.revision_no||0)>0;
+ const L={
+  tr:{pageEyebrow:'E-POSTA GÖNDERİMİ',back:'Geri',preview:'Ön İzle',sentPanel:'Gönderilen Proformalar',sendTitle:'Proformayı E-posta ile Gönder',sendNote:'Bu bölüm aç/kapa çalışır. Güvenli bağlantı açıldığında görüntülenme bilgisi otomatik işlenir.',to:'Kime',cc:'Bilgi (CC)',recipientHint:'Adresi yazıp Enter, virgül veya noktalı virgül tuşuna basın.',subject:'Konu',expires:'Bağlantı Süresi',never:'Süresiz',days7:'7 gün',days15:'15 gün',days30:'30 gün',message:'Mesaj',send:'E-postayı Gönder',logsTitle:'Gönderim ve Görüntülenme Logları',lastRecords:'Son 30 kayıt',empty:'Henüz gönderim kaydı yok.',sent:'Gönderildi',failed:'Başarısız',pending:'Bekliyor',recipient:'Alıcı',sendTime:'Gönderim',viewCount:'Açılma',firstView:'İlk görüntülenme',notViewed:'Okunmadı',read:'Okundu',link:'Link',copy:'Kopyala',copyDone:'Kopyalandı',copyUnavailable:'Eski kayıtta kopyalanabilir bağlantı yok; proformayı yeniden gönderin.',delete:'Sil',deleteSelected:'Seçilenleri sil',error:'Hata',views:'kez',unknown:'Bilinmiyor',mailSubject:'fiyat teklifimiz',revisionSubject:'revize fiyat teklifimiz',normal:'Standart teklif',revision:'Revizyon bildirimi',delConfirm:'Bu gönderim kaydı listeden kaldırılsın mı? Ana proforma silinmez.',bulkConfirm:'Seçilen gönderim kayıtları listeden kaldırılsın mı? Ana proformalar silinmez.',defaultBody:`Sn. Yetkili,\n\nİstemiş olduğunuz fiyat teklifi aşağıdaki güvenli bağlantı üzerinden bilgilerinize sunulmuştur.\n\n{{TEKLIF_LINKI}}\n\nHer türlü teknik soru ve ek talepleriniz için memnuniyetle destek vermeye hazırız.\n\nİyi çalışmalar dileriz\nSaygılarımla...`,revisionBody:`Sn. Yetkili,\n\nİsteğiniz üzerine fiyat teklifimiz revize edilmiştir. Güncel teklifimize aşağıdaki güvenli bağlantı üzerinden ulaşabilirsiniz.\n\n{{TEKLIF_LINKI}}\n\nHer türlü teknik soru ve ek talepleriniz için memnuniyetle destek vermeye hazırız.\n\nİyi çalışmalar dileriz\nSaygılarımla...`},
+  en:{pageEyebrow:'EMAIL DELIVERY',back:'Back',preview:'Preview',sentPanel:'Sent Proformas',sendTitle:'Send Proforma by Email',sendNote:'This section is collapsible. When the secure link is opened, view information is recorded automatically.',to:'To',cc:'Cc',recipientHint:'Type an address and press Enter, comma, or semicolon.',subject:'Subject',expires:'Link Expiry',never:'No expiry',days7:'7 days',days15:'15 days',days30:'30 days',message:'Message',send:'Send Email',logsTitle:'Sending and Viewing Logs',lastRecords:'Last 30 records',empty:'No email sending record yet.',sent:'Sent',failed:'Failed',pending:'Pending',recipient:'Recipient',sendTime:'Sent',viewCount:'Views',firstView:'First view',notViewed:'Unread',read:'Read',link:'Link',copy:'Copy',copyDone:'Copied',copyUnavailable:'No copyable link exists for this older record; send the quote again.',delete:'Delete',deleteSelected:'Delete selected',error:'Error',views:'times',unknown:'Unknown',mailSubject:'price offer',revisionSubject:'revised price offer',normal:'Standard offer',revision:'Revision notice',delConfirm:'Remove this sending log from the list? Main quote will not be deleted.',bulkConfirm:'Remove selected sending logs from the list? Main quotes will not be deleted.',defaultBody:`Dear Sir/Madam,\n\nThe requested price offer is submitted through the secure link below.\n\n{{TEKLIF_LINKI}}\n\nWe will be pleased to support you with any technical questions or additional requests.\n\nBest regards...`,revisionBody:`Dear Sir/Madam,\n\nYour requested price offer has been revised. You can access the current offer through the secure link below.\n\n{{TEKLIF_LINKI}}\n\nWe will be pleased to support you with any technical questions or additional requests.\n\nBest regards...`}
+ }[lang];
+ const fmtDate=v=>v?new Date(Number(v||0)).toLocaleString(lang==='tr'?'tr-TR':'en-US'):'—';
+ const shortDate=v=>v?new Date(Number(v||0)).toLocaleString(lang==='tr'?'tr-TR':'en-US',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+ const statusText=s=>({SENT:L.sent,FAILED:L.failed,PENDING:L.pending})[String(s||'').toUpperCase()]||String(s||'-');
+ const statusCls=s=>({SENT:'email-log-status--sent',FAILED:'email-log-status--failed',PENDING:'email-log-status--pending'})[String(s||'').toUpperCase()]||'email-log-status--pending';
+ const defaultSubject=`${displayNo} ${isRevision?L.revisionSubject:L.mailSubject}`;
+ const defaultBody=isRevision?L.revisionBody:L.defaultBody;
+ const hasWhatsappMobile=String(c.mobile||c.phone||'').replace(/\D/g,'').length>=10;
+%>
+<header class="page-head email-page-head pro-headline">
+ <div><span class="eyebrow">✉️ <%=L.pageEyebrow%></span><h1><%=displayNo%></h1></div>
+ <div class="row-actions quote-page-actions email-page-actions"><a class="btn btn--sm js-back" href="/quotes/<%=row.id%>">‹ <%=L.back%></a><a class="btn btn--sm" target="_blank" rel="noopener" href="/quotes/<%=row.id%>/print">👁️ <%=L.preview%></a><a class="btn btn--soft btn--sm" href="/quotes/sent">📨 <%=L.sentPanel%></a><% if(hasWhatsappMobile&&can('quotes','export')){ %><form class="inline-form" method="post" action="/quotes/<%=row.id%>/whatsapp" data-whatsapp-share><input type="hidden" name="_csrf" value="<%=csrfToken%>"><input type="hidden" name="return_to" value="/quotes/<%=row.id%>/email"><button class="btn btn--whatsapp btn--sm quote-whatsapp-action" type="submit" title="<%=lang==='tr'?'WhatsApp ile Paylaş':'Share via WhatsApp'%>" aria-label="<%=lang==='tr'?'WhatsApp ile Paylaş':'Share via WhatsApp'%>"><%- include('../partials/whatsapp-icon') %><span class="quote-whatsapp-label"><%=lang==='tr'?'WhatsApp ile Paylaş':'Share via WhatsApp'%></span></button></form><% } %></div>
+</header>
+
+<section class="email-page-stack">
+ <details class="card collapse-card email-send-card" open>
+  <summary><span>✉️ <%=L.sendTitle%></span><small><%=L.sendNote%></small></summary>
+  <form method="post" action="/quotes/<%=row.id%>/email" class="form-grid compact-email-form pro-compact-form" data-confirm="<%=lang==='tr'?'E-posta gönderilsin mi?':'Send email?'%>" data-confirm-title="<%=lang==='tr'?'E-posta Gönderim Onayı':'Email Delivery Confirmation'%>" data-confirm-message="<%=lang==='tr'?'Proforma bu alıcılara e-posta ile gönderilsin ve güvenli bağlantı görüntülenme takibi başlatılsın mı?':'Send the proforma to these recipients and start secure-link view tracking?'%>" data-confirm-ok="<%=lang==='tr'?'E-posta ile Gönder':'Send by Email'%>"><input type="hidden" name="_csrf" value="<%=csrfToken%>">
+   <label class="span-2 email-recipient-field">📧 <%=L.to%>
+    <div class="email-recipient-editor" data-email-recipient-editor data-required="1" data-invalid-message="<%=lang==='tr'?'Geçerli bir Kime adresi yazın.':'Enter a valid To address.'%>">
+     <div class="email-recipient-tags" data-email-tags></div><input type="text" inputmode="email" autocomplete="off" data-email-entry placeholder="musteri@firma.com"><input type="hidden" name="to" value="<%=c.email||''%>" data-email-values>
+    </div><small class="email-recipient-hint"><%=L.recipientHint%></small>
+   </label>
+   <label class="span-2 email-recipient-field">📨 <%=L.cc%>
+    <div class="email-recipient-editor" data-email-recipient-editor data-invalid-message="<%=lang==='tr'?'Geçerli bir Bilgi adresi yazın.':'Enter a valid Cc address.'%>">
+     <div class="email-recipient-tags" data-email-tags></div><input type="text" inputmode="email" autocomplete="off" data-email-entry placeholder="bilgi@firma.com"><input type="hidden" name="cc" value="" data-email-values>
+    </div><small class="email-recipient-hint"><%=L.recipientHint%></small>
+   </label>
+   <label>📝 <%=L.subject%><input name="subject" value="<%=defaultSubject%>"></label>
+   <label>⏳ <%=L.expires%><select name="expires_days"><option value=""><%=L.never%></option><option value="7"><%=L.days7%></option><option value="15"><%=L.days15%></option><option value="30"><%=L.days30%></option></select></label>
+   <label>🔁 <%= lang==='tr'?'Gönderim türü':'Mail type'%><select name="mail_type"><option value="QUOTE" <%=!isRevision?'selected':''%>><%=L.normal%></option><option value="REVISION" <%=isRevision?'selected':''%>><%=L.revision%></option></select></label>
+   <label class="span-2">💬 <%=L.message%><textarea name="body" rows="7" data-auto-grow data-max-height="320"><%=defaultBody%></textarea></label>
+   <button class="btn btn--primary btn--sm email-send-submit">✉️ <%=L.send%></button>
+  </form>
+ </details>
+
+ <details class="card collapse-card email-log-card" open>
+  <summary><span>📊 <%=L.logsTitle%></span><small><%=L.lastRecords%> · <%=logs.length%> <%=lang==='tr'?'kayıt':'records'%></small></summary>
+  <% if(!logs.length){ %>
+    <div class="empty email-log-empty">📭 <%=L.empty%></div>
+  <% } else { %>
+    <form id="emailLogsForm" method="post" action="/quotes/email-logs/bulk-archive" class="email-log-compact-list" data-confirm="<%=L.bulkConfirm%>"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><div class="email-log-toolbar"><button class="btn btn--danger btn--sm" data-requires-selection="emailLogsForm" disabled>🗑️ <%=L.deleteSelected%> (<span data-selection-count="emailLogsForm">0</span>)</button></div>
+     <% logs.forEach((l,idx)=>{ const views=Number(l.verified_view_count||0); const isViewed=views>0; const failed=String(l.status||'').toUpperCase()==='FAILED'; const viewEvents=Array.isArray(l.view_events)?l.view_events:[]; %>
+      <section class="email-log-row email-log-row--mini <%=isViewed?'is-read':'is-unread'%> <%=idx===0?'is-latest':''%>">
+       <label class="select-mini"><input type="checkbox" name="ids" value="<%=l.id%>"><span></span></label>
+       <div class="email-log-row__state" title="<%=isViewed?L.read:L.notViewed%>"><span><%=isViewed?'🟢':'🔴'%></span><b><%=isViewed?L.read:L.notViewed%></b></div>
+       <div class="email-log-row__main"><strong><%=l.recipient_email||L.unknown%></strong><% if(l.cc_email){ %><small><%=L.cc%>: <%=l.cc_email%></small><% } %><small><%=l.subject||'-'%></small></div>
+       <span class="email-log-status <%=statusCls(l.status)%>" title="<%=statusText(l.status)%>"><%=failed?'⚠️':String(l.status||'').toUpperCase()==='PENDING'?'⏳':'✅'%> <%=statusText(l.status)%></span>
+       <div class="email-log-row__meta" title="<%=L.sendTime%>: <%=fmtDate(l.sent_at||l.created_at)%>"><small>🕒 <%=L.sendTime%></small><b><%=shortDate(l.sent_at||l.created_at)%></b></div>
+       <div class="email-log-row__meta" title="<%=L.viewCount%>: <%=views%>"><small>👁️ <%=L.viewCount%></small><b><%=views%> <%=L.views%></b></div>
+       <div class="email-log-row__meta" title="<%=L.firstView%>: <%=isViewed?fmtDate(l.verified_first_viewed_at):L.notViewed%>"><small>📍 <%=L.firstView%></small><b><%=isViewed?shortDate(l.verified_first_viewed_at):L.notViewed%></b></div>
+       <div class="email-log-row__link"><input readonly value="<%=l.copy_url||L.copyUnavailable%>" class="<%=l.copy_url?'':'is-unavailable'%>" data-quote-link><button type="button" class="btn btn--soft btn--sm" data-copy-quote-link data-copy-label="<%=L.copy%>" data-copy-done="<%=L.copyDone%>" <%=l.copy_url?'':'disabled'%>><%=L.copy%></button></div><% if(viewEvents.length){ %><details class="email-view-history-v128"><summary>🕒 <%=lang==='tr'?'Gerçek açılma zamanları':'Verified opening times'%> (<%=viewEvents.length%>)</summary><ol><% viewEvents.forEach((ts,n)=>{ %><li><b><%=n+1%>.</b> <time datetime="<%=new Date(Number(ts)).toISOString()%>"><%=fmtDate(ts)%></time></li><% }) %></ol></details><% } %>
+       <button class="btn btn--danger btn--sm email-log-row__delete" formaction="/quotes/email-logs/<%=l.id%>/archive" formmethod="post" data-confirm="<%=L.delConfirm%>">🗑️ <%=L.delete%></button>
+       <% if(l.error_message){ %><div class="email-log-row__error">⚠️ <%=l.error_message%></div><% } %>
+      </section>
+     <% }) %>
+    </form>
+  <% } %>
+ </details>
+</section>

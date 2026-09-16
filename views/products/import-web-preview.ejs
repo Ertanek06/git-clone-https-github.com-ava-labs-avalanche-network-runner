@@ -1,0 +1,75 @@
+<% layout('layout') -%>
+<header class="page-head pro-headline"><div><span class="eyebrow">🌐 WEB SİTESİ ÜRÜN AKTARIMI</span><h1>Tarama Sonuçları</h1><p><b><%=source?.name||'-'%></b> · <%=source?.base_url||''%> · <%=totalRows%> ürün analiz edildi</p></div><div class="row-actions"><a class="btn btn--sm" href="/products/import-web">← Tarama Merkezi</a><a class="btn btn--sm" href="/products">Ürün Listesi</a></div></header>
+
+<section class="card web-preview-summary"><div><small>Toplam ürün</small><b><%=totalRows%></b></div><div><small>Yeni</small><b><%=newTotal%></b></div><div><small>Güncellenecek</small><b><%=updateTotal%></b></div><div><small>Güncel</small><b><%=currentTotal%></b></div><div><small>Hatalı</small><b><%=errorTotal%></b></div><div><small>Seçili</small><b id="webSelectedTotal"><%=selectedTotal%></b></div></section>
+
+<section class="card web-preview-toolbar">
+ <form method="get" action="/products/import-web/scan/<%=job.id%>/preview" class="web-filter-form"><label>Ara<input name="q" value="<%=q||''%>" placeholder="Ürün adı, kod, marka, açıklama..."></label><label>Filtre<select name="filter"><% [['ALL','Tümü'],['NEW','Yeni Ürünler'],['UPDATE','Güncellenecek'],['CURRENT','Güncel / Değişiklik Yok'],['ERROR','Hatalı / Çakışan'],['WARNING','Kontrol Gerekli'],['EXISTING','CRM’de Var'],['READY','Aktarıma Hazır'],['SELECTED','Seçili'],['IMAGE','Görselli'],['NO_IMAGE','Görselsiz'],['DOCS','PDF Belgesi Olan'],['MISSING_META','Marka / Model / Kategori Eksik'],['PRICE_ZERO','Fiyatı Eksik / Sıfır'],['REMOVED','Listeden Kaldırılan']].forEach(([v,l])=>{ %><option value="<%=v%>" <%=filter===v?'selected':''%>><%=l%></option><% }) %></select></label><label>Satır Göster<select name="per_page"><% [['50','50 ürün'],['100','100 ürün'],['250','250 ürün'],['ALL','Tümünü Göster']].forEach(([v,l])=>{ %><option value="<%=v%>" <%=perPageValue===v?'selected':''%>><%=l%></option><% }) %></select></label><button class="btn btn--primary" type="submit"><span aria-hidden="true">⌕</span> Filtrele</button></form>
+ <div class="web-toolbar-note"><b><%=filteredTotal%></b> kayıt listeleniyor. Tablo üzerinde yaptığınız değişiklikler otomatik kaydedilir.</div>
+</section>
+
+<nav class="web-status-tabs" aria-label="Tarama sonuç grupları">
+ <% [['ALL','Tümü',totalRows,'▦','all'],['NEW','Yeni',newTotal,'＋','new'],['UPDATE','Güncellenecek',updateTotal,'↻','update'],['CURRENT','Güncel',currentTotal,'✓','current'],['ERROR','Hatalı',errorTotal,'!','error'],['EXISTING','CRM’de Var',existingTotal,'◉','existing']].forEach(([v,l,n,icon,tone])=>{ %>
+  <a class="web-status-tab web-status-tab--<%=tone%> <%=filter===v?'is-active':''%>" href="?q=<%=encodeURIComponent(q||'')%>&filter=<%=v%>&per_page=<%=encodeURIComponent(perPageValue)%>"><i aria-hidden="true"><%=icon%></i><span><%=l%></span><b><%=n%></b></a>
+ <% }) %>
+</nav>
+
+<section class="card web-preview-table-card" id="webImportPreview" data-no-collapse="1" data-job-id="<%=job.id%>" data-csrf="<%=csrfToken%>" data-query="<%=q||''%>" data-filter="<%=filter||'ALL'%>">
+ <div class="web-control-head">
+  <div class="web-control-title"><span class="web-control-title__icon" aria-hidden="true">☑</span><div><span class="web-control-title__eyebrow">AKTARIM KONTROL MERKEZİ</span><h2>Ürün Kontrol Tablosu</h2><small>Ürün kodu ve adı bulunan satırları seçin. Kaynakta bulunmayan marka, model ve kategori boş kalır; aynı kod veya ürün URL'si eşleşirse seçilen güncel bilgiler mevcut CRM kaydının yerine yazılır.</small></div></div>
+  <strong class="web-control-selected"><b id="webControlSelected"><%=selectedTotal%></b> ürün seçili</strong>
+ </div>
+ <aside class="web-selection-panel" aria-label="Toplu ürün seçimi">
+   <div class="web-selection-panel__head"><div><span>TOPLU SEÇİM</span><small>Görünen sayfayı veya filtre sonucunun tamamını yönetin</small></div></div>
+   <div class="web-selection-actions" role="group">
+    <button class="web-bulk-action web-bulk-action--page" type="button" data-web-bulk-select="PAGE" data-selected="1"><i aria-hidden="true">▣</i><span><b>Bu Sayfayı Seç</b><small>Görünen kayıtlar</small></span></button>
+    <button class="web-bulk-action web-bulk-action--filter" type="button" data-web-bulk-select="FILTERED" data-selected="1"><i aria-hidden="true">☑</i><span><b>Filtredeki Tümünü Seç</b><small>Tüm sonuçlar</small></span></button>
+    <button class="web-bulk-action web-bulk-action--clear" type="button" data-web-bulk-select="FILTERED" data-selected="0"><i aria-hidden="true">↺</i><span><b>Seçimi Temizle</b><small>İşaretleri kaldır</small></span></button>
+   </div>
+   <small id="webBulkState" aria-live="polite"></small>
+ </aside>
+ <div class="web-table-heading"><span aria-hidden="true">▤</span><div><b>Ürün Listesi</b><small><%=filteredTotal%> kayıt · <%=perPageValue==='ALL'?'tüm ürünler':('sayfada '+perPageValue+' ürün')%></small></div><em>Liste doğrudan açıktır</em></div>
+  <div class="table-scroll"><table class="lined web-catalog-table"><thead><tr><th>Seç</th><th>Görsel</th><th>Ürün Kodu</th><th>Ürün Adı / Açıklama Ön İzleme</th><th>Fiyat</th><th>Kategori</th><th>Marka</th><th>Model</th><th>Durum</th><th>İşlemler</th></tr></thead><tbody>
+ <% rows.forEach(row=>{ %>
+  <tr class="web-main-row <%=row.warning?'has-warning':''%>" data-row-index="<%=row.index%>">
+   <td><input class="web-row-selected" data-web-field="selected" type="checkbox" aria-label="<%=row.name||'Ürün'%> satırını seç" <%=row.selected!==false&&row.selectable?'checked':''%> <%=row.selectable?'':'disabled title="Ürün kodu veya gerçek ürün adı eksik/hatalı olduğu için bu satır seçilemez."'%>></td>
+   <td class="web-thumb-cell"><% if(row.image_url){ %><img class="web-import-thumb" src="<%=row.image_url%>" alt="" loading="lazy"><span class="web-no-image" hidden>Görsel yok</span><% }else{ %><span class="web-no-image">Görsel yok</span><% } %></td>
+   <td><b><%=row.code||'-'%></b><small><%=row.source_method||''%></small></td>
+   <td class="web-name-cell"><b><%=row.name||'-'%></b><p><%=String(row.description||'').slice(0,260)%><%=String(row.description||'').length>260?'…':''%></p></td>
+   <td><b><%=Number(row.price||0).toLocaleString('tr-TR',{maximumFractionDigits:2})%> <%=row.currency||row.existing_product?.currency||'TRY'%></b><% if(row.existing_product&&Number(row.price||0)>0){ %><small>CRM: <%=Number(row.existing_product.sale_price||0).toLocaleString('tr-TR',{maximumFractionDigits:2})%> <%=row.existing_product.currency||'TRY'%></small><% } %></td>
+   <td><b><%=row.display_category||'-'%></b><% if(!row.category&&row.existing_product?.category){ %><small>CRM bilgisi</small><% } %></td>
+   <td><b><%=row.display_brand||'-'%></b><% if(!row.brand&&row.existing_product?.brand){ %><small>CRM bilgisi</small><% } %></td>
+   <td><b><%=row.display_model||'-'%></b><% if(!row.model&&row.existing_product?.model){ %><small>CRM bilgisi</small><% } %></td>
+   <td>
+    <% if(row.statusKey==='ERROR'){ %><span class="status-pill danger">Hatalı</span><small><%=row.duplicate_reason==='NAME'?'Aynı başlık başka kodla CRM’de mevcut. Tekrar eklenemez.':(row.warning||'Ürün kimlik bilgilerini kontrol edin.')%></small>
+    <% }else if(row.statusKey==='UPDATE'){ %><span class="status-pill update">Güncellenecek</span><small><%=row.change_fields.length?'Değişen: '+row.change_fields.join(', '):'Mevcut ürün güncellenecek.'%></small>
+    <% }else if(row.statusKey==='CURRENT'){ %><span class="status-pill info">Güncel</span><small>Kaynak ile CRM arasında belirgin fark yok.</small>
+    <% }else if(row.statusKey==='REMOVED'){ %><span class="status-pill muted">Kaldırıldı</span><small>Tarama listesinden kaldırıldı.</small>
+    <% }else if(row.warning||row.missingMeta){ %><span class="status-pill warn">⚠ Kontrol</span><small><%=row.warning||'Marka / model / kategori kontrol edilmeli.'%></small>
+    <% }else{ %><span class="status-pill ok">Yeni</span><small>Yeni ürün olarak eklenecek.</small><% } %>
+   </td>
+   <td><div class="web-row-actions"><button class="btn btn--sm btn--soft web-detail-toggle" type="button" aria-expanded="false">Detay / Düzenle</button><% if(row.product_url){ %><a class="btn btn--sm btn--soft web-source-action" href="<%=row.product_url%>" target="_blank" rel="noopener noreferrer">Kaynak ↗</a><% } %><button class="btn btn--sm <%=row.statusKey==='REMOVED'?'btn--soft':'btn--danger'%>" type="button" data-web-row-remove data-next-ignored="<%=row.statusKey==='REMOVED'?'0':'1'%>"><%=row.statusKey==='REMOVED'?'Geri Al':'Listeden Kaldır'%></button></div><span class="web-row-save-state" aria-live="polite"></span></td>
+  </tr>
+  <tr class="web-detail-row" data-detail-index="<%=row.index%>" hidden><td colspan="10"><div class="web-detail-grid">
+    <label>Ürün Kodu<input data-web-field="code" value="<%=row.code||''%>"></label>
+    <label>Ürün Adı<input data-web-field="name" value="<%=row.name||''%>"></label>
+    <label>Fiyat<input data-web-field="price" type="number" min="0" step="0.01" value="<%=Number(row.price||0)%>"></label>
+    <label>Para Birimi<select data-web-field="currency"><% ['TRY','EUR','USD'].forEach(c=>{ %><option value="<%=c%>" <%=row.currency===c?'selected':''%>><%=c%></option><% }) %></select></label>
+    <label>Marka<input data-web-field="brand" value="<%=row.brand||row.existing_product?.brand||''%>"></label>
+    <label>Model<input data-web-field="model" value="<%=row.model||row.existing_product?.model||''%>"></label>
+    <label>Kategori<input data-web-field="category" value="<%=row.category||row.existing_product?.category||''%>"></label>
+    <label>Birim<input data-web-field="unit" value="<%=row.unit||'ADET'%>"></label>
+    <label>KDV %<input data-web-field="vat_rate" type="number" min="0" step="0.01" value="<%=Number(row.vat_rate||20)%>"></label>
+    <label>Mevcut ürün davranışı<select data-web-field="duplicate_action"><option value="UPDATE" <%=String(row.duplicate_action||'UPDATE')==='UPDATE'?'selected':''%>>Mevcut ürünü güncelle</option><option value="SKIP" <%=row.duplicate_action==='SKIP'?'selected':''%>>Varsa atla</option></select></label>
+    <label class="web-description-full">Ürün Açıklaması<textarea data-web-field="description" rows="12"><%=row.description||''%></textarea></label>
+    <div class="web-detail-side"><label class="check-line"><input data-web-field="download_image" type="checkbox" <%=row.download_image!==false&&row.image_url?'checked':''%> <%=row.image_url?'':'disabled'%>> Görseli CRM'e indir</label><% if(row.brochure_url){ %><a href="<%=row.brochure_url%>" target="_blank" rel="noopener noreferrer">📎 PDF Broşür ↗</a><% } %><% if(row.manual_url){ %><a href="<%=row.manual_url%>" target="_blank" rel="noopener noreferrer">📘 Kullanma Kılavuzu ↗</a><% } %><% if(row.ce_certificate_url){ %><a href="<%=row.ce_certificate_url%>" target="_blank" rel="noopener noreferrer">✅ CE / Sertifika PDF ↗</a><% } %><% if(row.variant?.note){ %><p><b>Varyant kontrolü:</b> <%=row.variant.note%></p><% } %></div>
+  </div></td></tr>
+ <% }) %>
+  </tbody></table></div>
+</section>
+
+<% if(pages>1){ %><nav class="pager web-pager"><% if(page>1){ %><a class="btn btn--sm" href="?q=<%=encodeURIComponent(q||'')%>&filter=<%=encodeURIComponent(filter||'ALL')%>&per_page=<%=encodeURIComponent(perPageValue)%>&page=<%=page-1%>">← Önceki</a><% } %><span>Sayfa <b><%=page%></b> / <%=pages%></span><% if(page<pages){ %><a class="btn btn--sm" href="?q=<%=encodeURIComponent(q||'')%>&filter=<%=encodeURIComponent(filter||'ALL')%>&per_page=<%=encodeURIComponent(perPageValue)%>&page=<%=page+1%>">Sonraki →</a><% } %></nav><% } %>
+
+<form method="post" action="/products/import-web/scan/<%=job.id%>/save" class="web-import-dock"><input type="hidden" name="_csrf" value="<%=csrfToken%>"><div class="web-import-dock__summary"><i aria-hidden="true">📦</i><span><b><strong id="webDockSelected"><%=selectedTotal%></strong> ürün seçili</b><small>Seçilen kayıtlar CRM’e aktarılmaya hazır</small></span></div><div class="web-import-dock__actions"><a class="btn btn--danger" href="/products/import-web"><span aria-hidden="true">↩</span> Vazgeç</a><button class="btn btn--primary" type="submit" data-confirm="Tarama tablosunda seçili ürünler CRM’e kaydedilsin mi?"><span aria-hidden="true">💾</span> Seçili Ürünleri CRM'e Kaydet</button></div></form>
+
+<script nonce="<%=cspNonce%>" defer src="/public/js/web-import-v45.js"></script>

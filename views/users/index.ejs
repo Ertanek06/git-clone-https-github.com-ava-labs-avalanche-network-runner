@@ -1,0 +1,42 @@
+<% layout('layout') -%>
+<%
+ const actionName=value=>String(value||'-').replaceAll('_',' ').toLocaleLowerCase('tr-TR').replace(/(^|\s)\p{L}/gu,m=>m.toLocaleUpperCase('tr-TR'));
+ const moduleName=value=>({USERS:'Kullanıcılar',AUTH:'Oturum',QUOTES:'Proformalar',PRODUCTS:'Ürünler',CUSTOMERS:'Müşteriler',SETTINGS:'Ayarlar',BACKUPS:'Yedekleme'}[String(value||'').toUpperCase()]||actionName(value));
+%>
+<header class="page-head">
+ <div><h1>Kullanıcı Yönetimi</h1><p>Kullanıcı adına dokunarak hesap bilgilerini ve son işlem raporunu açabilirsiniz.</p></div>
+ <a class="btn btn--primary page-head__primary-action btn--alive" href="/users/new"><span class="btn__icon btn__icon--live" aria-hidden="true">＋</span> Yeni Kullanıcı</a>
+</header>
+<section class="card list-table-card user-table-card-v3818">
+ <table class="lined pro-table user-table user-table-v3818">
+  <colgroup><col class="user-col-account"><col class="user-col-contact"><col class="user-col-access"><col class="user-col-login"><col class="user-col-actions"></colgroup>
+  <thead><tr><th>Kullanıcı</th><th>İletişim</th><th>Yetki ve Durum</th><th>Son Giriş</th><th class="actions-col actions-col--1 user-actions-head-v3818">İşlemler</th></tr></thead>
+  <tbody>
+  <% rows.forEach(x=>{ const activities=activityByUser?.[x.id]||[]; %>
+   <tr>
+    <td data-label="Kullanıcı"><button class="user-name-card-trigger-v3818" type="button" data-modal-open="userReport_<%=x.id%>"><b><%=x.username%></b><small><%=x.full_name||'Ad soyad girilmemiş'%></small></button></td>
+    <td data-label="İletişim"><span class="user-contact-v3818"><b><%=x.email||'-'%></b><small><%=x.phone||'Telefon yok'%></small></span></td>
+    <td data-label="Yetki ve Durum"><div class="user-access-v3818"><span class="tag tag--info" title="<%=roleHelp(x.role)%>"><%=roleLabel(x.role)%></span><span class="tag <%=x.is_active?'tag--success':'tag--danger'%>"><%=x.is_active?'Aktif':'Pasif'%></span></div></td>
+    <td data-label="Son Giriş"><%=x.last_login_at?new Date(x.last_login_at).toLocaleString('tr-TR'):'Henüz giriş yok'%></td>
+    <td data-label="İşlemler" class="actions-cell actions-cell--1"><div class="table-action-list"><a class="table-action is-edit" href="/users/<%=x.id%>/edit" data-label="Düzenle" title="Düzenle" aria-label="<%=x.username%> kullanıcısını düzenle"><%- include('../partials/table-action-icon',{iconName:'edit'}) %></a></div></td>
+   </tr>
+  <% }) %>
+  </tbody>
+ </table>
+</section>
+<% rows.forEach(x=>{ const activities=activityByUser?.[x.id]||[]; %>
+<div class="modal user-report-modal-v3818" id="userReport_<%=x.id%>" aria-hidden="true">
+ <div class="modal-card user-report-card-v3818">
+  <button type="button" class="modal-close" data-modal-close aria-label="Kapat">×</button>
+  <header class="user-report-head-v3818"><div class="user-report-avatar-v3818"><%=String(x.full_name||x.username||'?').trim().charAt(0).toLocaleUpperCase('tr-TR')%></div><div><h2><%=x.full_name||x.username%></h2><p>@<%=x.username%> · <%=roleLabel(x.role)%></p></div><span class="tag <%=x.is_active?'tag--success':'tag--danger'%>"><%=x.is_active?'Aktif':'Pasif'%></span></header>
+  <section class="user-detail-grid-v3818">
+   <div><small>E-posta</small><b><%=x.email||'-'%></b></div><div><small>Telefon</small><b><%=x.phone||'-'%></b></div>
+   <div><small>Oluşturulma</small><b><%=new Date(x.created_at).toLocaleString('tr-TR')%></b></div><div><small>Son giriş</small><b><%=x.last_login_at?new Date(x.last_login_at).toLocaleString('tr-TR'):'Henüz giriş yok'%></b></div>
+  </section>
+  <section class="user-activity-report-v3818">
+   <header><div><h3>Son İşlem Raporu</h3><small>Bu kullanıcının en son gerçekleştirdiği 12 kayıtlı işlem</small></div><span><%=activities.length%> kayıt</span></header>
+   <% if(activities.length){ %><div class="user-activity-scroll-v3818"><table><thead><tr><th>Tarih</th><th>Modül</th><th>İşlem</th><th>Sonuç</th><th>IP</th></tr></thead><tbody><% activities.forEach(a=>{ %><tr><td><%=new Date(a.created_at).toLocaleString('tr-TR')%></td><td><%=moduleName(a.module)%></td><td><%=actionName(a.action)%></td><td><span class="tag <%=String(a.result||'').toUpperCase()==='SUCCESS'?'tag--success':'tag--warning'%>"><%=String(a.result||'BİLGİ').toLocaleUpperCase('tr-TR')%></span></td><td><%=a.ip||'-'%></td></tr><% }) %></tbody></table></div><% }else{ %><p class="empty user-report-empty-v3818">Bu kullanıcı için henüz kayıtlı işlem bulunmuyor.</p><% } %>
+  </section>
+ </div>
+</div>
+<% }) %>
