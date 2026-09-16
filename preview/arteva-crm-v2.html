@@ -248,7 +248,8 @@ body.sb-min .sb-item{justify-content:center;padding:var(--sp-2) 0}
 .panel__h{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4);border-bottom:1px solid var(--line)}
 .panel__h .spacer{flex:1}
 .panel__b{flex:1;overflow:auto;padding:var(--sp-4);display:grid;gap:var(--sp-4);align-content:start}
-.panel__f{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line);display:flex;gap:var(--sp-2);justify-content:flex-end}
+.panel__f{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line);display:flex;gap:var(--sp-2);
+  justify-content:flex-end;flex-wrap:wrap;align-items:center}
 .note{display:flex;gap:var(--sp-2);padding:var(--sp-3);border-radius:var(--r-md);font-size:var(--fs-sm);
   background:var(--warn-50);color:var(--warn);border:1px solid rgba(180,83,9,.2)}
 .note--info{background:var(--info-50);color:var(--info);border-color:rgba(37,99,235,.2)}
@@ -371,6 +372,68 @@ tr.drag{opacity:.4} tr.over td{box-shadow:inset 0 2px 0 var(--brand)}
 }
 /* Menü açıkken gövdeyi karartan perde, panelle aynı bileşen. */
 @media (max-width:860px){ body.sb-open .scrim{opacity:1;pointer-events:auto} }
+
+/* ---------- 15) SIDEBAR: açılır alt menü, mega menü, düzenleyici ---------- */
+.sb-node{display:grid}
+.sb-sub{display:grid;overflow:hidden;max-height:0;transition:max-height .22s ease}
+.sb-node.open>.sb-sub{max-height:520px}
+.sb-node.open>.sb-item .sb-chev{transform:rotate(90deg)}
+.sb-chev{transition:transform .18s ease}
+.sb-sub .sb-item{padding-left:34px;font-size:var(--fs-xs);color:var(--sb-ink-2)}
+.sb-sub .sb-item:hover{color:var(--sb-ink)}
+.sb-sub .sb-item.on{background:var(--brand-50);color:var(--brand);font-weight:650}
+body.sb-min .sb-sub{display:none}
+.sb-tools{display:flex;gap:var(--sp-1);padding:0 var(--sp-2) var(--sp-2)}
+body.sb-min .sb-tools{flex-direction:column;align-items:center}
+.mega{position:fixed;top:0;bottom:0;left:var(--sb-w);width:min(560px,60vw);background:var(--surface);
+  border-right:1px solid var(--line);box-shadow:var(--shadow-lg);z-index:62;padding:var(--sp-4);
+  display:none;grid-template-rows:auto 1fr;gap:var(--sp-3);overflow:auto}
+.mega.on{display:grid}
+.mega__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--sp-2);align-content:start}
+.mega__item{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-3);border-color:var(--line);
+  border-radius:var(--r-md);background:var(--surface-2);text-align:left;width:100%}
+.mega__item:hover{border-color:var(--brand);background:var(--surface)}
+@media(max-width:860px){.mega{left:0;width:100%}}
+
+/* menü düzenleyici satırı — liste satırlarıyla aynı dil */
+.navedit{display:grid;gap:var(--sp-2)}
+.navedit__row{display:grid;grid-template-columns:auto 44px minmax(0,1fr) 150px auto;align-items:center;
+  gap:var(--sp-2);padding:var(--sp-2);border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.navedit__row[data-off="1"]{opacity:.5}
+.navedit__grp{font-size:var(--fs-2xs);font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);padding:var(--sp-2) 0 0}
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:var(--sp-1);
+  max-height:190px;overflow:auto;padding:var(--sp-2);border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2)}
+.emoji-grid .ctl{height:32px;border-radius:var(--r-sm);font-size:16px;background:var(--surface);border-color:var(--line)}
+.emoji-grid .ctl:hover{border-color:var(--brand)}
+.switch{position:relative;width:38px;height:21px;border-radius:var(--r-pill);background:var(--line-2);
+  border:0;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+  background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch[aria-pressed="true"]{background:var(--brand)}
+.switch[aria-pressed="true"]::after{transform:translateX(17px)}
+
+/* ---------- 16) SATIR DÜZENLEME: medya alanları ---------- */
+.media{display:grid;grid-template-columns:76px minmax(0,1fr);gap:var(--sp-3);align-items:start}
+.media__box{width:76px;height:76px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface-2);
+  display:grid;place-items:center;font-size:26px;overflow:hidden}
+.media__box img{width:100%;height:100%;object-fit:cover}
+.file{display:grid;gap:var(--sp-1)}
+.file__btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);height:var(--h-md);
+  padding:0 var(--sp-3);border:1px dashed var(--line-2);border-radius:var(--r-md);background:var(--surface-2);
+  color:var(--ink-2);font-size:var(--fs-sm);font-weight:600;cursor:pointer}
+.file__btn:hover{border-color:var(--brand);color:var(--brand)}
+.file__name{font-size:var(--fs-xs);color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:var(--sp-1);margin-top:var(--sp-2)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 4px 3px 9px;border-radius:var(--r-pill);
+  background:var(--surface-3);border:1px solid var(--line);font-size:var(--fs-xs);color:var(--ink-2)}
+.chip .ctl{width:18px;height:18px;border-radius:50%;font-size:11px;color:var(--ink-3);display:grid;place-items:center}
+.chip .ctl:hover{background:var(--brand-50);color:var(--brand)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.seg .ctl{padding:0 var(--sp-3);height:var(--h-md);border-radius:0;font-size:var(--fs-sm);font-weight:600;color:var(--ink-3)}
+.seg .ctl[aria-pressed="true"]{background:var(--brand);color:#fff}
+.lines tbody tr{cursor:pointer}
+.lines tbody tr:hover td{background:var(--surface-2)}
 </style>
 </head>
 <body>
@@ -379,7 +442,10 @@ tr.drag{opacity:.4} tr.over td{box-shadow:inset 0 2px 0 var(--brand)}
     <div class="brand"><span class="mark">A</span><span><b>ARTEVA</b><small>Laboratuvar Cihazları Ve Malzemeleri</small></span></div>
     <div class="org" id="org"><span class="mark">AL</span><span style="min-width:0"><b>ARTEVA LAB</b><small>Aktif Firma 🏢</small></span></div>
     <nav class="sb-scroll" id="nav"></nav>
-    <div class="sb-foot"><button class="ctl sb-item" data-go="destek"><span class="sb-i">💬</span><span class="sb-t">Canlı Destek</span><span class="dot"></span></button></div>
+    <div class="sb-foot">
+      <button class="ctl sb-item" data-go="destek"><span class="sb-i">💬</span><span class="sb-t">Canlı Destek</span><span class="dot"></span></button>
+      <div class="sb-tools"><button class="ctl btn btn--ghost btn--sm" id="navEdit" title="Menüyü düzenle">✎ <span class="sb-t">Menüyü Düzenle</span></button></div>
+    </div>
   </aside>
 
   <div class="main">
@@ -403,6 +469,7 @@ tr.drag{opacity:.4} tr.over td{box-shadow:inset 0 2px 0 var(--brand)}
 </div>
 
 <div class="scrim" id="scrim"></div>
+<div class="mega" id="mega"></div>
 <aside class="panel" id="panel" aria-hidden="true">
   <div class="panel__h"><b class="h2" id="pTitle"></b><span class="spacer"></span>
     <button class="ctl btn btn--ghost btn--icon" id="pClose" title="Kapat">×</button></div>
@@ -468,25 +535,98 @@ const Panel = {
   },
   close(){ $('#panel').classList.remove('on'); $('#panel').setAttribute('aria-hidden','true'); $('#scrim').classList.remove('on'); }
 };
-$('#pClose').onclick=Panel.close; $('#scrim').onclick=Panel.close;
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') Panel.close(); });
+$('#pClose').onclick=Panel.close;
+$('#scrim').onclick=()=>{Panel.close();closeMega();document.body.classList.remove('sb-open')};
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){Panel.close();closeMega();} });
 
 /* ---------------- menü ---------------- */
-const NAV=[
+const NAV_DEF=[
  {items:[{k:'dashboard',i:'🏠',t:'Dashboard'},{k:'arama',i:'🔍',t:'Global Arama'}]},
- {g:'CRM',items:[{k:'musteriler',i:'👥',t:'Müşteriler',c:1},{k:'kisiler',i:'👤',t:'Kişiler',c:1},{k:'aktiviteler',i:'🗓',t:'Aktiviteler',c:1},{k:'firsatlar',i:'🎯',t:'Fırsatlar',c:1}]},
- {g:'Satış',items:[{k:'teklifler',i:'📄',t:'Teklifler / Proforma',c:1},{k:'siparisler',i:'🧾',t:'Siparişler',c:1},{k:'sevkiyatlar',i:'🚚',t:'Sevkiyatlar',c:1},{k:'faturalar',i:'📑',t:'Faturalar',c:1},{k:'tahsilatlar',i:'💰',t:'Tahsilatlar',c:1}]},
- {g:'Katalog',items:[{k:'urunler',i:'📦',t:'Ürünler',c:1},{k:'kategoriler',i:'🗂',t:'Kategoriler',c:1},{k:'markalar',i:'🏷',t:'Markalar',c:1},{k:'import',i:'⇅',t:'Import Merkezi',c:1},{k:'fiyat',i:'💲',t:'Fiyat Listeleri',c:1}]},
- {g:'Pazarlama',items:[{k:'kampanyalar',i:'📣',t:'Kampanyalar',c:1},{k:'eposta',i:'✉',t:'E-posta Gönderimi',c:1}]},
- {g:'Raporlar',items:[{k:'satis-rapor',i:'📊',t:'Satış Raporları',c:1},{k:'urun-rapor',i:'📈',t:'Ürün Raporları',c:1},{k:'musteri-analizi',i:'👣',t:'Müşteri Analizi',c:1},{k:'performans',i:'⚡',t:'Performans',c:1}]},
- {g:'Yönetim',items:[{k:'tema',i:'🎨',t:'Tema Stüdyosu',c:1},{k:'ayarlar',i:'⚙',t:'Ayarlar',c:1},{k:'kullanicilar',i:'🔐',t:'Kullanıcılar',c:1},{k:'yedekleme',i:'💾',t:'Yedekleme',c:1},{k:'loglar',i:'📋',t:'Sistem Logları',c:1}]}
+ {g:'CRM',items:[
+   {k:'musteriler',i:'👥',t:'Müşteriler',ch:[['musteriler','Müşteri Listesi'],['musteri-yeni','Yeni Müşteri'],['musteri-analizi','Müşteri Analizi']]},
+   {k:'kisiler',i:'👤',t:'Kişiler',ch:[['kisiler','Kişi Listesi'],['kisi-yeni','Yeni Kişi']]},
+   {k:'aktiviteler',i:'🗓',t:'Aktiviteler',ch:[['aktiviteler','Takvim'],['gorevler','Görevler']]},
+   {k:'firsatlar',i:'🎯',t:'Fırsatlar',ch:[['firsatlar','Fırsat Listesi'],['firsat-yeni','Yeni Fırsat']]}]},
+ {g:'Satış',items:[
+   {k:'teklifler',i:'📄',t:'Teklifler / Proforma',ch:[['teklifler','Proforma Listesi'],['yeni-teklif','Yeni Proforma'],['gonderilen','Gönderilenler'],['arsiv','Arşiv'],['sablonlar','Proforma Şablonları']]},
+   {k:'siparisler',i:'🧾',t:'Siparişler',ch:[['siparisler','Sipariş Listesi'],['uretim','Üretim Süreci'],['teslim','Teslim Edilen']]},
+   {k:'sevkiyatlar',i:'🚚',t:'Sevkiyatlar',ch:[['sevkiyatlar','Sevkiyat Listesi'],['sevkiyat-yeni','Yeni Sevkiyat']]},
+   {k:'faturalar',i:'📑',t:'Faturalar',ch:[['faturalar','Fatura Listesi'],['fatura-entegrasyon','Fatura Entegrasyonu']]},
+   {k:'tahsilatlar',i:'💰',t:'Tahsilatlar',ch:[['tahsilatlar','Tahsilat Listesi'],['vadesi-gecen','Vadesi Geçen']]}]},
+ {g:'Katalog',items:[
+   {k:'urunler',i:'📦',t:'Ürünler',ch:[['urunler','Ürün Listesi'],['urun-yeni','Yeni Ürün'],['urun-proforma','Proformadan Aktar'],['urun-web','Web Sitesinden Aktar']]},
+   {k:'kategoriler',i:'🗂',t:'Kategoriler',ch:[['kategoriler','Kategori Listesi'],['kategori-yeni','Yeni Kategori']]},
+   {k:'markalar',i:'🏷',t:'Markalar',ch:[['markalar','Marka Listesi'],['marka-yeni','Yeni Marka']]},
+   {k:'import',i:'⇅',t:'Import Merkezi',ch:[['import','Aktarım Merkezi'],['import-gecmis','Aktarım Geçmişi']]},
+   {k:'fiyat',i:'💲',t:'Fiyat Listeleri',ch:[['fiyat','Fiyat Listeleri'],['fiyat-yeni','Yeni Fiyat Listesi']]}]},
+ {g:'Pazarlama',items:[
+   {k:'kampanyalar',i:'📣',t:'Kampanyalar',ch:[['kampanyalar','Kampanya Listesi'],['kampanya-yeni','Yeni Kampanya']]},
+   {k:'eposta',i:'✉',t:'E-posta Gönderimi',ch:[['eposta','Gönderim Listesi'],['eposta-sablon','E-posta Şablonları']]}]},
+ {g:'Raporlar',items:[
+   {k:'satis-rapor',i:'📊',t:'Satış Raporları',ch:[['satis-rapor','Aylık / Yıllık'],['satis-urun','Ürün Bazlı']]},
+   {k:'urun-rapor',i:'📈',t:'Ürün Raporları',ch:[['urun-rapor','Ürün Performansı'],['stok-rapor','Stok Durumu']]},
+   {k:'musteri-analizi',i:'👣',t:'Müşteri Analizi',ch:[['musteri-analizi','Sektör / Bölge'],['musteri-skor','Müşteri Skoru']]},
+   {k:'performans',i:'⚡',t:'Performans',ch:[['performans','Dönüşüm'],['temsilci','Temsilci Performansı']]}]},
+ {g:'Yönetim',items:[
+   {k:'tema',i:'🎨',t:'Tema Stüdyosu',ch:[['tema','Tema ve Görünüm'],['nav-duzenle','Sidebar Düzenle']]},
+   {k:'ayarlar',i:'⚙',t:'Ayarlar',ch:[['ayarlar','Genel Ayarlar'],['firma','Firma Profili']]},
+   {k:'kullanicilar',i:'🔐',t:'Kullanıcılar',ch:[['kullanicilar','Kullanıcı Listesi'],['yetkiler','Yetki Matrisi']]},
+   {k:'yedekleme',i:'💾',t:'Yedekleme',ch:[['yedekleme','Yedekleme'],['kurtarma','Arşiv ve Kurtarma']]},
+   {k:'loglar',i:'📋',t:'Sistem Logları',ch:[['loglar','Sistem Logları'],['denetim','Denetim İzi']]}]}
 ];
-const navItem = k => NAV.flatMap(s=>s.items).find(x=>x.k===k);
+// Menü kişiselleştirmesi: gizle/göster, ikon, ad, açılma biçimi. Tarayıcıda saklanır.
+const NAV_MODES=[['acc','Akordiyon'],['mega','Mega menü'],['flat','Alt menüsüz']];
+let navCfg=store.get('navCfg',{hide:{},icon:{},label:{},mode:{}});
+const saveNav=()=>store.set('navCfg',navCfg);
+const allItems=()=>NAV_DEF.flatMap(s=>s.items);
+const navItem=k=>allItems().find(x=>x.k===k)
+  || allItems().flatMap(x=>(x.ch||[]).map(c=>({k:c[0],t:c[1],i:x.i}))).find(x=>x.k===k);
+const itemIcon=it=>navCfg.icon[it.k]||it.i;
+const itemLabel=it=>navCfg.label[it.k]||it.t;
+const itemMode=it=>navCfg.mode[it.k]||'acc';
+const EMOJIS=['🏠','🔍','👥','👤','🗓','🎯','📄','🧾','🚚','📑','💰','📦','🗂','🏷','⇅','💲','📣','✉','📊','📈',
+ '👣','⚡','🎨','⚙','🔐','💾','📋','🧪','🔬','🧰','🛠','🏢','⭐','🔔','📌','🚀','🧭','💬','🖨','🧮','📁','🗃','✅','⚠'];
+
 function paintNav(active){
-  $('#nav').innerHTML = NAV.map(s=>(s.g?`<div class="sb-group">${s.g}</div>`:'')+
-    s.items.map(it=>`<button class="ctl sb-item${it.k===active?' on':''}" data-go="${it.k}">
-      <span class="sb-i">${it.i}</span><span class="sb-t">${it.t}</span>${it.c?'<span class="sb-chev">❯</span>':''}</button>`).join('')).join('');
+  const open=store.get('navOpen',{});
+  $('#nav').innerHTML=NAV_DEF.map(sec=>{
+    const items=sec.items.filter(it=>!navCfg.hide[it.k]);
+    if(!items.length) return '';
+    return (sec.g?`<div class="sb-group">${sec.g}</div>`:'')+items.map(it=>{
+      const kids=(it.ch||[]).filter(c=>!navCfg.hide[c[0]]);
+      const mode=itemMode(it), isOpen=open[it.k]&&mode==='acc';
+      const hasKids=kids.length&&mode!=='flat';
+      const on=it.k===active||kids.some(c=>c[0]===active);
+      const head=`<button class="ctl sb-item${on?' on':''}" ${hasKids?`data-node="${it.k}" data-mode="${mode}"`:`data-go="${it.k}"`}>
+        <span class="sb-i">${itemIcon(it)}</span><span class="sb-t">${esc(itemLabel(it))}</span>
+        ${hasKids?`<span class="sb-chev">❯</span>`:''}</button>`;
+      if(!hasKids) return head;
+      return `<div class="sb-node${isOpen?' open':''}" data-node-wrap="${it.k}">${head}
+        <div class="sb-sub">${kids.map(c=>`<button class="ctl sb-item${c[0]===active?' on':''}" data-go="${c[0]}">
+          <span class="sb-t">${esc(c[1])}</span></button>`).join('')}</div></div>`;
+    }).join('');
+  }).join('');
+  $$('#nav [data-node]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.node;
+    if(b.dataset.mode==='mega') return openMega(k);
+    const wrap=b.closest('[data-node-wrap]'); const now=!wrap.classList.contains('open');
+    wrap.classList.toggle('open',now);
+    const o=store.get('navOpen',{}); o[k]=now; store.set('navOpen',o);
+  });
 }
+function openMega(k){
+  const it=allItems().find(x=>x.k===k); if(!it) return;
+  const kids=(it.ch||[]).filter(c=>!navCfg.hide[c[0]]);
+  $('#mega').innerHTML=`<div class="card__h card__h--plain" style="padding:0">
+      <h3 class="h2">${itemIcon(it)} ${esc(itemLabel(it))}</h3><span class="spacer"></span>
+      <button class="ctl btn btn--ghost btn--icon" data-mega-close title="Kapat">×</button></div>
+    <div class="mega__grid">${kids.map(c=>`<button class="ctl mega__item" data-go="${c[0]}">
+      <span class="thumb thumb--sm">${itemIcon(it)}</span><span style="min-width:0"><b style="display:block;font-size:var(--fs-sm);font-weight:650;color:var(--ink)">${esc(c[1])}</b>
+      <small style="font-size:var(--fs-xs);color:var(--ink-3)">${esc(itemLabel(it))}</small></span></button>`).join('')}</div>`;
+  $('#mega').classList.add('on'); $('#scrim').classList.add('on');
+  $('#mega [data-mega-close]').onclick=closeMega;
+}
+function closeMega(){ $('#mega').classList.remove('on'); if(!$('#panel').classList.contains('on')) $('#scrim').classList.remove('on'); }
 
 /* ---------------- veri ---------------- */
 const DB={
@@ -517,13 +657,14 @@ const UNITS=['ADET','METRE','METRETÜL','SET','TAKIM','PAKET','KG','LİTRE'];
 /* ---------------- router ---------------- */
 let route='dashboard';
 const ROUTES={dashboard:pgDashboard,musteriler:pgCustomers,urunler:pgProducts,teklifler:pgQuotes,
-  'yeni-teklif':pgQuoteEditor,tema:pgTheme};
+  'yeni-teklif':pgQuoteEditor,tema:pgTheme,'urun-yeni':pgProducts,'musteri-yeni':pgCustomers,
+  'nav-duzenle':()=>{pgTheme();panelNavEdit()}};
 function go(k){
   route=k; paintNav(k==='yeni-teklif'?'teklifler':k);
   document.body.classList.remove('edit'); edit=false;
   (ROUTES[k]||(()=>pgStub(k)))(); window.scrollTo(0,0);
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(b){e.preventDefault(); go(b.dataset.go);}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]'); if(b){e.preventDefault(); closeMega(); go(b.dataset.go);}});
 const render = html => $('#view').innerHTML = `<div class="page">${html}</div>`;
 
 /* ===========================================================================
@@ -786,7 +927,9 @@ function rail(){
    YENİ PROFORMA
    =========================================================================== */
 let PF=null;
-const line=()=>({id:uid(),code:'',name:'',desc:'',img:'',qty:1,unit:'ADET',price:0,dType:'P',dPct:0,dAmt:0,vat:20,alt:false});
+const line=()=>({id:uid(),code:'',name:'',desc:'',img:'',imgUrl:'',gtip:'',origin:'',cur:'',
+  qty:1,unit:'ADET',price:0,dType:'P',dPct:0,dAmt:0,vat:20,alt:false,
+  brochure:'',ce:'',manual:'',showImg:1,showDesc:1,inTotal:1});
 function pgQuoteEditor(){
   PF=PF||{cust:'',cur:'TRY',subject:'',lines:[line()],pay:'%50 peşin, %50 teslimatta',del:'Fabrika teslim',war:'2 yıl'};
   render(UI.page({title:'Yeni Proforma',sub:'Ekrandan çıkmadan müşteri ve ürün ekleyebilirsiniz.',
@@ -844,14 +987,14 @@ function addLine(p,alt=false){
 }
 function calc(l){const g=+l.qty*+l.price, d=l.dType==='P'?g*(+l.dPct)/100:+l.dAmt, n=Math.max(0,g-d);
   return {g,d,n,v:n*(+l.vat)/100}}
-function tot(){let s=0,d=0,v=0;PF.lines.forEach(l=>{if(l.alt)return;const c=calc(l);s+=c.g;d+=c.d;v+=c.v});
+function tot(){let s=0,d=0,v=0;PF.lines.forEach(l=>{if(l.alt||l.inTotal===0)return;const c=calc(l);s+=c.g;d+=c.d;v+=c.v});
   return {s,d,n:s-d,v,g:s-d+v}}
 function paintLines(){
   const cur=PF.cur;
   $('#pfL').innerHTML = UI.table({
     cols:[
       {t:'',w:'24px',render:()=>`<div class="grip" title="Sürükleyip sıralayın">⋮⋮</div>`},
-      {t:'Görsel',w:'48px',render:l=>UI.thumb(l.img,true)},
+      {t:'Görsel',w:'48px',render:l=>l.imgUrl?`<span class="thumb thumb--sm"><img src="${esc(l.imgUrl)}" alt="" style="width:100%;height:100%;object-fit:cover"></span>`:UI.thumb(l.img,true)},
       {t:'Ürün Kodu',w:'110px',render:(l,i)=>`<input class="inp inp--flush" value="${esc(l.code)}" data-f="code" data-i="${i}" placeholder="Kod">`},
       {t:'Ürün Adı / Açıklama',render:(l,i)=>`${l.alt?'<span class="tag">MUADİL</span>':''}
         <input class="inp inp--flush" value="${esc(l.name)}" data-f="name" data-i="${i}" placeholder="Ürün adı">
@@ -863,7 +1006,8 @@ function paintLines(){
       {t:'İsk Tutar',w:'112px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="0.01" value="${(+l.dAmt).toFixed(2)}" data-f="dAmt" data-i="${i}">`},
       {t:'KDV',w:'78px',render:(l,i)=>`<input class="inp inp--flush inp--num" type="number" min="0" step="1" value="${l.vat}" data-f="vat" data-i="${i}">`},
       {t:'Satır Toplamı',w:'116px',align:'right',cls:'t-num',render:l=>`<div style="padding-top:7px">${money(calc(l).n)} ${cur}</div>`},
-      {t:'İşlemler',w:'168px',align:'right',render:(l,i)=>`<div class="dt__acts" style="padding-top:4px">
+      {t:'İşlemler',w:'196px',align:'right',render:(l,i)=>`<div class="dt__acts" style="padding-top:4px">
+        ${UI.iconBtn('✎',{s:'xs',v:'',act:'edit',title:'Ürünü / satırı düzenle'})}
         ${UI.iconBtn('🔄',{s:'xs',v:'',act:'alt',title:'Muadil ürün ekle'})}
         ${l.alt?UI.iconBtn('⊘',{s:'xs',v:'',act:'unalt',title:'Muadil işaretini kaldır'}):''}
         ${UI.iconBtn('⧉',{s:'xs',v:'',act:'copy',title:'Satırı kopyala'})}
@@ -875,6 +1019,11 @@ function paintLines(){
   });
   $$('#pfL tbody tr').forEach((tr,i)=>{
     if(PF.lines[i]?.alt) tr.classList.add('alt');
+    // Satırın üzerine tıklamak ürün düzenleme panelini açar; alan ve düğmeler kendi işini yapar.
+    tr.addEventListener('click',ev=>{
+      if(ev.target.closest('input,select,textarea,button,.grip')) return;
+      panelLine(i);
+    });
     tr.draggable=true;
     tr.addEventListener('dragstart',e=>{tr.classList.add('drag');e.dataTransfer.setData('text/plain',i)});
     tr.addEventListener('dragend',()=>tr.classList.remove('drag'));
@@ -905,6 +1054,7 @@ function paintLines(){
   });
   $$('#pfL [data-act]').forEach(b=>b.onclick=()=>{
     const i=+b.closest('tr').dataset.i,a=b.dataset.act;
+    if(a==='edit')return panelLine(i);
     if(a==='del')PF.lines.splice(i,1);
     if(a==='copy')PF.lines.splice(i+1,0,{...PF.lines[i],id:uid()});
     if(a==='up'&&i>0)PF.lines.splice(i-1,0,PF.lines.splice(i,1)[0]);
@@ -999,6 +1149,140 @@ function panelPicker(pick){
   paint(); $('#pkq').oninput=e=>paint(e.target.value);
 }
 
+/* ---------------- Proforma satırı / ürün düzenleme ----------------
+   MASTER akışının aynısı: görsel, kod, GTİP, menşei, ad, fiyat, para birimi,
+   birim, KDV, açıklama, broşür / CE / kullanma kılavuzu. Kayıtlı ürün burada
+   düzenlenirse ana ürün kaydı da güncellenir; yalnız bu proformaya özel
+   bırakmak isteyen “Sadece bu proformada” seçer. ---------------- */
+function panelLine(i){
+  const l=PF.lines[i]; if(!l) return;
+  const fileRow=(lab,key,accept,val)=>`<div class="field"><span>${lab}</span>
+    <div class="file"><label class="ctl file__btn">⬆ Dosya seç<input type="file" accept="${accept}" data-file="${key}" hidden></label>
+      <span class="file__name" data-fname="${key}">${esc(val||'Seçili dosya yok')}</span>
+      <input class="inp inp--sm" data-f="${key}Url" value="${esc(l[key+'Url']||'')}" placeholder="veya URL yapıştır"></div></div>`;
+  Panel.open({wide:true,title:'Ürün / Satır Düzenle',
+    body:`<div class="note note--info">Kayıtlı ürün burada düzenlenirse ana ürün kaydı da güncellenir.
+        Satır üzerinde doğrudan yapılan değişiklikler yalnızca bu proformaya özel kalır.</div>
+      ${UI.card({title:'Ürün Görseli',body:`<div class="media">
+        <span class="media__box" id="lnImg">${l.imgUrl?`<img src="${esc(l.imgUrl)}" alt="">`:(l.img||'🖼')}</span>
+        <div class="file"><label class="ctl file__btn">⬆ Görsel yükle<input type="file" accept="image/png,image/jpeg,image/webp" id="lnImgFile" hidden></label>
+          <input class="inp inp--sm" data-f="imgUrl" value="${esc(l.imgUrl||'')}" placeholder="Görsel URL">
+          <input class="inp inp--sm" data-f="img" value="${esc(l.img||'')}" placeholder="veya sembol / emoji" maxlength="4"></div></div>`})}
+      ${UI.card({title:'Ürün Bilgileri',body:`<div class="form" style="--cols:2">
+        ${UI.field({label:'Ürün Kodu',name:'code',value:l.code})}
+        ${UI.field({label:'GTİP Numarası',name:'gtip',value:l.gtip})}
+        ${UI.field({label:'Menşei',name:'origin',value:l.origin})}
+        ${UI.field({label:'Birim',name:'unit',value:l.unit,opts:UNITS})}
+        ${UI.field({label:'Ürün Adı',name:'name',value:l.name,wide:true})}
+        ${UI.field({label:'Birim Fiyat',name:'price',type:'number',value:l.price})}
+        ${UI.field({label:'Para Birimi',name:'cur',value:l.cur||PF.cur,opts:['TRY','EUR','USD']})}
+        ${UI.field({label:'KDV %',name:'vat',type:'number',value:l.vat})}
+        ${UI.field({label:'Miktar',name:'qty',type:'number',value:l.qty})}
+        ${UI.field({label:'Ürün Açıklaması (teklife özel)',name:'desc',value:l.desc,rows:4,wide:true})}</div>`})}
+      ${UI.card({title:'Belgeler',body:`<div class="form" style="--cols:1">
+        ${fileRow('Broşür (PDF)','brochure','application/pdf',l.brochure)}
+        ${fileRow('CE Belgesi (PDF)','ce','application/pdf',l.ce)}
+        ${fileRow('Kullanma Kılavuzu (PDF)','manual','application/pdf',l.manual)}</div>`})}
+      ${UI.card({title:'Teklifte Görünüm',body:`<div class="navedit">
+        ${[['showImg','Görseli teklifte göster'],['showDesc','Açıklamayı teklifte göster'],['inTotal','Toplamlara dahil et']]
+          .map(([k,t])=>`<div class="navedit__row" style="grid-template-columns:auto minmax(0,1fr)">
+            <button class="ctl switch" data-sw="${k}" aria-pressed="${l[k]?'true':'false'}"></button>
+            <span>${t}</span></div>`).join('')}</div>`})}`,
+    foot:`<div class="seg" style="margin-right:auto">
+        <button class="ctl" data-scope="line" aria-pressed="true">Sadece bu proformada</button>
+        <button class="ctl" data-scope="master" aria-pressed="false">Ürün kaydını da güncelle</button></div>
+      ${UI.btn({t:'Vazgeç',act:'close'})}${UI.btn({t:'Kaydet',v:'primary',act:'save'})}`});
+
+  let scope='line';
+  $$('#pFoot [data-scope]').forEach(b=>b.onclick=()=>{
+    scope=b.dataset.scope;
+    $$('#pFoot [data-scope]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  });
+  const sw={showImg:l.showImg,showDesc:l.showDesc,inTotal:l.inTotal};
+  $$('#pBody [data-sw]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.sw; sw[k]=sw[k]?0:1; b.setAttribute('aria-pressed',String(!!sw[k]));
+  });
+  // Yüklenen dosya tarayıcıda okunur; görsel anında önizlenir.
+  $('#lnImgFile').onchange=e=>{
+    const f=e.target.files?.[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{ $('#pBody [data-f="imgUrl"]').value=r.result; $('#lnImg').innerHTML=`<img src="${r.result}" alt="">`; };
+    r.readAsDataURL(f);
+  };
+  $$('#pBody [data-file]').forEach(inp=>inp.onchange=e=>{
+    const f=e.target.files?.[0]; if(!f) return;
+    $(`#pBody [data-fname="${inp.dataset.file}"]`).textContent=f.name;
+    inp.dataset.picked=f.name;
+  });
+  const get=n=>$(`#pBody [data-f="${n}"]`)?.value ?? '';
+  $('#pFoot [data-act="close"]').onclick=Panel.close;
+  $('#pFoot [data-act="save"]').onclick=()=>{
+    Object.assign(l,{code:get('code'),gtip:get('gtip'),origin:get('origin'),name:get('name'),
+      desc:get('desc'),unit:get('unit'),cur:get('cur'),img:get('img'),imgUrl:get('imgUrl'),
+      price:+get('price')||0,vat:+get('vat')||0,qty:+get('qty')||0,
+      brochureUrl:get('brochureUrl'),ceUrl:get('ceUrl'),manualUrl:get('manualUrl'),
+      ...sw});
+    $$('#pBody [data-file]').forEach(inp=>{ if(inp.dataset.picked) l[inp.dataset.file]=inp.dataset.picked; });
+    const g=+l.qty*+l.price;
+    l.dType==='P'?l.dAmt=g*(+l.dPct)/100:l.dPct=g?(+l.dAmt)/g*100:0;
+    if(scope==='master'){
+      const p=DB.products.find(x=>x.code===l.code);
+      const rec={code:l.code,name:l.name,unit:l.unit,price:l.price,vat:l.vat,img:l.img||'📦',cat:p?.cat||'Genel'};
+      p?Object.assign(p,rec):DB.products.push({id:uid(),stock:0,...rec});
+      save('products'); toast('Satır ve ana ürün kaydı güncellendi.');
+    } else toast('Satır bu proformaya özel güncellendi.');
+    Panel.close(); paintLines();
+  };
+}
+
+/* ---------------- Sidebar düzenleyici: gizle/göster, ikon, ad, açılma biçimi ---------------- */
+function panelNavEdit(){
+  const row=(it,child)=>{
+    const key=child?child[0]:it.k, label=child?child[1]:itemLabel(it), off=navCfg.hide[key]?1:0;
+    return `<div class="navedit__row" data-off="${off}" data-key="${key}">
+      <button class="ctl switch" data-tg="${key}" aria-pressed="${off?'false':'true'}" title="${off?'Gizli':'Görünür'}"></button>
+      ${child?'<span></span>':`<button class="ctl btn btn--icon" data-ico="${it.k}" title="İkon seç">${itemIcon(it)}</button>`}
+      <input class="inp inp--sm" data-lbl="${key}" value="${esc(navCfg.label[key]||label)}">
+      ${child?'<span></span>':`<select class="inp inp--sm" data-mode="${it.k}">${NAV_MODES.map(m=>`<option value="${m[0]}"${itemMode(it)===m[0]?' selected':''}>${m[1]}</option>`).join('')}</select>`}
+      <span class="meta">${child?'alt':'ana'}</span></div>`;
+  };
+  const body = NAV_DEF.map(sec=>(sec.g?`<div class="navedit__grp">${sec.g}</div>`:'')+
+    sec.items.map(it=>row(it)+(it.ch||[]).map(c=>row(it,c)).join('')).join('')).join('');
+  Panel.open({wide:true,title:'Menüyü Düzenle',
+    body:`<div class="note note--info">Kapattığın menü sidebar'da görünmez. İkonu değiştirebilir, adını yeniden yazabilir, ana menünün akordiyon mu mega menü mü açılacağını seçebilirsin.</div>
+      ${UI.card({title:'Menü Öğeleri',body:`<div class="navedit">${body}</div>`})}`,
+    foot:UI.btn({t:'Varsayılana dön',i:'↺',act:'reset'})+UI.btn({t:'Kapat',act:'close'})});
+  const refresh=()=>{ saveNav(); paintNav(route); };
+  $$('#pBody [data-tg]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.tg, off=!navCfg.hide[k];
+    off?navCfg.hide[k]=1:delete navCfg.hide[k];
+    b.setAttribute('aria-pressed',String(!off)); b.closest('.navedit__row').dataset.off=off?'1':'0';
+    refresh();
+  });
+  $$('#pBody [data-lbl]').forEach(i=>i.onchange=()=>{
+    const k=i.dataset.lbl, v=i.value.trim();
+    v?navCfg.label[k]=v:delete navCfg.label[k]; refresh();
+  });
+  $$('#pBody [data-mode]').forEach(sel=>sel.onchange=()=>{ navCfg.mode[sel.dataset.mode]=sel.value; refresh(); });
+  $$('#pBody [data-ico]').forEach(b=>b.onclick=()=>panelIcon(b.dataset.ico,()=>panelNavEdit()));
+  $('#pFoot [data-act="close"]').onclick=Panel.close;
+  $('#pFoot [data-act="reset"]').onclick=()=>{ navCfg={hide:{},icon:{},label:{},mode:{}}; saveNav(); paintNav(route); panelNavEdit(); toast('Menü varsayılana döndü.'); };
+}
+// İkon / emoji seçici — hazır kütüphaneden seç ya da kendi sembolünü yaz.
+function panelIcon(key,done){
+  const it=navItem(key)||{i:'📄',t:key};
+  Panel.open({title:'İkon Seç',
+    body:UI.card({title:itemLabel(it),body:`<div class="form" style="--cols:1">
+        <label class="field"><span>Kendi emoji veya sembolün</span><input class="inp" id="icoIn" value="${esc(itemIcon(it))}" maxlength="4"></label>
+      </div><p class="meta" style="margin:var(--sp-3) 0 var(--sp-2)">Hazır ikonlar</p>
+      <div class="emoji-grid">${EMOJIS.map(e=>`<button class="ctl" data-e="${e}">${e}</button>`).join('')}</div>`}),
+    foot:UI.btn({t:'Varsayılana dön',act:'def'})+UI.btn({t:'Uygula',v:'primary',act:'ok'})});
+  const apply=v=>{ v?navCfg.icon[key]=v:delete navCfg.icon[key]; saveNav(); paintNav(route); Panel.close(); done&&done(); };
+  $$('#pBody [data-e]').forEach(b=>b.onclick=()=>{ $('#icoIn').value=b.dataset.e; });
+  $('#pFoot [data-act="ok"]').onclick=()=>apply($('#icoIn').value.trim());
+  $('#pFoot [data-act="def"]').onclick=()=>apply('');
+}
+
 /* ---------------- Tema Stüdyosu ---------------- */
 function pgTheme(){
   render(UI.page({title:'Tema Stüdyosu',sub:'Ana tema ve sidebar teması birbirinden bağımsız.'})
@@ -1013,6 +1297,7 @@ function pgTheme(){
 }
 
 /* ---------------- boot ---------------- */
+$('#navEdit').onclick=panelNavEdit;
 $('#burger').onclick=()=>{
   // Dar ekranda menü çekmece gibi açılır, geniş ekranda raya daralır.
   if(matchMedia('(max-width:860px)').matches) document.body.classList.toggle('sb-open');
