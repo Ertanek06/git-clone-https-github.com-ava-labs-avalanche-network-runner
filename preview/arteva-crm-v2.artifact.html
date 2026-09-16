@@ -1,8 +1,4 @@
-<!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>ARTEVA CRM v2.0</title>
 <style>
 /* ===========================================================================
@@ -372,8 +368,6 @@ tr.drag{opacity:.4} tr.over td{box-shadow:inset 0 2px 0 var(--brand)}
 /* Menü açıkken gövdeyi karartan perde, panelle aynı bileşen. */
 @media (max-width:860px){ body.sb-open .scrim{opacity:1;pointer-events:auto} }
 </style>
-</head>
-<body>
 <div class="shell">
   <aside class="sidebar">
     <div class="brand"><span class="mark">A</span><span><b>ARTEVA</b><small>Laboratuvar Cihazları Ve Malzemeleri</small></span></div>
@@ -1030,5 +1024,3 @@ if(store.get('sbTheme')==='dark')document.body.classList.add('sb-dark');
 if(store.get('brand'))document.documentElement.style.setProperty('--brand',store.get('brand'));
 go('dashboard');
 </script>
-</body>
-</html>
