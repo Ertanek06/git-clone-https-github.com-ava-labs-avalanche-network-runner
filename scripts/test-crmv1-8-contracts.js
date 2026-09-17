@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 const pkg=JSON.parse(read('package.json')),build=JSON.parse(read('BUILD_INFO.json'));
-const sidebar=read('views/partials/sidebar.ejs'),dashboard=read('views/dashboard/index.ejs'),app=read('public/js/app.js'),themeView=read('views/settings/theme.ejs'),themeJs=read('public/js/theme-studio-v18.js'),themeCss=read('public/css/crmv1.8.css'),themeService=read('src/services/theme.service.js'),settings=read('src/routes/settings.js'),assetBuild=read('scripts/build-assets.js');
+const sidebar=read('views/partials/sidebar.ejs'),dashboard=read('views/dashboard/index.ejs'),app=read('public/js/app.js'),themeView=read('views/settings/theme.ejs'),themeJs=read('public/js/theme-studio.js'),themeCss=read('public/css/crmv1.8.css'),themeService=read('src/services/theme.service.js'),settings=read('src/routes/settings.js'),assetBuild=read('scripts/build-assets.js');
 
 assert.equal(pkg.version,'3.8.57');
 assert.equal(build.package,'crmv1.45');

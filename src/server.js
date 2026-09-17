@@ -148,7 +148,7 @@ app.use(
 );
 app.use("/public/build", (req, res, next) => {
   const file = path.basename(req.path),
-    hashed = /^crm-(?:styles|print|app)\.[a-f0-9]{16}\.(?:css|js)$/.test(file);
+    hashed = /^crm-[a-z]+\.[a-f0-9]{16}\.(?:css|js)$/.test(file);
   if (!hashed) return next();
   res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
   res.setHeader("Vary", "Accept-Encoding");

@@ -1,6 +1,6 @@
 {
   "schema": 3,
-  "generatedAt": "2026-09-17T04:47:16.653Z",
+  "generatedAt": "2026-09-17T05:00:18.913Z",
   "stylesCss": "/public/build/crm-styles.54f998d7dca4a491.css",
   "printCss": "/public/build/crm-print.bed5f8eb01e4f0c9.css",
   "appJs": "/public/build/crm-app.60eacc12ca59d630.js",
@@ -83,8 +83,7 @@
         "template-studio.js"
       ],
       "theme": [
-        "theme-studio.js",
-        "theme-studio-v18.js"
+        "theme-studio.js"
       ],
       "loginStudio": [
         "login-studio-v356.js"

@@ -71,7 +71,7 @@ const pageJs = {
   dashboard: ["dashboard-proforma-visits-v16.js"],
   quotes: ["quote-check-assistant.js", "quote-email.js", "quote-form.js", "template-modal.js"],
   templates: ["template-modal.js", "template-studio.js"],
-  theme: ["theme-studio.js", "theme-studio-v18.js"],
+  theme: ["theme-studio.js"],
   loginStudio: ["login-studio-v356.js"],
   auth: ["login-page-v356.js"]
 };
