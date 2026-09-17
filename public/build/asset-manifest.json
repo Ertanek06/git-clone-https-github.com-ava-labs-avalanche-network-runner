@@ -1,7 +1,7 @@
 {
   "schema": 3,
-  "generatedAt": "2026-09-16T19:28:15.542Z",
-  "stylesCss": "/public/build/crm-styles.1b616c4aa81912c0.css",
+  "generatedAt": "2026-09-17T04:47:16.653Z",
+  "stylesCss": "/public/build/crm-styles.54f998d7dca4a491.css",
   "printCss": "/public/build/crm-print.bed5f8eb01e4f0c9.css",
   "appJs": "/public/build/crm-app.60eacc12ca59d630.js",
   "printJs": "/public/build/crm-print.7160a153377569d5.js",
@@ -39,7 +39,8 @@
       "crmv1.13.css",
       "crmv1.15.css",
       "crmv1.16.css",
-      "login-studio-v356.css"
+      "login-studio-v356.css",
+      "arteva-ds-v2.css"
     ],
     "print": [
       "print.css"

@@ -761,6 +761,15 @@ r.get("/theme.css", (req, res) => {
     "--scrollbar-width": `${u.scrollbar_width}px`,
     "--motion": u.animations_enabled ? `${u.animation_speed}ms` : "0ms"
   };
+  // Kullanıcının seçtiği tema renkleri tasarım sisteminin tokenlarını besler.
+  const dsTokens = [
+    `--ds-bg:${u.page_bg}`,
+    `--ds-surface:${u.card_bg}`,
+    `--ds-surface-2:${u.table_alt_bg || u.inner_panel_bg}`,
+    `--ds-line:${u.border_color}`,
+    `--ds-ink:${u.text_color}`,
+    `--ds-ink-3:${u.muted_color}`
+  ].join(";");
   const root = Object.entries(vars)
     .map(([k, v]) => `${k}:${v}`)
     .join(";");
@@ -801,6 +810,10 @@ r.get("/theme.css", (req, res) => {
         : "private, no-cache"
     )
     .type("css")
-    .send(`:root{${root}}\n${rules}\n${custom}`);
+    // crmv1.46 — tek tema motoru: bu uç nokta artık yalnızca token yayımlar.
+    // Görünümün tamamı tasarım sisteminden (arteva-ds-v2.css) gelir; buradaki
+    // eski !important kural bloğu kaldırıldı, kullanıcı renkleri DS tokenlarına
+    // bağlanır. `rules` yalnızca özel CSS'i sıraya sokmak için korunur.
+    .send(`:root{${root};${dsTokens}}\n${custom}`);
 });
 export default r;

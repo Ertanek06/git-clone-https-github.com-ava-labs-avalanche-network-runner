@@ -11,6 +11,14 @@ const buildDir = path.join(publicDir, "build");
 
 // Source files stay separated by responsibility. Browsers receive a small core
 // plus a page-specific, content-addressed script only where it is needed.
+// crmv1.46 — tek tasarım katmanı.
+// Eski hotfix / override / ui-consistency / ui-integrity zinciri paketten
+// çıkarıldı; görünümün tamamı arteva-ds-v2.css'ten gelir. Burada yalnızca
+// yapıyı taşıyan taban dosyalar kalır.
+// crmv1.46 — tek tasarım katmanı.
+// Eski dosyalar pakette kalır (yapı ve sayfaya özel yerleşim onlardan gelir),
+// ancak `@layer legacy` içine alınıp `!important`leri sökülür. Görünümün
+// sahibi, katmansız olarak en sonda duran arteva-ds-v2.css'tir.
 const appCss = [
   "fonts-v3817.css",
   "app.css",
@@ -36,7 +44,8 @@ const appCss = [
   "crmv1.13.css",
   "crmv1.15.css",
   "crmv1.16.css",
-  "login-studio-v356.css"
+  "login-studio-v356.css",
+  "arteva-ds-v2.css"
 ];
 
 const appJs = [
@@ -69,7 +78,23 @@ const pageJs = {
 const printJs = ["print-paginator.js", "crmv1.13.js"];
 
 const read = (folder, file) => fs.readFileSync(path.join(publicDir, folder, file), "utf8");
-const joinCss = (files) => files.map((file) => `/* source:${file} */\n${read("css", file)}`).join("\n");
+// crmv1.46 — tek tasarım katmanı, kesin sıralama.
+// Eski dosyalar `@layer legacy` içine alınır ve içlerindeki `!important`
+// sökülür; tasarım sistemi katmansız kalır. Katmansız + important bildirim,
+// katmanlı normal bildirimlerin tamamını yener. Böylece görünümün sahibi
+// özgüllük yarışına girmeden tek dosya olur.
+const DESIGN_SYSTEM = "arteva-ds-v2.css";
+const stripImportant = (css) => css.replace(/\s*!\s*important/gi, "");
+const joinCss = (files) => {
+  const legacy = files.filter((file) => file !== DESIGN_SYSTEM);
+  const layered = legacy
+    .map((file) => `/* source:${file} */\n${stripImportant(read("css", file))}`)
+    .join("\n");
+  const system = files.includes(DESIGN_SYSTEM)
+    ? `\n/* source:${DESIGN_SYSTEM} */\n${read("css", DESIGN_SYSTEM)}`
+    : "";
+  return `@layer legacy;\n@layer legacy{\n${layered}\n}\n${system}`;
+};
 const joinJs = (files) =>
   files.map((file) => `;(()=>{\n/* source:${file} */\n${read("js", file)}\n})();`).join("\n");
 const minify = (source, loader) =>

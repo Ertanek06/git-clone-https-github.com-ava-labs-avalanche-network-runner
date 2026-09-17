@@ -1,0 +1,972 @@
+/* ===========================================================================
+   ARTEVA DESIGN SYSTEM v2 — tek tasarım katmanı
+   ---------------------------------------------------------------------------
+   Bu dosya uygulamanın TEK görsel dilidir. Eski CSS dosyaları yalnızca yapıyı
+   taşır; görünümün tamamı buradan gelir ve bu dosya en son yüklenir.
+   Akışlara, sınıf adlarına ve şablonlara dokunulmaz: MASTER'ın kendi sözlüğü
+   (btn, card, page-head, table, modal, menu…) burada yeniden tanımlanır.
+   Kurallar: 1 token katmanı · 1 buton · 1 input · 1 tablo · 1 kart ·
+             1 sayfa başlığı · 1 panel (her açılım sağdan dikey).
+   =========================================================================== */
+
+:root {
+  --ds-brand: #e11d2a;
+  --ds-brand-700: #a91019;
+  --ds-brand-50: #fdecee;
+  --ds-bg: #f4f6f9;
+  --ds-surface: #ffffff;
+  --ds-surface-2: #f8fafc;
+  --ds-surface-3: #f1f4f8;
+  --ds-line: #e6eaf0;
+  --ds-line-2: #d7dee7;
+  --ds-ink: #1a2235;
+  --ds-ink-2: #48536a;
+  --ds-ink-3: #7b869a;
+  --ds-ok: #12a150;
+  --ds-ok-50: #e8f7ee;
+  --ds-warn: #b45309;
+  --ds-warn-50: #fff4e0;
+  --ds-info: #2563eb;
+  --ds-info-50: #e9f0ff;
+  --ds-dim: #eef1f5;
+
+  --ds-fs-2xs: 10px;
+  --ds-fs-xs: 11px;
+  --ds-fs-sm: 12px;
+  --ds-fs-md: 13px;
+  --ds-fs-lg: 15px;
+  --ds-fs-xl: 20px;
+  --ds-fs-2xl: 24px;
+
+  --ds-1: 4px;
+  --ds-2: 8px;
+  --ds-3: 12px;
+  --ds-4: 16px;
+  --ds-5: 20px;
+  --ds-6: 24px;
+
+  --ds-r-sm: 6px;
+  --ds-r-md: 8px;
+  --ds-r-lg: 12px;
+  --ds-r-pill: 999px;
+
+  --ds-h-sm: 30px;
+  --ds-h-md: 34px;
+  --ds-h-lg: 40px;
+
+  --ds-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --ds-shadow-lg: 0 12px 34px rgba(16, 24, 40, 0.16);
+  --ds-font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --ds-sidebar-w: 224px;
+}
+
+/* Koyu tema: yalnızca tokenlar değişir, tek bir bileşen bile yeniden yazılmaz. */
+body.theme-midnight-ops,
+body.theme-dark-executive,
+body.theme-graphite-noir,
+body.ds-dark {
+  --ds-bg: #0f141c;
+  --ds-surface: #161c26;
+  --ds-surface-2: #1b222e;
+  --ds-surface-3: #212a37;
+  --ds-line: #273040;
+  --ds-line-2: #333e51;
+  --ds-ink: #e7ecf4;
+  --ds-ink-2: #b6c1d2;
+  --ds-ink-3: #8d99ad;
+  --ds-dim: #222b39;
+  --ds-brand-50: #3a1720;
+  --ds-ok-50: #123021;
+  --ds-warn-50: #332612;
+  --ds-info-50: #17233d;
+  --ds-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --ds-shadow-lg: 0 14px 38px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- temel ---------- */
+body {
+  background: var(--ds-bg) !important;
+  color: var(--ds-ink) !important;
+  font-family: var(--ds-font) !important;
+  font-size: var(--ds-fs-md) !important;
+  line-height: 1.45 !important;
+  -webkit-font-smoothing: antialiased;
+}
+body * {
+  font-family: inherit;
+}
+body h1 {
+  font-size: var(--ds-fs-2xl) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  color: var(--ds-ink) !important;
+}
+body h2 {
+  font-size: var(--ds-fs-lg) !important;
+  font-weight: 650 !important;
+  color: var(--ds-ink) !important;
+}
+body h3 {
+  font-size: var(--ds-fs-md) !important;
+  font-weight: 650 !important;
+  color: var(--ds-ink) !important;
+}
+body small,
+body .muted {
+  color: var(--ds-ink-3) !important;
+}
+body .eyebrow {
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-2xs) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase;
+}
+body a {
+  color: var(--ds-brand);
+}
+body ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+body ::-webkit-scrollbar-thumb {
+  background: var(--ds-line-2);
+  border-radius: var(--ds-r-pill);
+}
+body ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- kabuk ---------- */
+body .app-shell {
+  background: var(--ds-bg) !important;
+}
+body .sidebar {
+  width: var(--ds-sidebar-w) !important;
+  padding: 0 !important;
+  background: var(--ds-surface) !important;
+  border-right: 1px solid var(--ds-line) !important;
+  color: var(--ds-ink-2) !important;
+  display: flex !important;
+  flex-direction: column;
+}
+body .app-main {
+  width: calc(100% - var(--ds-sidebar-w)) !important;
+  margin-left: var(--ds-sidebar-w) !important;
+  background: var(--ds-bg) !important;
+}
+body .page-wrap {
+  padding: var(--ds-5) !important;
+  max-width: none !important;
+}
+
+/* marka / firma kartı */
+body .brand-card {
+  gap: var(--ds-2) !important;
+  padding: var(--ds-3) var(--ds-3) var(--ds-3) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface) !important;
+}
+body .brand-logo {
+  height: 62px !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface-2) !important;
+}
+body .brand-name {
+  font-size: var(--ds-fs-md) !important;
+  font-weight: 700 !important;
+  color: var(--ds-ink) !important;
+}
+body .brand-card__top {
+  font-size: var(--ds-fs-2xs) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ds-ink-3) !important;
+}
+body .status-dot {
+  padding: 2px 8px !important;
+  border-radius: var(--ds-r-pill) !important;
+  background: var(--ds-ok-50) !important;
+  color: var(--ds-ok) !important;
+  font-size: var(--ds-fs-2xs) !important;
+  font-weight: 700 !important;
+}
+
+/* menü */
+body .menu {
+  gap: 1px !important;
+  padding: var(--ds-2) var(--ds-2) var(--ds-6) !important;
+}
+body .menu-section-label {
+  margin: var(--ds-3) var(--ds-2) var(--ds-1) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-2xs) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+}
+body .menu__item,
+body .menu summary {
+  gap: var(--ds-2) !important;
+  min-height: 34px !important;
+  padding: 7px var(--ds-2) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--ds-r-sm) !important;
+  background: transparent !important;
+  color: var(--ds-ink-2) !important;
+  font-size: var(--ds-fs-sm) !important;
+  font-weight: 500 !important;
+}
+body .menu__item:hover,
+body .menu summary:hover {
+  background: var(--ds-surface-3) !important;
+  color: var(--ds-ink) !important;
+}
+body .menu__item.is-active,
+body .menu details[open] > summary {
+  background: var(--ds-brand) !important;
+  border-color: var(--ds-brand) !important;
+  color: #fff !important;
+  font-weight: 650 !important;
+}
+body .menu i {
+  width: 18px !important;
+  height: 18px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  font-size: 14px !important;
+}
+body .menu i:before {
+  font-size: 14px !important;
+}
+body .menu details > a {
+  margin: 0 0 1px !important;
+  padding: 6px var(--ds-2) 6px 34px !important;
+  border: 0 !important;
+  border-radius: var(--ds-r-sm) !important;
+  background: transparent !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-xs) !important;
+  font-weight: 500 !important;
+}
+body .menu details > a:hover {
+  background: var(--ds-surface-3) !important;
+  color: var(--ds-ink) !important;
+}
+body .menu details > a.is-active {
+  background: var(--ds-brand-50) !important;
+  color: var(--ds-brand) !important;
+  font-weight: 650 !important;
+}
+body .sidebar-logout {
+  padding: var(--ds-2) !important;
+  border-top: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface) !important;
+}
+
+/* üst bar */
+body .topbar {
+  min-height: 56px !important;
+  padding: 0 var(--ds-4) !important;
+  gap: var(--ds-3) !important;
+  background: var(--ds-surface) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  color: var(--ds-ink) !important;
+  backdrop-filter: none !important;
+}
+body .topbar .pill {
+  background: var(--ds-surface-2) !important;
+  border: 1px solid var(--ds-line) !important;
+  color: var(--ds-ink-2) !important;
+}
+body .user-chip {
+  padding: 4px 10px !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface-2) !important;
+  border: 1px solid var(--ds-line) !important;
+  color: var(--ds-ink) !important;
+  font-size: var(--ds-fs-sm) !important;
+  font-weight: 650 !important;
+}
+
+/* ---------- sayfa başlığı ---------- */
+body .page-head {
+  gap: var(--ds-4) !important;
+  margin: 0 0 var(--ds-4) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+body .page-head h1 {
+  margin: 0 0 3px !important;
+}
+body .page-head p {
+  margin: 0 !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-md) !important;
+}
+
+/* ---------- kart ---------- */
+body .card,
+body .list-table-card,
+body .collapse-card,
+body .pro-module-card,
+body .form-section,
+body .customer-kpi-card {
+  padding: var(--ds-4) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-lg) !important;
+  background: var(--ds-surface) !important;
+  box-shadow: var(--ds-shadow) !important;
+}
+body .card-head {
+  gap: var(--ds-3) !important;
+  margin: 0 0 var(--ds-3) !important;
+  padding: 0 0 var(--ds-3) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+}
+body .card h2 {
+  margin: 0 !important;
+}
+
+/* ---------- buton: tek bileşen ---------- */
+body .btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-2) !important;
+  min-height: var(--ds-h-md) !important;
+  height: auto !important;
+  padding: 0 var(--ds-3) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink-2) !important;
+  font-size: var(--ds-fs-sm) !important;
+  font-weight: 650 !important;
+  line-height: 1;
+  box-shadow: none !important;
+  transition:
+    background 0.14s,
+    border-color 0.14s,
+    color 0.14s;
+}
+body .btn:hover {
+  transform: none !important;
+  background: var(--ds-surface-3) !important;
+  border-color: var(--ds-line-2) !important;
+  color: var(--ds-ink) !important;
+  box-shadow: none !important;
+}
+body .btn:focus-visible {
+  outline: 2px solid var(--ds-brand);
+  outline-offset: 1px;
+}
+body .btn--primary,
+body .btn--alive {
+  background: var(--ds-brand) !important;
+  border-color: var(--ds-brand) !important;
+  color: #fff !important;
+}
+body .btn--primary:hover,
+body .btn--alive:hover {
+  background: var(--ds-brand-700) !important;
+  border-color: var(--ds-brand-700) !important;
+  color: #fff !important;
+}
+body .btn--soft {
+  background: var(--ds-surface-2) !important;
+  border-color: var(--ds-line) !important;
+  color: var(--ds-ink-2) !important;
+}
+body .btn--soft:hover {
+  background: var(--ds-surface-3) !important;
+  color: var(--ds-ink) !important;
+}
+body .btn--success,
+body .btn--whatsapp {
+  background: var(--ds-ok) !important;
+  border-color: var(--ds-ok) !important;
+  color: #fff !important;
+}
+body .btn--danger {
+  background: var(--ds-surface) !important;
+  border-color: var(--ds-line) !important;
+  color: var(--ds-brand) !important;
+}
+body .btn--danger:hover {
+  background: var(--ds-brand-50) !important;
+  border-color: var(--ds-brand) !important;
+  color: var(--ds-brand) !important;
+}
+body .btn--sm {
+  min-height: var(--ds-h-sm) !important;
+  padding: 0 var(--ds-2) !important;
+  font-size: var(--ds-fs-xs) !important;
+}
+body .btn--lg {
+  min-height: var(--ds-h-lg) !important;
+  padding: 0 var(--ds-4) !important;
+  font-size: var(--ds-fs-md) !important;
+}
+body .btn--block {
+  width: 100%;
+}
+body .icon-btn,
+body .table-action,
+body .toolbar-btn,
+body .action-icon {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: var(--ds-h-sm) !important;
+  height: var(--ds-h-sm) !important;
+  min-width: var(--ds-h-sm) !important;
+  padding: 0 !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-sm) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-sm) !important;
+  box-shadow: none !important;
+}
+body .icon-btn:hover,
+body .table-action:hover,
+body .toolbar-btn:hover,
+body .action-icon:hover {
+  border-color: var(--ds-brand) !important;
+  color: var(--ds-brand) !important;
+  background: var(--ds-brand-50) !important;
+}
+body .row-actions,
+body .actions-cell,
+body .table-action-list,
+body .form-actions {
+  display: flex !important;
+  gap: var(--ds-1) !important;
+  flex-wrap: wrap;
+  align-items: center;
+}
+body .form-actions {
+  gap: var(--ds-2) !important;
+  justify-content: flex-end;
+}
+
+/* ---------- input: tek bileşen ---------- */
+body input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body select,
+body textarea,
+body .toolbar-input {
+  min-height: var(--ds-h-md) !important;
+  padding: 0 var(--ds-3) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink) !important;
+  font-size: var(--ds-fs-sm) !important;
+  box-shadow: none !important;
+  transition:
+    border-color 0.14s,
+    box-shadow 0.14s;
+}
+body textarea {
+  padding: var(--ds-2) var(--ds-3) !important;
+  line-height: 1.45 !important;
+}
+body input:hover,
+body select:hover,
+body textarea:hover {
+  border-color: var(--ds-line-2) !important;
+}
+body input:focus,
+body select:focus,
+body textarea:focus {
+  border-color: var(--ds-brand) !important;
+  box-shadow: 0 0 0 3px var(--ds-brand-50) !important;
+}
+body ::placeholder {
+  color: var(--ds-ink-3) !important;
+}
+body label,
+body .field-title {
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-xs) !important;
+  font-weight: 650 !important;
+}
+body label input,
+body label select,
+body label textarea {
+  font-weight: 400;
+}
+body input[type="checkbox"],
+body input[type="radio"] {
+  accent-color: var(--ds-brand);
+}
+body .form-grid,
+body .compact-field-grid,
+body .login-studio-control-grid {
+  gap: var(--ds-3) !important;
+}
+body .checkline {
+  gap: var(--ds-2) !important;
+  color: var(--ds-ink-2) !important;
+  font-size: var(--ds-fs-sm) !important;
+}
+
+/* ---------- tablo: tek motor ---------- */
+body .table-scroll {
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-lg) !important;
+  background: var(--ds-surface) !important;
+  overflow: auto !important;
+}
+body table,
+body .pro-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  font-size: var(--ds-fs-sm) !important;
+  border-radius: 0 !important;
+}
+body table thead th,
+body .pro-table thead th {
+  padding: var(--ds-3) !important;
+  background: var(--ds-surface-2) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-xs) !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+body table td,
+body .pro-table td {
+  height: auto !important;
+  padding: var(--ds-3) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  border-color: var(--ds-line) !important;
+  color: var(--ds-ink-2) !important;
+  background: transparent !important;
+}
+body table tbody tr,
+body table tbody tr:nth-child(even) {
+  background: var(--ds-surface) !important;
+}
+body table tbody tr:hover,
+body table tbody tr:hover td {
+  background: var(--ds-surface-2) !important;
+}
+body table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+body .empty {
+  padding: var(--ds-6) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-md) !important;
+  text-align: center;
+}
+
+/* ---------- rozet ---------- */
+body .tag,
+body .pill,
+body .status-pill,
+body .badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px !important;
+  border: 0 !important;
+  border-radius: var(--ds-r-pill) !important;
+  background: var(--ds-dim) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-xs) !important;
+  font-weight: 650 !important;
+}
+body .tag--success,
+body .status--success,
+body .pill--ok {
+  background: var(--ds-ok-50) !important;
+  color: var(--ds-ok) !important;
+}
+body .tag--warning,
+body .status--warning {
+  background: var(--ds-warn-50) !important;
+  color: var(--ds-warn) !important;
+}
+body .tag--danger,
+body .status--danger,
+body .toast--error {
+  background: var(--ds-brand-50) !important;
+  color: var(--ds-brand) !important;
+}
+body .tag--info,
+body .status--info {
+  background: var(--ds-info-50) !important;
+  color: var(--ds-info) !important;
+}
+
+/* ---------- metrik ---------- */
+body .metric,
+body .metric-card,
+body .dashboard-stat,
+body .stat-card {
+  padding: var(--ds-4) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-lg) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink) !important;
+  box-shadow: none !important;
+}
+body .metric__icon,
+body .metric-card__icon,
+body .stat-card__icon {
+  width: 36px !important;
+  height: 36px !important;
+  border: 0 !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-brand-50) !important;
+  color: var(--ds-brand) !important;
+}
+
+/* ---------- bildirim ---------- */
+body .toast,
+body .flash,
+body .form-error {
+  padding: var(--ds-3) var(--ds-4) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-ok-50) !important;
+  color: var(--ds-ok) !important;
+  font-size: var(--ds-fs-sm) !important;
+  font-weight: 650 !important;
+}
+body .toast--error,
+body .form-error {
+  background: var(--ds-brand-50) !important;
+  color: var(--ds-brand) !important;
+  border-color: var(--ds-brand-50) !important;
+}
+
+/* ---------- PANEL: ortada modal yok, her açılım sağdan dikey ---------- */
+body .modal {
+  padding: 0 !important;
+  background: rgba(9, 18, 33, 0.45) !important;
+  align-items: stretch !important;
+  justify-content: flex-end !important;
+}
+body .modal-card,
+body .dialog {
+  width: min(560px, 96vw) !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: var(--ds-4) !important;
+  border: 0 !important;
+  border-left: 1px solid var(--ds-line) !important;
+  border-radius: 0 !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink) !important;
+  box-shadow: var(--ds-shadow-lg) !important;
+  overflow: auto !important;
+  animation: ds-slide 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Belge ön izlemesi geniş kalmalı: A4 sayfası dar panele sığmaz. */
+body .modal .preview-modal__card,
+body .modal-card.preview-modal__card {
+  width: min(1040px, 98vw) !important;
+}
+@keyframes ds-slide {
+  from {
+    transform: translateX(28px);
+    opacity: 0.4;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .modal-card,
+  body .dialog {
+    animation: none;
+  }
+}
+body .modal-close {
+  top: var(--ds-3) !important;
+  right: var(--ds-3) !important;
+  width: var(--ds-h-sm) !important;
+  height: var(--ds-h-sm) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-sm) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink-3) !important;
+}
+body .modal-close:hover {
+  border-color: var(--ds-brand) !important;
+  color: var(--ds-brand) !important;
+}
+
+/* ---------- araç çubuğu ---------- */
+body .filterbar,
+body .toolbar,
+body .workspace-toolbar,
+body .workspace-toolbar__row {
+  gap: var(--ds-2) !important;
+}
+body .toolbar-input {
+  border-radius: var(--ds-r-md) !important;
+}
+
+/* ---------- dar ekran ---------- */
+@media (max-width: 1000px) {
+  body .app-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  body .page-wrap {
+    padding: var(--ds-4) !important;
+  }
+  body .modal-card,
+  body .dialog {
+    width: 100% !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Belirleyicilik katmanı — eski sayfaya özel kuralların üstünde kalması gereken
+   az sayıda görsel özellik. Yeni kural eklenmez, yalnızca sahiplik netleşir.
+   --------------------------------------------------------------------------- */
+html body thead th,
+html body table thead th,
+html body .pro-table thead th,
+html body .quote-items thead th {
+  background: var(--ds-surface-2) !important;
+  background-color: var(--ds-surface-2) !important;
+  color: var(--ds-ink-3) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+}
+html body section.card,
+html body .card,
+html body .list-table-card,
+html body .collapse-card,
+html body .pro-module-card,
+html body .form-section,
+html body .customer-panel,
+html body .quote-customer-card,
+html body .quote-lines-card,
+html body .customer-kpi-card {
+  border-radius: var(--ds-r-lg) !important;
+  border: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface) !important;
+  box-shadow: var(--ds-shadow) !important;
+}
+html body .btn {
+  border-radius: var(--ds-r-md) !important;
+}
+html body input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html body select,
+html body textarea {
+  border-radius: var(--ds-r-md) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Liste araç çubuğu — tek yerleşim. Eski katman bunu mutlak konumlandırma ve
+   sabit genişliklerle kuruyordu; burada akışa alınır, sarar ve taşmaz.
+   --------------------------------------------------------------------------- */
+html body .workspace-toolbar,
+html body .workspace-toolbar__row,
+html body .toolbar-search-form,
+html body .toolbar-bulk-group,
+html body .filterbar {
+  position: static !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+  float: none !important;
+}
+html body .workspace-toolbar {
+  gap: var(--ds-3) !important;
+  padding: var(--ds-3) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-lg) !important;
+  background: var(--ds-surface) !important;
+}
+html body .workspace-toolbar__row {
+  width: 100% !important;
+}
+html body .toolbar-search-pair {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+  flex: 1 1 320px !important;
+  min-width: 0 !important;
+}
+html body .toolbar-input {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: var(--ds-h-md) !important;
+  padding: 0 var(--ds-3) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface) !important;
+  overflow: hidden !important;
+}
+html body .toolbar-input--search {
+  flex: 1 1 260px !important;
+}
+html body .toolbar-input input,
+html body .toolbar-input select {
+  height: 100% !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html body .toolbar-input__icon {
+  position: static !important;
+  flex: none !important;
+  width: auto !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-sm) !important;
+}
+html body .toolbar-btn,
+html body .toolbar-btn--compact,
+html body .toolbar-btn--search {
+  position: static !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: var(--ds-h-md) !important;
+  padding: 0 var(--ds-3) !important;
+  border-radius: var(--ds-r-md) !important;
+  font-size: var(--ds-fs-sm) !important;
+  white-space: nowrap !important;
+}
+html body .toolbar-total,
+html body .toolbar-selected,
+html body .toolbar-select-all {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+  height: var(--ds-h-md) !important;
+  padding: 0 var(--ds-3) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-r-md) !important;
+  background: var(--ds-surface-2) !important;
+  color: var(--ds-ink-2) !important;
+  font-size: var(--ds-fs-sm) !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+}
+html body .toolbar-import {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+}
+/* Araç çubuğundaki hiçbir parça bir diğerinin üstüne binmez. */
+html body .workspace-toolbar * {
+  position: static !important;
+}
+html body .workspace-toolbar .toolbar-input {
+  position: relative !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Cila — ölçülen üç yerleşim hatası:
+   butonun iki satıra taşması, onay kutusunun etiketinden kopması,
+   sidebar rozetiyle ray düğmesinin üst üste binmesi.
+   --------------------------------------------------------------------------- */
+html body .btn,
+html body .toolbar-btn {
+  height: auto !important;
+  min-height: var(--ds-h-md) !important;
+  flex: none !important;
+  white-space: nowrap !important;
+  line-height: 1.15 !important;
+}
+html body .btn > *,
+html body .toolbar-btn > * {
+  white-space: nowrap !important;
+}
+html body .btn--sm {
+  min-height: var(--ds-h-sm) !important;
+}
+
+/* onay kutusu + etiket her zaman aynı satırda */
+html body .checkline,
+html body label:has(> input[type="checkbox"]),
+html body label:has(> input[type="radio"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--ds-2) !important;
+  white-space: nowrap !important;
+}
+html body input[type="checkbox"],
+html body input[type="radio"] {
+  flex: none !important;
+  width: 15px !important;
+  height: 15px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+/* marka kartı ile ray düğmesi çakışmaz */
+html body .sidebar {
+  position: fixed !important;
+  overflow: visible !important;
+}
+html body .sidebar-rail-toggle {
+  top: 14px !important;
+  right: -13px !important;
+  width: 26px !important;
+  height: 26px !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: 50% !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink-3) !important;
+  font-size: var(--ds-fs-sm) !important;
+  box-shadow: var(--ds-shadow) !important;
+}
+html body .sidebar-rail-toggle:hover {
+  border-color: var(--ds-brand) !important;
+  color: var(--ds-brand) !important;
+}
+html body .brand-card__top {
+  gap: var(--ds-2) !important;
+  padding-right: 18px !important;
+}
+html body .menu {
+  overflow-x: hidden !important;
+}
+
+/* üst bar bilgi hapları kırpılmadan sarar */
+html body .topbar__pills {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--ds-2) !important;
+  min-width: 0 !important;
+}
+html body .topbar .pill {
+  height: var(--ds-h-sm) !important;
+  padding: 0 var(--ds-2) !important;
+  border-radius: var(--ds-r-md) !important;
+  font-size: var(--ds-fs-xs) !important;
+  white-space: nowrap !important;
+}
