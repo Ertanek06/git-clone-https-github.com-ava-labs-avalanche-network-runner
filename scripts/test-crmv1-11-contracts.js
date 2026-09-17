@@ -25,9 +25,18 @@ assert.match(css,/menu__item\[href="\/"\][\s\S]*position:sticky/);
 
 assert.match(themeJs,/const isDark=/);
 assert.match(themeJs,/success_bg:'#123528'/);
-assert.match(settings,/mobile-home-v4__stats>a/);
-assert.match(settings,/dashboard-shortcuts-dynamic/);
-assert.match(settings,/decision-card--approved/);
+// crmv1.46 — "eski dosyalar koyu temayı beyaza döndüremez" kuralı buradaydı ve
+// /settings/theme.css içinde ÜRETİLİP HİÇ GÖNDERİLMEYEN bir metin bloğunu
+// arıyordu; yani sözleşme geçiyor, kural gerçekte uygulanmıyordu. Ölçüm bunu
+// doğruladı: koyu temada tablolar, kısayollar ve mobil ana sayfa beyaz kalıyordu.
+// Sorumluluk tasarım sistemine taşındı ve davranış artık gerçek tarayıcıda
+// scripts/e2e/dark-surfaces.js ile denetleniyor.
+const ds=read('public/css/arteva-ds-v2.css');
+assert.match(ds,/mobile-home-v4__stats > a/);
+assert.match(ds,/dashboard-shortcuts-dynamic/);
+assert.match(ds,/decision-card--approved/);
+assert.match(ds,/YÜZEY SAHİPLİĞİ \(KOYU TEMA\)/);
+assert.ok(fs.existsSync(new URL('../scripts/e2e/dark-surfaces.js',import.meta.url)),'koyu tema yüzey denetimi paketten çıkarılamaz');
 assert.match(layout,/settings\/theme\.css\?v=<%=ui\.updated_at\|\|'default'%>&amp;b=crmv1.45/);
 
 assert.match(css,/dashboard-widget-v63>.card-head h2[\s\S]*-webkit-line-clamp:2/);

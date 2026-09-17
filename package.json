@@ -31,7 +31,8 @@
     "test:e2e": "node scripts/e2e/flows.js",
     "test:visual": "node scripts/e2e/visual.js",
     "test:visual:update": "node scripts/e2e/visual.js --update",
-    "test:baseline": "npm run test:e2e && npm run test:visual"
+    "test:baseline": "npm run test:e2e && npm run test:dark && npm run test:visual",
+    "test:dark": "node scripts/e2e/dark-surfaces.js"
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",

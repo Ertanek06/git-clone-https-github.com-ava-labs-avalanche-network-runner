@@ -30,6 +30,9 @@
   --ds-info-50: #e9f0ff;
   --ds-dim: #eef1f5;
 
+  /* Tipografi — TEK ölçek.
+     Yoğun bir CRM için tasarlandı: gövde 13px, tablo 12px, etiket 11px.
+     Ara değer yok; bir metnin boyutu bu yedi basamaktan biridir. */
   --ds-fs-2xs: 10px;
   --ds-fs-xs: 11px;
   --ds-fs-sm: 12px;
@@ -37,6 +40,15 @@
   --ds-fs-lg: 15px;
   --ds-fs-xl: 20px;
   --ds-fs-2xl: 24px;
+
+  --ds-lh-tight: 1.2;
+  --ds-lh-snug: 1.35;
+  --ds-lh-normal: 1.5;
+
+  --ds-fw-regular: 400;
+  --ds-fw-medium: 500;
+  --ds-fw-semibold: 600;
+  --ds-fw-bold: 700;
 
   --ds-1: 4px;
   --ds-2: 8px;
@@ -56,8 +68,34 @@
 
   --ds-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
   --ds-shadow-lg: 0 12px 34px rgba(16, 24, 40, 0.16);
-  --ds-font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  /* Tek yazı tipi hattı.
+     Inter uygulamayla birlikte woff2 olarak geliyor (fonts-v3817.css); tasarım
+     sistemi onu kullanmıyordu ve metin işletim sistemine göre değişiyordu.
+     Artık zincir tek: kullanıcının Tema Stüdyosu'nda seçtiği aile (--font)
+     varsa o öne geçer, arkasında her zaman aynı yedek sıralaması durur. */
+  --ds-font-stack: Inter, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ds-font: var(--font, Inter), var(--ds-font-stack);
+  --ds-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --ds-sidebar-w: 224px;
+
+  /* Eski katmanın yazı tipi değişkenleri tek zincire bağlanır.
+     Kaynakta otuzdan fazla yazı tipi değişkeni vardı ve her biri kendi
+     yedeğini taşıyordu; aynı ekranda üç ayrı aile render olabiliyordu.
+     Burada hepsi --ds-font'a çıkar. Tema Stüdyosu'nun kendi ürettiği
+     --heading-font / --sidebar-font / --table-font / --button-font
+     değişkenleri /settings/theme.css ile DAHA SONRA yüklendiği için
+     kullanıcının seçimi bu varsayılanların üstünde kalır; akış korunur. */
+  --ui-font-stack: var(--ds-font);
+  --ui-font: var(--ds-font);
+  --title-font: var(--ds-font);
+  --pv-font: var(--ds-font);
+  --v68-font: var(--ds-font);
+  --v69-font: var(--ds-font);
+  --v70-font: var(--ds-font);
+  --field-label-font: var(--ds-font);
+  --input-text-font: var(--ds-font);
+  --note-font: var(--ds-font);
+  --remember-font: var(--ds-font);
 }
 
 /* Koyu tema: yalnızca tokenlar değişir, tek bir bileşen bile yeniden yazılmaz. */
@@ -89,6 +127,10 @@ body {
   color: var(--ds-ink) !important;
   font-family: var(--ds-font) !important;
   font-size: var(--ds-fs-md) !important;
+  line-height: var(--ds-lh-normal);
+  font-weight: var(--ds-fw-regular);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.45 !important;
   -webkit-font-smoothing: antialiased;
 }
@@ -969,4 +1011,131 @@ html body .topbar .pill {
   border-radius: var(--ds-r-md) !important;
   font-size: var(--ds-fs-xs) !important;
   white-space: nowrap !important;
+}
+
+/* ===========================================================================
+   YÜZEY SAHİPLİĞİ (KOYU TEMA) — crmv1.46 / Faz 1
+   ---------------------------------------------------------------------------
+   Sorun: tasarım sistemi bazı bileşenlerin yalnızca geometrisini devralmış,
+   yüzey rengini eski katmana bırakmıştı. Açık temada bu görünmüyordu (eski
+   katmanın beyazı ile --ds-surface aynı), koyu temada ise tablolar, sayfa
+   gövdesi, açılır paneller ve ayar kartları beyaz kalıyordu. Eski sözleşme bu
+   kuralı /settings/theme.css içindeki ölü bir metin bloğunda "koruyordu".
+
+   Kapsam bilinçli olarak YALNIZCA koyu temadır. İlk yazımda kurallar her
+   temada uygulanıyordu ve ölçüm şunu gösterdi: ARTEVA kırmızısı lacivere,
+   bağlantı mavisi soluk griye, uyarı amberi nötre dönüyordu — arka planı
+   düzeltirken anlam taşıyan ön plan renkleri siliniyordu. Açık temanın
+   semantik renklerini birleştirmek Faz 3'ün (bileşenler) kararıdır, koyu tema
+   düzeltmesinin yan etkisi değil.
+
+   Liste tahmini değil: scripts/e2e/dark-surfaces.js ile ölçülmüş gerçek
+   eksiklerdir ve o test bu bloğun eksilmesini bir daha sessizce geçirmez.
+   Aşağıdaki sınıf listesi, dosyanın başındaki koyu tema token bloğuyla
+   AYNI olmalıdır.
+   =========================================================================== */
+
+/* 1 — Sayfa gövdesi ve içerik kapsayıcıları */
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(section.page-wrap, .app-content, .dashboard-table-fit) {
+  background: transparent !important;
+}
+
+/* 2 — Tablo gövdesi. Satır ve hücre zaten tokenlıydı, tablo elemanının
+      kendisi değildi; altındaki beyaz zemin koyu temada sızıyordu. */
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(table, .pro-table, table.lined, .quote-items tr) {
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink-2) !important;
+}
+
+/* 3 — Beyaz kalan yüzeyler: paneller, listeler, kartlar */
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(
+    .topbar-search__pop,
+    .term-suggestion-list,
+    .table-column-menu-v3817__panel,
+    .import-pop__body,
+    .dropdown,
+    .select-menu,
+    .menu-popover,
+    .popover,
+    .dashboard-shortcuts-dynamic,
+    .dashboard-shortcuts-dynamic > a,
+    .shortcut-row,
+    a.setting-card,
+    .mini-list,
+    .activity-scroll,
+    .dash-tools-v372,
+    .mobile-home-v4,
+    .mobile-home-v4__stats > a,
+    .mobile-home-v4__list > a,
+    .mobile-home-v4__list > div,
+    .quote-check-assistant,
+    .profile-card
+  ) {
+  background: var(--ds-surface) !important;
+  border-color: var(--ds-line) !important;
+  color: var(--ds-ink) !important;
+}
+
+/* 4 — Açık mavi/gri tonlu ikincil yüzeyler */
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(
+    .ui-zoom-controls,
+    .ui-zoom-btn,
+    .locale-flags,
+    .locale-flags > a,
+    .pager,
+    .pager > a,
+    .pager > span,
+    .card-collapse-toggle,
+    .quote-pick-btn,
+    .quote-line-image,
+    .term-combo,
+    .term-chip,
+    .card-head > a,
+    .live-dash-summary > span,
+    .snapshot-grid > div,
+    .customer-edit > summary,
+    .quote-lines-live-summary-v11 > span,
+    .quote-total > div,
+    .quote-total .quote-total-discount-card,
+    .quote-total .grand,
+    .quote-global-discount,
+    .quote-global-discount__applied,
+    .quote-global-discount summary small
+  ) {
+  background: var(--ds-surface-2) !important;
+  border-color: var(--ds-line) !important;
+  color: var(--ds-ink-2) !important;
+}
+
+/* 5 — Rozet/durum yüzeyleri.
+      Nötr taban önce verilir, sonra durum varyantları semantik tokenlara
+      bağlanır: aksi halde koyu temada onaylı/teklif/ödeme ikonlarının hepsi
+      aynı griye düşer ve kartın taşıdığı durum bilgisi kaybolur. Koyu
+      paletin -50 tonları dosyanın başındaki token bloğunda tanımlıdır. */
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(.decision-card__icon, .workflow-current-count-v16, .fx-rate-status) {
+  background: var(--ds-surface-3) !important;
+  color: var(--ds-ink-2) !important;
+}
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  .decision-card--approved
+  .decision-card__icon {
+  background: var(--ds-ok-50) !important;
+  color: var(--ds-ok) !important;
+}
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  .decision-card--quote
+  .decision-card__icon {
+  background: var(--ds-warn-50) !important;
+  color: var(--ds-warn) !important;
+}
+body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-noir)
+  :is(.decision-card--payment, .decision-card--rate)
+  .decision-card__icon {
+  background: var(--ds-info-50) !important;
+  color: var(--ds-info) !important;
 }

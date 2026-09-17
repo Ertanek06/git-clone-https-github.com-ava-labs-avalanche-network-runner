@@ -18,11 +18,18 @@ const UPDATE = process.argv.includes("--update") || process.env.VISUAL_UPDATE ==
 // bir kabuk bu eşiği kat kat aşar.
 const TOLERANCE = 0.35;
 
+// Genişlikler rastgele değil: her biri kanonik breakpoint ölçeğinin bir
+// bandının ORTASINA denk gelir. Eşiğin tam üstünde ölçmek kırılgandır; bandın
+// içinde ölçmek o bandın yerleşimini temsil eder. Bir breakpoint kaydığında
+// hangi bandın etkilendiği doğrudan görünür.
 const VIEWPORTS = [
-  { name: "1920", width: 1920, height: 1080 },
-  { name: "1440", width: 1440, height: 900 },
-  { name: "1024", width: 1024, height: 768 },
-  { name: "390", width: 390, height: 844 }
+  { name: "390", width: 390, height: 844 }, // telefon          (≤620)
+  { name: "560", width: 560, height: 900 }, // büyük telefon    (≤620)
+  { name: "700", width: 700, height: 900 }, // küçük tablet     (≤760)
+  { name: "950", width: 950, height: 900 }, // tablet           (≤1000)
+  { name: "1100", width: 1100, height: 900 }, // küçük dizüstü  (≤1180)
+  { name: "1300", width: 1300, height: 900 }, // dizüstü        (≤1400)
+  { name: "1600", width: 1600, height: 1000 } // geniş ekran    (>1500)
 ];
 
 const ROUTES = [
