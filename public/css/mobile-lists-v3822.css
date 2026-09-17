@@ -830,7 +830,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 430px) {
   .app-main .page-wrap > .page-head.list-page-head {
     grid-template-columns: minmax(0, 1fr) !important;
   }

@@ -1139,3 +1139,99 @@ body:is(.ds-dark, .theme-midnight-ops, .theme-dark-executive, .theme-graphite-no
   background: var(--ds-info-50) !important;
   color: var(--ds-info) !important;
 }
+
+/* ===========================================================================
+   YERLEŞİM KUSURU DÜZELTMELERİ — crmv1.46 / Faz 1
+   scripts/e2e/layout-sanity.js ile ölçülmüş, gerçek ve görünür kusurlar.
+   =========================================================================== */
+
+/* Pano widget araç şeridi (🔒 ↺ ×) yığın modunda kartın BAŞLIĞININ ÜSTÜNE
+   biniyordu: genel `.dashboard-widget-v63 > .card-head > div{display:grid}`
+   kuralı (0,2,1) şeridin kendi `display:flex` bildirimini (0,1,0) eziyor,
+   şerit dikey bir sütuna dönüşüyor; `.dashboard-stack-v372 .dash-tools-v372`
+   ise onu `left:10px` ile sola çekiyordu. Sonuç: "Canlı Proforma Takibi"
+   başlığı ve ilk kutucuk üç düğmenin altında kalıyordu.
+
+   Şerit akışa döndürülür; geniş ekranda zaten böyle davranıyordu.
+   Kapsam min-width:1001px: 1000 pikselin altında eski katman bu şeridi
+   bilinçli olarak gizler ve o davranış korunmalıdır. Serbest yerleşim
+   (freeboard) modu sürükleme için mutlak konumu gerektirdiğinden
+   kapsam dışıdır. */
+@media (min-width: 1001px) {
+  body .dashboard-stack-v372 .dash-tools-v372 {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto !important;
+  }
+}
+
+/* Liste araç çubuğundaki toplu seçim grubu 390 piksellik ekranda kabından
+   46 piksel taşıyor, sayfaya 17 piksel yatay kaydırma bindiriyordu:
+   `flex:0 0 auto` daralmayı engelliyor, `min-width:auto` ise flex öğesinin
+   içeriğinden daha dar olmasını yasaklıyordu. Grup artık daralıp sarıyor. */
+body .toolbar-bulk-group {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  flex-wrap: wrap !important;
+}
+body .toolbar-select-all,
+body .toolbar-selected {
+  min-width: 0 !important;
+}
+
+/* Tema içe aktarma formunda "İçe aktardıktan sonra aktif et" onay kutusunun
+   etiketi, ızgaranın ona ayırdığı ~90 piksellik sütuna sığmayıp 1190 piksel
+   genişlikte ekranın 2 piksel dışına taşıyordu: flex öğesinin varsayılan
+   `min-width:auto` değeri daralmayı, `white-space` ise sarmayı engelliyordu. */
+body .theme-import-activate-v370 {
+  min-width: 0 !important;
+}
+body .theme-import-activate-v370 > * {
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Mobil alt menüde etiketler `white-space:nowrap` + `overflow:hidden` ile
+   sabit genişlikli hücrelere sıkıştırılıyordu: 390 pikselde "Ürün ve
+   Hizmetler" 95 piksellik hücrede 111 piksel yer kaplayıp kelimenin
+   ortasından, üç nokta bile olmadan kesiliyordu. Etiket artık sarıyor. */
+body .mobile-nav a {
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  font-size: var(--ds-fs-xs) !important;
+  line-height: 1.15 !important;
+  hyphens: auto !important;
+}
+
+/* Mobil kart görünümünde "kayıt bulunamadı" hücresi 25 piksele sıkışıp metni
+   harf harf alt alta diziyordu. Sebep özgüllük beraberliği: onay kutusu
+   sütunu için yazılmış `… tbody td:first-child{width:25px}` ile
+   `… tbody td.empty{width:100%}` kuralları aynı ağırlıkta (0,4,3) ve boş
+   satırın tek hücresi hem :first-child hem .empty olduğundan, dosyada sonra
+   gelen dar sütun kuralı kazanıyordu; o kural hücreyi kart köşesine
+   sabitlemek için position ve max-width de veriyordu, bu yüzden yalnızca
+   width'i geri almak yetmiyor. Tasarım sistemi katman dışı olduğu için bu
+   beraberliği kesin olarak bitirir. */
+@media (max-width: 760px) {
+  body table[data-mobile-cards] tbody td.empty {
+    position: static !important;
+    inset: auto !important;
+    display: grid !important;
+    place-items: center !important;
+    /* Kart görünümü hücreleri "etiket | değer" iki sütunludur; boş satır
+       mesajı bu kalıbı devralırsa 93 piksellik ilk sütuna sıkışıp
+       kelime kelime alt alta diziliyor. Tek sütuna döndürülür. */
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 70px !important;
+    padding: var(--ds-4) !important;
+    text-align: center !important;
+  }
+}

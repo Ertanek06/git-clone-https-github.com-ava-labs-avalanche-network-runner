@@ -1,9 +1,9 @@
 {
   "schema": 3,
-  "generatedAt": "2026-09-17T06:54:37.089Z",
-  "stylesCss": "/public/build/crm-styles.c03dbf913bf7762c.css",
+  "generatedAt": "2026-09-17T14:19:11.901Z",
+  "stylesCss": "/public/build/crm-styles.7350927d100b6a24.css",
   "printCss": "/public/build/crm-print.bed5f8eb01e4f0c9.css",
-  "appJs": "/public/build/crm-app.60eacc12ca59d630.js",
+  "appJs": "/public/build/crm-app.b67ddc692dd511fb.js",
   "printJs": "/public/build/crm-print.7160a153377569d5.js",
   "pageJs": {
     "dashboard": "/public/build/crm-dashboard.1c622c8f496fe125.js",

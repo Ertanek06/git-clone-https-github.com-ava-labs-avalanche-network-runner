@@ -605,8 +605,15 @@
       const r=el.getBoundingClientRect();
       if(r.width<260 || r.height<120){el.style.width='';el.style.height='';}
       // Eski inline ölçüler yerine kartların doğal ızgara ölçüsüne dön.
-      if(el.style.width && parseFloat(el.style.width)<300) el.style.width='';
-      if(el.style.height && parseFloat(el.style.height)<170) el.style.height='';
+      // Eşikler serbest yerleşim motorunun kendi alt sınırlarının ALTINDA
+      // olmalıdır. Önceden 300/170 idi; normalize() ise genişliği en az 280,
+      // yüksekliği en az 160 piksele sabitliyor. Dar bir sütuna düşen kartın
+      // 280 piksellik genişliği "bozuk eski değer" sanılıp siliniyor, kart
+      // CSS'ten %100 genişlik alıyor ama left değeri yerinde kalıyordu:
+      // 1380 pikselin üstünde "Canlı Proforma Takibi" ve "Son Eklenen
+      // Müşteriler" kartları ekranın dışına taşıp kesiliyordu.
+      if(el.style.width && parseFloat(el.style.width)<260) el.style.width='';
+      if(el.style.height && parseFloat(el.style.height)<160) el.style.height='';
     });
   }
   function dashboardDragFix(){

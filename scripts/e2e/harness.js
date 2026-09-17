@@ -148,6 +148,42 @@ export async function login(page, base) {
 // döviz kuru gibi her koşuda değişen alanlar sabitlenir, yoksa her çalıştırma
 // yanlış alarm üretir.
 export async function freezeVolatile(page) {
+  // Kural enjeksiyonu, öğe öğe stil yazmaktan daha güvenilirdir: yedekleme
+  // hatırlatıcısı gibi ZAMANLAYICIYLA açılan katmanlar dondurma çağrısından
+  // SONRA görünebilir ve kareye karışır. Kural bir kez eklendiğinde sonradan
+  // eklenen öğeleri de kapsar. CSP style-src nonce istediği için sayfaya
+  // <style> etiketi eklenmez; var olan bir stil sayfasına kural eklemek
+  // CSSOM üzerinden yapılır ve CSP'ye takılmaz.
+  await page.evaluate(() => {
+    const sheet = [...document.styleSheets].reverse().find((candidate) => {
+      try {
+        return candidate.cssRules && !candidate.disabled;
+      } catch {
+        return false; // farklı kaynaklı stil sayfası
+      }
+    });
+    if (!sheet || sheet.dataset_e2eFrozen) return;
+    const rules = [
+      // YALNIZCA zamanlayıcıyla açılan yedekleme hatırlatıcısı. `.modal`
+      // sınıfını toptan gizlemek ön izleme penceresini de kapatır ve akış
+      // testindeki "liste satırından ön izleme açılıyor" kontrolü düşer;
+      // ölçüm aracı ölçtüğü davranışı bozmamalıdır. Kareyi alırken o an
+      // AÇIK olan pencereler aşağıda öğe bazlı kapatılır.
+      ".backup-reminder-modal { display: none !important; }",
+      "[data-live-date], [data-live-time], [data-eur], [data-usd]," +
+        ".pill--date, .pill--time, .pill--currency { visibility: hidden !important; }",
+      "*, *::before, *::after { animation: none !important; transition: none !important;" +
+        " caret-color: transparent !important; }"
+    ];
+    for (const rule of rules) {
+      try {
+        sheet.insertRule(rule, sheet.cssRules.length);
+      } catch {
+        /* kural eklenemezse öğe bazlı dondurma devreye girer */
+      }
+    }
+  });
+
   // CSP `style-src` nonce istediği için sayfaya stil etiketi enjekte edilmez.
   // Dondurma CSSOM üzerinden yapılır: element.style yazımı CSP'ye takılmaz ve
   // uygulamanın kendi güvenlik ayarını gevşetmeden ölçüm yapılabilir.

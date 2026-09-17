@@ -357,7 +357,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 430px) {
   .app-main .page-wrap table[data-mobile-cards] .table-action {
     flex-basis: 30px !important;
     width: 30px !important;

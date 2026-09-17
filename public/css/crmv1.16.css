@@ -613,7 +613,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
-@media (max-width: 1050px) {
+@media (max-width: 1180px) {
   #templateCodeForm,
   .template-code-modal.is-fullscreen-v17 #templateCodeForm {
     grid-template-columns: 1fr !important;
@@ -664,7 +664,7 @@
   width: min(100%, 1120px) !important;
   min-height: 720px !important;
 }
-@media (max-width: 1050px) {
+@media (max-width: 1180px) {
   .template-designer-main-v370 {
     min-height: 760px !important;
   }
@@ -676,7 +676,7 @@
     min-height: 680px !important;
   }
 }
-@media (max-width: 650px) {
+@media (max-width: 680px) {
   .template-live-stage-v370 {
     height: 640px !important;
     min-height: 640px !important;

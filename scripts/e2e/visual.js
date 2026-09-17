@@ -18,18 +18,24 @@ const UPDATE = process.argv.includes("--update") || process.env.VISUAL_UPDATE ==
 // bir kabuk bu eşiği kat kat aşar.
 const TOLERANCE = 0.35;
 
-// Genişlikler rastgele değil: her biri kanonik breakpoint ölçeğinin bir
-// bandının ORTASINA denk gelir. Eşiğin tam üstünde ölçmek kırılgandır; bandın
-// içinde ölçmek o bandın yerleşimini temsil eder. Bir breakpoint kaydığında
-// hangi bandın etkilendiği doğrudan görünür.
+// Genişlikler rastgele değil. Bir max-width eşiği v'den v'ye çekildiğinde
+// davranış TAM OLARAK (v, v'] aralığında değişir; başka hiçbir genişlikte
+// değişmez. Bu liste her birleştirme boşluğundan en az bir genişlik içerir,
+// yani ölçek değişikliğinin etkileyebileceği her aralık gerçekten ölçülür.
+// Geri kalanlar bant temsilcisidir.
 const VIEWPORTS = [
-  { name: "390", width: 390, height: 844 }, // telefon          (≤620)
-  { name: "560", width: 560, height: 900 }, // büyük telefon    (≤620)
-  { name: "700", width: 700, height: 900 }, // küçük tablet     (≤760)
-  { name: "950", width: 950, height: 900 }, // tablet           (≤1000)
-  { name: "1100", width: 1100, height: 900 }, // küçük dizüstü  (≤1180)
-  { name: "1300", width: 1300, height: 900 }, // dizüstü        (≤1400)
-  { name: "1600", width: 1600, height: 1000 } // geniş ekran    (>1500)
+  { name: "390", width: 390, height: 844 }, // telefon (bant temsilcisi)
+  { name: "410", width: 410, height: 900 }, // (390,430] birleşme aralığı
+  { name: "560", width: 560, height: 900 }, // büyük telefon (bant temsilcisi)
+  { name: "590", width: 590, height: 900 }, // (560,620]
+  { name: "660", width: 660, height: 900 }, // (640,680]
+  { name: "750", width: 750, height: 900 }, // (700,760]
+  { name: "950", width: 950, height: 900 }, // (780,1000]
+  { name: "1100", width: 1100, height: 900 }, // (1050,1180]
+  { name: "1270", width: 1270, height: 900 }, // (1250,1280]
+  { name: "1390", width: 1390, height: 900 }, // (1380,1400]
+  { name: "1490", width: 1490, height: 900 }, // (1480,1500]
+  { name: "1600", width: 1600, height: 1000 } // geniş ekran (bant temsilcisi)
 ];
 
 const ROUTES = [
@@ -67,12 +73,34 @@ const report = reporter("E2E_VISUAL");
 let updated = 0;
 
 try {
+  // Tek oturum, çok görünüm: her genişlik için yeniden giriş yapmak
+  // uygulamanın giriş hız sınırına (15 dakikada 10) takılır. Görünüm
+  // boyutlandırılıp sayfa yeniden yükleniyor, yani ölçüm hâlâ o genişlikte
+  // yapılmış temiz bir yükleme üzerinden alınıyor.
+  const { browser, page } = await openBrowser({
+    width: VIEWPORTS[0].width,
+    height: VIEWPORTS[0].height
+  });
+  await login(page, app.base);
   for (const viewport of VIEWPORTS) {
-    const { browser, page } = await openBrowser({ width: viewport.width, height: viewport.height });
-    try {
-      await login(page, app.base);
+    {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
       for (const [name, route] of ROUTES) {
         await page.goto(app.base + route, { waitUntil: "networkidle" });
+        // Her kare bağımsız olmalı. Kenar çubuğunun açık menü durumu ve tablo
+        // tercihleri localStorage'da saklanır; tek tarayıcıda gezilince bu
+        // durum genişlikler arasında taşınır ve aynı sayfa farklı menü
+        // vurgusuyla çekilir. Tarayıcı deposu temizlenip sayfa yeniden
+        // yükleniyor, böylece ölçülen şey her zaman aynı başlangıç durumu.
+        await page.evaluate(() => {
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch {
+            /* özel pencerede erişilemeyebilir */
+          }
+        });
+        await page.reload({ waitUntil: "networkidle" });
         await freezeVolatile(page);
         const height = await settle(page);
         const file = path.join(BASELINE_DIR, `${name}-${viewport.name}.png`);
@@ -101,10 +129,9 @@ try {
           `fark=%${ratio.toFixed(3)} · ${reason} · ${height}px`
         );
       }
-    } finally {
-      await browser.close();
     }
   }
+  await browser.close();
 } catch (error) {
   report.fail("koşum", String(error).split("\n")[0]);
 } finally {

@@ -106,7 +106,7 @@
 .login-studio-savebar{padding:11px 13px!important;border-top:1px solid var(--border,#d9e3ef)!important;background:#fff!important}
 .login-studio-controls .btn--soft{background:#edf4fc!important;color:#245ba7!important;border-color:#d5e2f2!important}
 @media(max-width:1280px){.login-studio-pro{grid-template-columns:minmax(0,1fr) 350px!important}.login-studio-viewport{height:360px!important}.login-studio-controls{top:70px!important}}
-@media(max-width:980px){.login-studio-pro{grid-template-columns:1fr!important}.login-studio-controls{position:relative!important;top:auto!important;height:auto!important;max-height:none!important}.login-studio-controls-scroll{max-height:none!important}.login-media-grid{grid-auto-columns:145px!important}.login-media-card{width:145px!important;min-width:145px!important}}
+@media(max-width:1000px){.login-studio-pro{grid-template-columns:1fr!important}.login-studio-controls{position:relative!important;top:auto!important;height:auto!important;max-height:none!important}.login-studio-controls-scroll{max-height:none!important}.login-media-grid{grid-auto-columns:145px!important}.login-media-card{width:145px!important;min-width:145px!important}}
 
 
 /* v3.5.6 — tam ekran, dengeli ve yüksek kontrastlı kurumsal giriş revizyonu */
@@ -205,7 +205,7 @@
 body.login-live-preview-open{overflow:hidden!important}
 
 @media(max-width:1280px){.login-studio-pro{grid-template-columns:minmax(0,1fr) 375px!important}.login-studio-viewport{height:350px!important}}
-@media(max-width:1050px){.login-card-model-grid{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}.login-card-model{min-width:150px}}
+@media(max-width:1180px){.login-card-model-grid{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}.login-card-model{min-width:150px}}
 /* Tam ekran ön izleme, gerçek /login ile aynı kullanılabilir pencere ölçüsünü kullanır. */
 .login-live-modal{display:block!important}
 .login-live-modal-stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
@@ -287,7 +287,7 @@ body.login-live-preview-open{overflow:hidden!important}
 .login-pro-canvas.is-mobile-layout .login-pro-submit{min-height:46px!important;height:auto!important;padding:10px!important}
 .login-pro-canvas.is-mobile-layout .login-pro-note{padding-top:8px!important;font-size:11px!important;line-height:1.3!important}
 
-@media(max-width:1100px){
+@media(max-width:1180px){
   .login-pro-page{min-height:100dvh!important;overflow:auto!important;overscroll-behavior-y:contain!important}
   .login-pro-page .login-pro-stage{position:relative!important;inset:auto!important;width:100%!important;min-height:100dvh!important;overflow:visible!important}
   .login-studio-head{align-items:flex-start!important}
@@ -338,7 +338,7 @@ body.login-live-preview-open{overflow:hidden!important}
   .login-live-modal-stage .login-pro-canvas.is-mobile-layout .login-pro-right{padding-top:10px!important}
 }
 
-@media(max-width:390px){
+@media(max-width:430px){
   .login-pro-canvas.is-mobile-layout{--mobile-media-height:clamp(155px,25dvh,205px)}
   .login-pro-canvas.is-mobile-layout .login-pro-card{width:calc(100vw - 14px)!important;padding:13px 14px!important;border-radius:min(var(--card-radius),20px)!important}
   .login-pro-canvas.is-mobile-layout .login-pro-logo-wrap{min-height:50px!important}
@@ -347,7 +347,7 @@ body.login-live-preview-open{overflow:hidden!important}
   .login-card-model-grid{grid-template-columns:minmax(0,1fr)!important}
 }
 
-@media(max-height:690px) and (max-width:1100px){
+@media(max-height:690px) and (max-width:1180px){
   .login-pro-canvas.is-mobile-layout{--mobile-media-height:clamp(145px,23dvh,170px)}
   .login-pro-canvas.is-mobile-layout .login-pro-right{align-items:flex-start!important}
   .login-pro-canvas.is-mobile-layout .login-pro-card{gap:6px!important;margin:0 auto!important;padding-top:12px!important;padding-bottom:12px!important}

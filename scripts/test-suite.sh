@@ -104,3 +104,6 @@ node scripts/test-crmv1-42-web-import-control-center.js
 node scripts/test-crmv1-43-product-web-import-repair.js
 node scripts/test-crmv1-44-web-import-ui-sanitizer.js
 node scripts/test-crmv1-45-web-import-upsert-ui-docs.js
+
+# crmv1.46 — kırılma noktası ölçeği tek yerde tutulur
+node scripts/test-breakpoint-scale.js

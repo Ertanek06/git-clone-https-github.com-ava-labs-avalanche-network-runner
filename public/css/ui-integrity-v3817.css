@@ -23,7 +23,7 @@
 .recovery-table td strong{display:block;max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .health-recovery-link{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .health-recovery-link h2,.health-recovery-link p{margin:3px 0}
-@media(max-width:1050px){.recovery-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1180px){.recovery-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){
  .recovery-head{align-items:stretch;flex-direction:column}
  .recovery-total{grid-template-columns:1fr auto;align-items:center;text-align:left}

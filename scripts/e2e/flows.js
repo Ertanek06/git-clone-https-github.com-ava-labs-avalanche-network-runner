@@ -155,6 +155,49 @@ try {
       (await page.evaluate(() => document.querySelectorAll(".theme-editable-v18").length)) > 0
   );
 
+  // --- mobil: kesilen etiket ve sıkışan boş liste hücresi ---
+  // Bu iki kontrol sezgisel değil, ölçülmüş iki gerçek hatayı kilitler:
+  // alt menüde "Ürün ve Hizmetler" 95 piksellik hücrede kelimenin ortasından
+  // kesiliyordu; "kayıt bulunamadı" hücresi ise özgüllük beraberliği yüzünden
+  // 25 piksele sıkışıp metni harf harf alt alta diziyordu.
+  await page.setViewportSize({ width: 390, height: 844 });
+  // Boş durum hücresini görmek için sonuç vermeyecek bir arama yapılır;
+  // bu noktada listede az önce oluşturulan müşteri duruyor.
+  await page.goto(`${app.base}/customers?q=ZZZ-BULUNMAYAN-${stamp}`, { waitUntil: "networkidle" });
+  await freezeVolatile(page);
+
+  const nav = await page.evaluate(() =>
+    [...(document.querySelector(".mobile-nav")?.children || [])].map((el) => ({
+      metin: el.textContent.trim(),
+      kesik: el.scrollWidth - el.clientWidth > 1
+    }))
+  );
+  report.check(
+    "mobil alt menüde etiketler kesilmiyor",
+    nav.length > 0 && nav.every((item) => !item.kesik),
+    nav
+      .filter((item) => item.kesik)
+      .map((item) => item.metin)
+      .join(", ") || `${nav.length} sekme tam`
+  );
+
+  const emptyCell = await page.evaluate(() => {
+    const cell = document.querySelector("td.empty");
+    if (!cell) return null;
+    const row = cell.closest("tr");
+    return {
+      oran: cell.getBoundingClientRect().width / row.getBoundingClientRect().width,
+      satir: Math.round(cell.getBoundingClientRect().height)
+    };
+  });
+  report.check(
+    "boş liste mesajı satırın tamamını kullanıyor",
+    !!emptyCell && emptyCell.oran > 0.9,
+    emptyCell ? `genişlik oranı %${Math.round(emptyCell.oran * 100)}` : "hücre yok"
+  );
+
+  await page.setViewportSize({ width: 1600, height: 1000 });
+
   // --- oturum kapatma ---
   await page.goto(`${app.base}/`, { waitUntil: "networkidle" });
   await freezeVolatile(page);
