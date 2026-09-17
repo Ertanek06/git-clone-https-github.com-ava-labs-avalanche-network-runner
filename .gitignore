@@ -6,3 +6,6 @@ public/uploads/*
 logs/
 releases/
 current
+
+# Görsel regresyon fark çıktıları (referanslar sürümlenir, farklar sürümlenmez)
+tests/visual-diff/

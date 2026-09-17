@@ -1,14 +1,14 @@
 {
   "schema": 3,
-  "generatedAt": "2026-09-17T05:00:18.913Z",
+  "generatedAt": "2026-09-17T05:27:30.840Z",
   "stylesCss": "/public/build/crm-styles.54f998d7dca4a491.css",
   "printCss": "/public/build/crm-print.bed5f8eb01e4f0c9.css",
   "appJs": "/public/build/crm-app.60eacc12ca59d630.js",
   "printJs": "/public/build/crm-print.7160a153377569d5.js",
   "pageJs": {
     "dashboard": "/public/build/crm-dashboard.1c622c8f496fe125.js",
-    "quotes": "/public/build/crm-quotes.a669c7b6f8a4ccf6.js",
-    "templates": "/public/build/crm-templates.e8798855e030298b.js",
+    "quotes": "/public/build/crm-quotes.63e3a4a5ba0ce44d.js",
+    "templates": "/public/build/crm-templates.af74a11b9e381f77.js",
     "theme": "/public/build/crm-theme.7777909f20d1c2f7.js",
     "loginStudio": "/public/build/crm-loginstudio.4d2473d43c659ace.js",
     "auth": "/public/build/crm-auth.57e963b80564e599.js"

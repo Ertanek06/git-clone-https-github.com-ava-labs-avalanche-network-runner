@@ -40,7 +40,7 @@
   const logoOffsetXOutput = document.getElementById("tplLogoOffsetXOutput");
   const logoOffsetYOutput = document.getElementById("tplLogoOffsetYOutput");
   const paletteEnabled = document.getElementById("tplCustomPaletteEnabled");
-  const paletteInputs = [...form.querySelectorAll("[data-template-section-color]")];
+  const paletteInputs = form ? [...form.querySelectorAll("[data-template-section-color]")] : [];
   const fullscreenStorageKey = "crm-template-studio-fullscreen-v17";
   const paletteStyleMap = {
     page_bg_color: [".a4", "backgroundColor"],
