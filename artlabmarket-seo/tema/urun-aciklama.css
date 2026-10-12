@@ -89,3 +89,10 @@
   .al-pd-spec th { width: 45%; }
   .al-pd-spec th, .al-pd-spec td { padding: 8px 10px; }
 }
+
+/* Çok sütunlu tablolar (model karşılaştırma, hacim/doğruluk tabloları) */
+.al-pd-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 16px 0 8px; }
+.al-pd-grid { min-width: 520px; text-align: center; }
+.al-pd-grid th, .al-pd-grid td { width: auto; text-align: center; white-space: nowrap; }
+.al-pd-grid caption { caption-side: top; text-align: left; font-weight: 600; padding: 0 0 8px; color: var(--al-text); }
+.al-pd a { color: var(--al-accent); font-weight: 500; }
