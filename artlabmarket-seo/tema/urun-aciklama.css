@@ -1,0 +1,91 @@
+/* ArtLab Market – standart ürün açıklama şablonu
+   IdeaSoft: Tasarım > Tema Düzenleyici > (Özel CSS) alanına bir kez eklenir.
+   Ürün açıklamalarında satır içi style, font, color kullanılmaz; görünüm yalnızca buradan yönetilir. */
+
+.al-pd {
+  --al-text: #343d47;
+  --al-muted: #737982;
+  --al-line: #dce1e7;
+  --al-soft: #f7f8fa;
+  --al-accent: #cc0b30;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--al-text);
+  max-width: 980px;
+}
+.al-pd * { font-family: inherit !important; box-sizing: border-box; }
+
+.al-pd-lead { font-size: 16px; margin: 0 0 24px; }
+.al-pd-lead strong { font-weight: 600; }
+
+.al-pd-h {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  line-height: 1.35;
+  color: var(--al-text);
+  margin: 32px 0 14px !important;
+  padding-left: 12px;
+  border-left: 4px solid var(--al-accent);
+}
+
+/* Teknik özellikler tablosu */
+.al-pd-spec {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--al-line);
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.al-pd-spec th,
+.al-pd-spec td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--al-line);
+  text-align: left;
+  vertical-align: top;
+}
+.al-pd-spec th {
+  width: 38%;
+  font-weight: 600;
+  background: var(--al-soft);
+  color: var(--al-text);
+}
+.al-pd-spec tr:last-child th,
+.al-pd-spec tr:last-child td { border-bottom: 0; }
+
+/* Listeler (tema varsayılanı inside disc olduğu için sıfırlanır) */
+.current-page-product-detail .product-detail .al-pd ul.al-pd-list,
+.al-pd ul.al-pd-list { margin: 0; padding: 0; list-style: none; }
+.current-page-product-detail .product-detail .al-pd ul.al-pd-list li,
+.al-pd ul.al-pd-list li {
+  list-style: none;
+  position: relative;
+  padding: 4px 0 4px 26px;
+}
+.al-pd ul.al-pd-list li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--al-accent);
+}
+
+.al-pd-note {
+  margin-top: 32px;
+  padding: 16px 18px;
+  background: var(--al-soft);
+  border: 1px solid var(--al-line);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--al-muted);
+}
+.al-pd-note strong { color: var(--al-text); font-weight: 600; }
+
+@media (max-width: 767px) {
+  .al-pd { font-size: 14px; }
+  .al-pd-spec th { width: 45%; }
+  .al-pd-spec th, .al-pd-spec td { padding: 8px 10px; }
+}
